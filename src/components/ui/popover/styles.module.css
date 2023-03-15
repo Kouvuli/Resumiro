@@ -1,0 +1,6 @@
+.my-popover {
+    color: '#fff';
+}
+.my-popover a:hover {
+    color: unset;
+}
