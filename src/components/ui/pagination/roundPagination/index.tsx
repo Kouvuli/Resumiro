@@ -19,7 +19,6 @@ const RoundPagination = () => {
             variant="outlined"
             shape="rounded"
             color="primary"
-            size="large"
         />
     )
 }

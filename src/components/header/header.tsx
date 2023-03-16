@@ -3,7 +3,6 @@ import Container from '@mui/material/Container'
 import { styled } from '@mui/material/styles'
 import {
     Avatar,
-    Box,
     List,
     ListItem,
     ListItemButton,
@@ -261,16 +260,16 @@ const Header = () => {
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link href="ho-so-cv">
+                                            <Link href="/ho-so-cv">
                                                 Hồ sơ & CV
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link href="cong-ty">Công ty</Link>
+                                            <Link href="/cong-ty">Công ty</Link>
                                         </li>
                                     </ul>
                                 </nav>
-                                <Box sx={{ flexGrow: 1 }} />
+                                <div style={{ flexGrow: 1 }} />
                                 <RoundSelect
                                     type={2}
                                     style={{
@@ -333,14 +332,14 @@ const Header = () => {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="ho-so-cv">Hồ sơ & CV</Link>
+                                    <Link href="/ho-so-cv">Hồ sơ & CV</Link>
                                 </li>
                                 <li>
-                                    <Link href="cong-ty">Công ty</Link>
+                                    <Link href="/cong-ty">Công ty</Link>
                                 </li>
                             </ul>
                         </nav>
-                        <Box sx={{ flexGrow: 1 }} />
+                        <div style={{ flexGrow: 1 }} />
                         <RoundSelect style={{ marginRight: '16px' }} />
                         <IconButton sx={{ mr: 2 }}>
                             <FavoriteBorderOutlinedIcon />

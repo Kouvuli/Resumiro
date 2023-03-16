@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import Card from '@mui/material/Card'

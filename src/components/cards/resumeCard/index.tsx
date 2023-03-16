@@ -5,6 +5,11 @@ import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
+import styles from './styles.module.css'
+import { Button } from '@mui/material'
+import ShareIcon from '@mui/icons-material/Share'
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 interface ResumeCardProps {
     index?: number
 }
@@ -40,13 +45,67 @@ const ResumeCard: React.FC<ResumeCardProps> = ({}) => {
             transition={{
                 duration: 0.5
             }}
+            className={styles['resume-card-container']}
         >
+            <div className={styles['overlay']}>
+                <div className={styles['overlay-content']}>
+                    <div className={styles['view-resume']}>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            color="secondary"
+                            sx={{
+                                boxShadow: 'unset',
+                                textTransform: 'capitalize'
+                            }}
+                        >
+                            Xem CV
+                        </Button>
+                    </div>
+                    <div className={styles['action']}>
+                        <Button
+                            variant="text"
+                            size="small"
+                            startIcon={<ShareIcon />}
+                            sx={{
+                                textTransform: 'none',
+                                mr: 2,
+                                mb: 1
+                            }}
+                        >
+                            Chia sẻ
+                        </Button>
+                        <Button
+                            variant="text"
+                            size="small"
+                            startIcon={<FavoriteBorderIcon />}
+                            sx={{
+                                textTransform: 'none',
+                                mb: 1
+                            }}
+                        >
+                            Chính
+                        </Button>
+                    </div>
+                    <div className={styles['action']}>
+                        <Button
+                            variant="text"
+                            size="small"
+                            startIcon={<DeleteOutlineRoundedIcon />}
+                            sx={{ textTransform: 'none', color: 'grey[200]' }}
+                        >
+                            Xoá
+                        </Button>
+                    </div>
+                </div>
+            </div>
             <CustomResumeCard
                 sx={{
                     // maxWidth: 345,
                     aspectRatio: '1/1.3',
                     position: 'relative'
                 }}
+                className={styles['content']}
             >
                 <CardMedia
                     component="img"

@@ -1,0 +1,22 @@
+.description {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 100px 1fr 100px 1fr;
+    grid-template-rows: auto;
+    gap: 15px 16px;
+    width: 100%;
+}
+
+.description dt {
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    color: rgb(86, 86, 86);
+}
+
+.description dd {
+    margin: 0px;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

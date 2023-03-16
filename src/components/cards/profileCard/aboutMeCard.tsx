@@ -6,14 +6,31 @@ import Typography from '@mui/material/Typography'
 import CreateIcon from '@mui/icons-material/Create'
 import AddIcon from '@mui/icons-material/Add'
 import React from 'react'
-
+import { motion, Variants } from 'framer-motion'
 interface AboutMeCardProps {
     style?: React.CSSProperties
 }
 
+const variants: Variants = {
+    initial: {
+        opacity: 0,
+        y: '20px'
+    },
+    visible: {
+        opacity: 1,
+        y: 0
+    }
+}
+
 const AboutMeCard: React.FC<AboutMeCardProps> = ({ style }) => {
     return (
-        <div style={style}>
+        <motion.div
+            style={style}
+            variants={variants}
+            initial="initial"
+            whileInView="visible"
+            viewport={{ once: true }}
+        >
             <Card>
                 <CardHeader
                     title={
@@ -44,7 +61,7 @@ const AboutMeCard: React.FC<AboutMeCardProps> = ({ style }) => {
                     </Typography>
                 </CardContent>
             </Card>
-        </div>
+        </motion.div>
     )
 }
 

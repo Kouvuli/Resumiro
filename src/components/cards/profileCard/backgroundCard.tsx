@@ -18,17 +18,6 @@ const BackgroundCard = () => {
                 height="350px"
                 alt="Paella dish"
             />
-            {/* <img
-                src="/images/Images_1.png"
-                width="100%"
-                height="350px"
-                style={{
-                    objectFit: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    borderTopRightRadius: '5px',
-                    borderTopLeftRadius: '5px'
-                }}
-            /> */}
         </Card>
     )
 }

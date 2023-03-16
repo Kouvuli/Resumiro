@@ -6,14 +6,14 @@ import SuitableJob from '@components/lists/suitableJob'
 import ArticleLayout from '@components/layouts/article'
 const ResumePage = () => {
     return (
-        <ArticleLayout title="Hồ sơ -CV">
+        <ArticleLayout title="Hồ sơ - CV">
             <Container>
                 <Grid container marginTop="1rem " marginBottom="5rem">
                     <Grid item xs={12} md={7.5}>
                         <ResumeGrid />
                     </Grid>
                     <Grid item xs={12} md={4.5}>
-                        <SuitableJob />
+                        <SuitableJob isResumePage />
                     </Grid>
                 </Grid>
             </Container>

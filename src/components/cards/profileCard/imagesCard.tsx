@@ -5,7 +5,6 @@ import {
     Typography,
     CardContent,
     Button,
-    Box,
     CardActions,
     ImageList,
     ImageListItem
@@ -103,7 +102,7 @@ const ImagesCard = () => {
                 </ImageList>
             </CardContent>
             <CardActions sx={{ py: 'unset' }}>
-                <Box sx={{ flexGrow: 1 }}></Box>
+                <div style={{ flexGrow: 1 }}></div>
                 <Button
                     variant="text"
                     color="primary"

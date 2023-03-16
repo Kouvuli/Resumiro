@@ -12,8 +12,8 @@ import WorkIcon from '@mui/icons-material/Work'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Image from 'next/image'
 import TagButton from '@components/ui/button/tagButton'
-import Box from '@mui/material/Box'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import Link from 'next/link'
 interface JobCardProps {
     type?: number
 }
@@ -53,80 +53,80 @@ const JobCard: React.FC<JobCardProps> = ({ type }) => {
                     // delay: index * 0.2
                 }}
             >
-                <CustomJobCard>
-                    <CardHeader
-                        sx={{
-                            alignItems: 'start'
-                        }}
-                        avatar={
-                            <Image
-                                style={{ borderRadius: '5px' }}
-                                src="/images/Images_1.png"
-                                width={60}
-                                height={60}
-                                alt="avatar"
-                            />
-                        }
-                        title={
-                            <Typography
-                                variant="h5"
-                                sx={{ textTransform: 'none' }}
-                            >
-                                Nhân viên bảo trì thiết bị
-                            </Typography>
-                        }
-                        subheader={
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: 'text.disabled',
-                                    textTransform: 'uppercase'
-                                }}
-                            >
-                                Công ty TNHH ABC
-                            </Typography>
-                        }
-                    />
-                    <CardContent
-                        sx={{
-                            padding: '0 12px 12px 12px'
-                        }}
-                    >
-                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            <TagButton
-                                style={{ marginRight: '6px' }}
-                                type={2}
-                                icon={<MonetizationOnIcon />}
-                            >
-                                VND 2.5 - 3 triệu
-                            </TagButton>
+                <Link href="/viec-lam/1">
+                    <CustomJobCard>
+                        <CardHeader
+                            sx={{
+                                alignItems: 'start'
+                            }}
+                            avatar={
+                                <Image
+                                    style={{ borderRadius: '5px' }}
+                                    src="/images/Images_1.png"
+                                    width={60}
+                                    height={60}
+                                    alt="avatar"
+                                />
+                            }
+                            title={
+                                <Typography
+                                    variant="h5"
+                                    sx={{ textTransform: 'none' }}
+                                >
+                                    Nhân viên bảo trì thiết bị
+                                </Typography>
+                            }
+                            subheader={
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: 'text.disabled',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    Công ty TNHH ABC
+                                </Typography>
+                            }
+                        />
+                        <CardContent
+                            sx={{
+                                padding: '0 12px 12px 12px'
+                            }}
+                        >
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                <TagButton
+                                    style={{ marginRight: '6px' }}
+                                    icon={<MonetizationOnIcon />}
+                                >
+                                    VND 2.5 - 3 triệu
+                                </TagButton>
 
-                            <TagButton
-                                style={{ marginRight: '6px' }}
-                                type={2}
-                                icon={<LocationOnIcon />}
-                            >
-                                Hồ Chí Minh
-                            </TagButton>
+                                <TagButton
+                                    style={{ marginRight: '6px' }}
+                                    icon={<LocationOnIcon />}
+                                >
+                                    Hồ Chí Minh
+                                </TagButton>
 
-                            <TagButton type={2} icon={<WorkIcon />}>
-                                Từ 1-3 năm
-                            </TagButton>
-                        </div>
-                    </CardContent>
-                    <CardActions sx={{ padding: '0 12px 12px 12px' }}>
-                        <Typography variant="body2">
-                            Cập nhật 6 giờ trước
-                        </Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <IconButton size="small">
-                            <FavoriteBorderOutlinedIcon />
-                        </IconButton>
-                        <IconButton size="small">
-                            <DeleteOutlineOutlinedIcon />
-                        </IconButton>
-                    </CardActions>
-                </CustomJobCard>
+                                <TagButton icon={<WorkIcon />}>
+                                    Từ 1-3 năm
+                                </TagButton>
+                            </div>
+                        </CardContent>
+                        <CardActions sx={{ padding: '0 12px 12px 12px' }}>
+                            <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                                Cập nhật 6 giờ trước
+                            </Typography>
+
+                            <IconButton size="small">
+                                <FavoriteBorderOutlinedIcon />
+                            </IconButton>
+                            <IconButton size="small">
+                                <DeleteOutlineOutlinedIcon />
+                            </IconButton>
+                        </CardActions>
+                    </CustomJobCard>
+                </Link>
             </motion.div>
         )
     }
@@ -141,66 +141,74 @@ const JobCard: React.FC<JobCardProps> = ({ type }) => {
                 // delay: index * 0.2
             }}
         >
-            <CustomJobCard>
-                <CardHeader
-                    sx={{ alignItems: 'start', padding: '24px 24px 12px 24px' }}
-                    avatar={
-                        <Image
-                            style={{ borderRadius: '5px' }}
-                            src="/images/Images_1.png"
-                            width={60}
-                            height={60}
-                            alt="avatar"
-                        />
-                    }
-                    action={
-                        <IconButton aria-label="settings">
-                            <FavoriteBorderOutlinedIcon />
-                        </IconButton>
-                    }
-                    title={
-                        <Typography
-                            variant="h5"
-                            sx={{ textTransform: 'uppercase', mb: 1 }}
-                        >
-                            Nhân viên bảo trì thiết bị
-                        </Typography>
-                    }
-                    subheader={
-                        <Typography variant="body1">
-                            Công ty TNHH ABC
-                        </Typography>
-                    }
-                />
-                <CardContent
-                    sx={{
-                        padding: '0 24px 24px 24px'
-                    }}
-                >
-                    <ul style={{ listStyleType: 'none' }}>
-                        <li>
-                            <TagButton icon={<MonetizationOnIcon />}>
-                                VND 2.500.000 - 3.000.000
-                            </TagButton>
-                        </li>
-                        <li>
-                            <TagButton icon={<LocationOnIcon />}>
-                                Hồ Chí Minh
-                            </TagButton>
-                        </li>
-                        <li>
-                            <TagButton icon={<WorkIcon />}>
-                                Từ 1-3 năm
-                            </TagButton>
-                        </li>
-                        <li style={{ paddingTop: '8px' }}>
-                            <Typography variant="body2">
-                                Cập nhật 6 giờ trước
+            <Link href="/viec-lam/1">
+                <CustomJobCard>
+                    <CardHeader
+                        sx={{
+                            alignItems: 'start',
+                            padding: '24px 24px 12px 24px'
+                        }}
+                        avatar={
+                            <Image
+                                style={{ borderRadius: '5px' }}
+                                src="/images/Images_1.png"
+                                width={60}
+                                height={60}
+                                alt="avatar"
+                            />
+                        }
+                        action={
+                            <IconButton aria-label="settings">
+                                <FavoriteBorderOutlinedIcon />
+                            </IconButton>
+                        }
+                        title={
+                            <Typography
+                                variant="h5"
+                                sx={{ textTransform: 'uppercase', mb: 1 }}
+                            >
+                                Nhân viên bảo trì thiết bị
                             </Typography>
-                        </li>
-                    </ul>
-                </CardContent>
-            </CustomJobCard>
+                        }
+                        subheader={
+                            <Typography variant="body1">
+                                Công ty TNHH ABC
+                            </Typography>
+                        }
+                    />
+                    <CardContent
+                        sx={{
+                            padding: '0 24px 24px 24px'
+                        }}
+                    >
+                        <ul style={{ listStyleType: 'none' }}>
+                            <li>
+                                <TagButton
+                                    primary
+                                    icon={<MonetizationOnIcon />}
+                                >
+                                    VND 2.500.000 - 3.000.000
+                                </TagButton>
+                            </li>
+                            <li>
+                                <TagButton primary icon={<LocationOnIcon />}>
+                                    Hồ Chí Minh
+                                </TagButton>
+                            </li>
+                            <li>
+                                <TagButton primary icon={<WorkIcon />}>
+                                    Từ 1-3 năm
+                                </TagButton>
+                            </li>
+                            <li style={{ paddingTop: '8px' }}>
+                                <Typography variant="body2">
+                                    Cập nhật 6 giờ trước
+                                </Typography>
+                            </li>
+                        </ul>
+                    </CardContent>
+                </CustomJobCard>
+            </Link>
         </motion.div>
     )
 }

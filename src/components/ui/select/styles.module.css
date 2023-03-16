@@ -1,0 +1,10 @@
+.select-type-2 {
+    border-color: transparent;
+}
+
+.select-type-2 .ant-select-selector {
+    border-color: transparent !important;
+    background-color: red !important;
+    box-shadow: none;
+    color: white;
+}

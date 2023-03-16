@@ -11,9 +11,20 @@ import ListItem from '@mui/material/ListItem'
 import SkillItem from './skillsItem'
 import { Button, CardActions, Divider } from '@mui/material'
 import { styled } from '@mui/material/styles'
-
+import { motion, Variants } from 'framer-motion'
 interface SkillCardProps {
     style?: React.CSSProperties
+}
+
+const variants: Variants = {
+    initial: {
+        opacity: 0,
+        y: '20px'
+    },
+    visible: {
+        opacity: 1,
+        y: 0
+    }
 }
 
 const CustomListItem = styled(ListItem)(({}) => ({
@@ -23,7 +34,13 @@ const CustomListItem = styled(ListItem)(({}) => ({
 
 const SkillCard: React.FC<SkillCardProps> = ({ style }) => {
     return (
-        <div style={style}>
+        <motion.div
+            style={style}
+            variants={variants}
+            initial="initial"
+            whileInView="visible"
+            viewport={{ once: true }}
+        >
             <Card sx={{ width: '100%' }}>
                 <CardHeader
                     title={
@@ -87,7 +104,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ style }) => {
                     </div>
                 </CardActions>
             </Card>
-        </div>
+        </motion.div>
     )
 }
 

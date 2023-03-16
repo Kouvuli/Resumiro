@@ -10,9 +10,20 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import EducationItem from './educationItem'
 import { styled } from '@mui/material/styles'
-
+import { motion, Variants } from 'framer-motion'
 interface EducationCardProps {
     style?: React.CSSProperties
+}
+
+const variants: Variants = {
+    initial: {
+        opacity: 0,
+        y: '20px'
+    },
+    visible: {
+        opacity: 1,
+        y: 0
+    }
 }
 
 const CustomListItem = styled(ListItem)(({}) => ({
@@ -22,7 +33,13 @@ const CustomListItem = styled(ListItem)(({}) => ({
 
 const EducationCard: React.FC<EducationCardProps> = ({ style }) => {
     return (
-        <div style={style}>
+        <motion.div
+            style={style}
+            variants={variants}
+            initial="initial"
+            whileInView="visible"
+            viewport={{ once: true }}
+        >
             <Card sx={{ width: '100%' }}>
                 <CardHeader
                     title={
@@ -60,7 +77,7 @@ const EducationCard: React.FC<EducationCardProps> = ({ style }) => {
                     </List>
                 </CardContent>
             </Card>
-        </div>
+        </motion.div>
     )
 }
 

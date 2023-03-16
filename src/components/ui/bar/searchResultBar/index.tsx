@@ -1,7 +1,6 @@
 import React from 'react'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import { ToggleButtonGroup } from '@mui/material'
 import Toggle from '@components/ui/button/toggleButton'
 
@@ -24,8 +23,9 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({ type }) => {
     }
     return (
         <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h5">Title</Typography>
-            <Box sx={{ flexGrow: 1 }} />
+            <Typography sx={{ flexGrow: 1 }} variant="h5">
+                Title
+            </Typography>
             <RoundSelect outlined />
             {type === 2 && (
                 <ToggleButtonGroup

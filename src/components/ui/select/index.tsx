@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { Select } from 'antd'
+import { Select, SelectProps } from 'antd'
+import styles from './styles.module.css'
 const { Option } = Select
 interface RoundSelectProps {
     type?: number
@@ -63,7 +64,7 @@ const CustomRoundSelectType2 = styled(Select)(({ theme }) => ({
 const RoundSelect: React.FC<RoundSelectProps> = ({ type, style, outlined }) => {
     const [age, setAge] = useState('one')
 
-    const handleChange = (value: string) => {
+    const handleChange = (value: SelectProps) => {
         setAge(value)
         console.log(value)
     }
@@ -72,6 +73,7 @@ const RoundSelect: React.FC<RoundSelectProps> = ({ type, style, outlined }) => {
             <CustomRoundSelectType2
                 defaultValue={age}
                 style={style}
+                // bordered={false}
                 onChange={handleChange}
             >
                 <Option value="one">Option 1</Option>

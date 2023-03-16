@@ -5,8 +5,10 @@ import React from 'react'
 interface TagButton {
     children: React.ReactNode
     icon: React.ReactNode
-    type?: number
+    primary?: boolean
     style?: React.CSSProperties
+    size?: 'small' | 'medium' | 'large'
+    variant?: 'text' | 'outlined' | 'contained'
 }
 
 const CustomTagButtonType2 = styled(Button)(({ theme }) => ({
@@ -39,14 +41,21 @@ const CustomTagButtonType1 = styled(Button)(({ theme }) => ({
     // },
 }))
 
-const TagButton: React.FC<TagButton> = ({ icon, children, type, style }) => {
-    if (type === 2) {
+const TagButton: React.FC<TagButton> = ({
+    icon,
+    children,
+    primary,
+    style,
+    size,
+    variant
+}) => {
+    if (!primary) {
         return (
             <CustomTagButtonType2
                 disableRipple
                 disableElevation
-                variant="text"
-                size="small"
+                variant={variant}
+                size={size}
                 sx={style}
                 startIcon={icon}
             >
@@ -58,7 +67,8 @@ const TagButton: React.FC<TagButton> = ({ icon, children, type, style }) => {
         <CustomTagButtonType1
             disableRipple
             disableElevation
-            variant="text"
+            variant={variant}
+            size={size}
             startIcon={icon}
             sx={style}
         >
