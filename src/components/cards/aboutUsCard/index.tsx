@@ -29,9 +29,7 @@ const AboutUsCard: React.FC<AboutUsCardProps> = ({}) => {
             columnSpacing={2}
         >
             <GridItem item xs={12} md={7} sx={{ height: '500px' }}>
-                <Canvas3D>
-                    <Box3D />
-                </Canvas3D>
+                <Canvas3D>{/* <Box3D /> */}</Canvas3D>
             </GridItem>
             <GridItem item xs={12} md={5}>
                 <Card

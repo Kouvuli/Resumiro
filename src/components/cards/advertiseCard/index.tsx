@@ -70,9 +70,7 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
                 </motion.div>
             </GridItem>
             <GridItem item xs={7} sx={{ height: '500px' }}>
-                <Canvas3D>
-                    <Planet3D />
-                </Canvas3D>
+                <Canvas3D>{/* <Planet3D /> */}</Canvas3D>
             </GridItem>
         </Grid>
     )
