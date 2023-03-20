@@ -201,7 +201,9 @@ const userContent = (
     </ListItem>
     <ListItem disablePadding>
       <ListItemButton>
-        <ListItemText primary="Đăng xuất" />
+        <Link href="/dang-nhap">
+          <ListItemText primary="Đăng xuất" />
+        </Link>
       </ListItemButton>
     </ListItem>
   </List>
