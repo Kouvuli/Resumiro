@@ -7,20 +7,20 @@ import lightTheme from '@styles/themes/light'
 import { AnimatePresence } from 'framer-motion'
 const inter = Inter({ subsets: ['latin'] })
 export default function App({ Component, pageProps, router }: AppProps) {
-    return (
-        <ThemeProvider theme={lightTheme}>
-            <Layout className={inter.className}>
-                <AnimatePresence
-                    mode="wait"
-                    onExitComplete={() => {
-                        if (typeof window !== 'undefined') {
-                            window.scrollTo({ top: 0 })
-                        }
-                    }}
-                >
-                    <Component {...pageProps} key={router.route} />
-                </AnimatePresence>
-            </Layout>
-        </ThemeProvider>
-    )
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <Layout className={inter.className}>
+        <AnimatePresence
+          mode="wait"
+          onExitComplete={() => {
+            if (typeof window !== 'undefined') {
+              window.scrollTo({ top: 0 })
+            }
+          }}
+        >
+          <Component {...pageProps} key={router.route} />
+        </AnimatePresence>
+      </Layout>
+    </ThemeProvider>
+  )
 }

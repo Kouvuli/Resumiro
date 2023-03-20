@@ -7,79 +7,79 @@ import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export default function Male1(props) {
-    const { nodes, materials } = useGLTF('/3D/male_1.gltf')
-    return (
-        <group {...props} dispose={null}>
-            <group rotation={[Math.PI / 2, 0, 0]}>
-                <primitive object={nodes.Root} />
-            </group>
-            <skinnedMesh
-                geometry={nodes.male_accessory.geometry}
-                material={materials.Palette}
-                skeleton={nodes.male_accessory.skeleton}
-            />
-            <skinnedMesh
-                geometry={nodes.male_hat.geometry}
-                material={materials.Palette}
-                skeleton={nodes.male_hat.skeleton}
-            />
-            <skinnedMesh
-                geometry={nodes.male_hair.geometry}
-                material={materials.Skin9}
-                skeleton={nodes.male_hair.skeleton}
-            />
-            <skinnedMesh
-                name="male_arm"
-                geometry={nodes.male_arm.geometry}
-                material={materials.Skin9}
-                skeleton={nodes.male_arm.skeleton}
-                morphTargetDictionary={nodes.male_arm.morphTargetDictionary}
-                morphTargetInfluences={nodes.male_arm.morphTargetInfluences}
-            />
-            <skinnedMesh
-                name="male_forearm"
-                geometry={nodes.male_forearm.geometry}
-                material={materials.Palette}
-                skeleton={nodes.male_forearm.skeleton}
-                morphTargetDictionary={nodes.male_forearm.morphTargetDictionary}
-                morphTargetInfluences={nodes.male_forearm.morphTargetInfluences}
-            />
-            <skinnedMesh
-                name="male_head"
-                geometry={nodes.male_head.geometry}
-                material={materials.Skin9}
-                skeleton={nodes.male_head.skeleton}
-                morphTargetDictionary={nodes.male_head.morphTargetDictionary}
-                morphTargetInfluences={nodes.male_head.morphTargetInfluences}
-            />
-            <skinnedMesh
-                name="male_pants"
-                geometry={nodes.male_pants.geometry}
-                material={materials.Palette}
-                skeleton={nodes.male_pants.skeleton}
-                morphTargetDictionary={nodes.male_pants.morphTargetDictionary}
-                morphTargetInfluences={nodes.male_pants.morphTargetInfluences}
-            />
-            <skinnedMesh
-                name="male_shirt"
-                geometry={nodes.male_shirt.geometry}
-                material={materials.Palette}
-                skeleton={nodes.male_shirt.skeleton}
-                morphTargetDictionary={nodes.male_shirt.morphTargetDictionary}
-                morphTargetInfluences={nodes.male_shirt.morphTargetInfluences}
-            />
-            <skinnedMesh
-                name="male_shoes"
-                geometry={nodes.male_shoes.geometry}
-                material={materials.Palette}
-                skeleton={nodes.male_shoes.skeleton}
-                morphTargetDictionary={nodes.male_shoes.morphTargetDictionary}
-                morphTargetInfluences={nodes.male_shoes.morphTargetInfluences}
-            />
-            <group rotation={[Math.PI / 2, 0, 0]}>
-                <primitive object={nodes.Root_1} />
-            </group>
-            {/* <skinnedMesh
+  const { nodes, materials } = useGLTF('/3D/male_1.gltf')
+  return (
+    <group {...props} dispose={null}>
+      <group rotation={[Math.PI / 2, 0, 0]}>
+        <primitive object={nodes.Root} />
+      </group>
+      <skinnedMesh
+        geometry={nodes.male_accessory.geometry}
+        material={materials.Palette}
+        skeleton={nodes.male_accessory.skeleton}
+      />
+      <skinnedMesh
+        geometry={nodes.male_hat.geometry}
+        material={materials.Palette}
+        skeleton={nodes.male_hat.skeleton}
+      />
+      <skinnedMesh
+        geometry={nodes.male_hair.geometry}
+        material={materials.Skin9}
+        skeleton={nodes.male_hair.skeleton}
+      />
+      <skinnedMesh
+        name="male_arm"
+        geometry={nodes.male_arm.geometry}
+        material={materials.Skin9}
+        skeleton={nodes.male_arm.skeleton}
+        morphTargetDictionary={nodes.male_arm.morphTargetDictionary}
+        morphTargetInfluences={nodes.male_arm.morphTargetInfluences}
+      />
+      <skinnedMesh
+        name="male_forearm"
+        geometry={nodes.male_forearm.geometry}
+        material={materials.Palette}
+        skeleton={nodes.male_forearm.skeleton}
+        morphTargetDictionary={nodes.male_forearm.morphTargetDictionary}
+        morphTargetInfluences={nodes.male_forearm.morphTargetInfluences}
+      />
+      <skinnedMesh
+        name="male_head"
+        geometry={nodes.male_head.geometry}
+        material={materials.Skin9}
+        skeleton={nodes.male_head.skeleton}
+        morphTargetDictionary={nodes.male_head.morphTargetDictionary}
+        morphTargetInfluences={nodes.male_head.morphTargetInfluences}
+      />
+      <skinnedMesh
+        name="male_pants"
+        geometry={nodes.male_pants.geometry}
+        material={materials.Palette}
+        skeleton={nodes.male_pants.skeleton}
+        morphTargetDictionary={nodes.male_pants.morphTargetDictionary}
+        morphTargetInfluences={nodes.male_pants.morphTargetInfluences}
+      />
+      <skinnedMesh
+        name="male_shirt"
+        geometry={nodes.male_shirt.geometry}
+        material={materials.Palette}
+        skeleton={nodes.male_shirt.skeleton}
+        morphTargetDictionary={nodes.male_shirt.morphTargetDictionary}
+        morphTargetInfluences={nodes.male_shirt.morphTargetInfluences}
+      />
+      <skinnedMesh
+        name="male_shoes"
+        geometry={nodes.male_shoes.geometry}
+        material={materials.Palette}
+        skeleton={nodes.male_shoes.skeleton}
+        morphTargetDictionary={nodes.male_shoes.morphTargetDictionary}
+        morphTargetInfluences={nodes.male_shoes.morphTargetInfluences}
+      />
+      <group rotation={[Math.PI / 2, 0, 0]}>
+        <primitive object={nodes.Root_1} />
+      </group>
+      {/* <skinnedMesh
                 geometry={nodes.male_hair_1.geometry}
                 material={materials.Skin9}
                 skeleton={nodes.male_hair_1.skeleton}
@@ -136,7 +136,7 @@ export default function Male1(props) {
                 morphTargetDictionary={nodes.male_shoes_1.morphTargetDictionary}
                 morphTargetInfluences={nodes.male_shoes_1.morphTargetInfluences}
             /> */}
-            {/* <group rotation={[Math.PI / 2, 0, 0]}>
+      {/* <group rotation={[Math.PI / 2, 0, 0]}>
                 <primitive object={nodes.Root_2} />
             </group>
             <skinnedMesh
@@ -199,7 +199,7 @@ export default function Male1(props) {
                 morphTargetDictionary={nodes.male_shoes_2.morphTargetDictionary}
                 morphTargetInfluences={nodes.male_shoes_2.morphTargetInfluences}
             /> */}
-            {/* <group rotation={[Math.PI / 2, 0, 0]}>
+      {/* <group rotation={[Math.PI / 2, 0, 0]}>
                 <primitive object={nodes.Root_3} />
             </group>
             <skinnedMesh
@@ -259,8 +259,8 @@ export default function Male1(props) {
                 morphTargetDictionary={nodes.male_shoes_3.morphTargetDictionary}
                 morphTargetInfluences={nodes.male_shoes_3.morphTargetInfluences}
             /> */}
-        </group>
-    )
+    </group>
+  )
 }
 
 useGLTF.preload('/3D/male_1.gltf')

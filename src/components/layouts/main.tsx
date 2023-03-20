@@ -6,27 +6,24 @@ import Header from '@components/header/header'
 import Footer from '@components/footer/footer'
 
 interface MainProps {
-    children: React.ReactNode
-    className?: string
+  children: React.ReactNode
+  className?: string
 }
 
 const MainLayout: React.FC<MainProps> = ({ children }) => {
-    return (
-        <Box>
-            <Head>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <title>Home page</title>
-            </Head>
-            <Header />
+  return (
+    <Box>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Home page</title>
+      </Head>
+      <Header />
 
-            <CssBaseline />
-            {children}
-            <Footer />
-        </Box>
-    )
+      <CssBaseline />
+      {children}
+      <Footer />
+    </Box>
+  )
 }
 
 export default MainLayout

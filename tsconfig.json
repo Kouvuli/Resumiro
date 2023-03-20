@@ -1,43 +1,38 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "noEmit": true,
-        "esModuleInterop": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "preserve",
-        "incremental": true,
-        "paths": {
-            "@components/*": ["./src/components/*"],
-            "@pages/*": ["./src/pages/*"],
-            "@styles/*": ["./src/styles/*"],
-            "@utils/*": ["./src/utils/*"],
-            "@hooks/*": ["./src/hooks/*"],
-            "@context/*": ["./src/context/*"],
-            "@types/*": ["./src/types/*"],
-            "@assets/*": ["./src/assets/*"],
-            "@config/*": ["./src/config/*"],
-            "@api/*": ["./src/api/*"],
-            "@helpers/*": ["./src/helpers/*"],
-            "@constants/*": ["./src/constants/*"],
-            "@store/*": ["./src/store/*"]
-        },
-        "typeRoots": ["./node_modules/@types", "./src/@types"]
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@context/*": ["./src/context/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@config/*": ["./src/config/*"],
+      "@apis/*": ["./src/apis/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@database/*": ["./src/database/*"]
     },
-    "include": [
-        "next-env.d.ts",
-        "**/*.ts",
-        "**/*.tsx",
-        "public/3D/Male.jsx",
-        "public/3D/Planet.jsx",
-        "public/3D/Planet.jsx"
-    ],
-    "exclude": ["node_modules"]
+    "typeRoots": ["./node_modules/@types", "./src/@types"]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

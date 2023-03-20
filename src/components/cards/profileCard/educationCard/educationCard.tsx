@@ -12,73 +12,73 @@ import EducationItem from './educationItem'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
 interface EducationCardProps {
-    style?: React.CSSProperties
+  style?: React.CSSProperties
 }
 
 const variants: Variants = {
-    initial: {
-        opacity: 0,
-        y: '20px'
-    },
-    visible: {
-        opacity: 1,
-        y: 0
-    }
+  initial: {
+    opacity: 0,
+    y: '20px'
+  },
+  visible: {
+    opacity: 1,
+    y: 0
+  }
 }
 
 const CustomListItem = styled(ListItem)(({}) => ({
-    paddingLeft: 'unset',
-    paddingRight: 'unset'
+  paddingLeft: 'unset',
+  paddingRight: 'unset'
 }))
 
 const EducationCard: React.FC<EducationCardProps> = ({ style }) => {
-    return (
-        <motion.div
-            style={style}
-            variants={variants}
-            initial="initial"
-            whileInView="visible"
-            viewport={{ once: true }}
-        >
-            <Card sx={{ width: '100%' }}>
-                <CardHeader
-                    title={
-                        <Typography
-                            variant="h5"
-                            color="text.primary"
-                            sx={{ fontSize: '20px' }}
-                        >
-                            Học vấn
-                        </Typography>
-                    }
-                    action={
-                        <>
-                            <IconButton>
-                                <AddIcon />
-                            </IconButton>
-                            <IconButton>
-                                <CreateIcon />
-                            </IconButton>
-                        </>
-                    }
-                    sx={{ pb: 1 }}
-                />
-                <CardContent sx={{ py: 'unset' }}>
-                    <List disablePadding>
-                        <CustomListItem>
-                            <EducationItem />
-                        </CustomListItem>
-                        <CustomListItem>
-                            <EducationItem />
-                        </CustomListItem>
-                        <CustomListItem>
-                            <EducationItem />
-                        </CustomListItem>
-                    </List>
-                </CardContent>
-            </Card>
-        </motion.div>
-    )
+  return (
+    <motion.div
+      style={style}
+      variants={variants}
+      initial="initial"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      <Card sx={{ width: '100%' }}>
+        <CardHeader
+          title={
+            <Typography
+              variant="h5"
+              color="text.primary"
+              sx={{ fontSize: '20px' }}
+            >
+              Học vấn
+            </Typography>
+          }
+          action={
+            <>
+              <IconButton>
+                <AddIcon />
+              </IconButton>
+              <IconButton>
+                <CreateIcon />
+              </IconButton>
+            </>
+          }
+          sx={{ pb: 1 }}
+        />
+        <CardContent sx={{ py: 'unset' }}>
+          <List disablePadding>
+            <CustomListItem>
+              <EducationItem />
+            </CustomListItem>
+            <CustomListItem>
+              <EducationItem />
+            </CustomListItem>
+            <CustomListItem>
+              <EducationItem />
+            </CustomListItem>
+          </List>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
 }
 
 export default EducationCard
