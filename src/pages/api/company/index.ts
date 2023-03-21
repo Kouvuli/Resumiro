@@ -17,14 +17,29 @@ export default async function handler(
     const { page, limit, location } = req.query
     let p = Number(page)
     let l = Number(limit)
-    const data = await prisma.companies.findMany({
+    let data
+    if (location !== undefined && location !== '') {
+      data = await prisma.companies.findMany({
+        skip: p ? (p - 1) * l : 0,
+        take: l ? l : 10,
+        where: {
+          location: {
+            name: location
+          }
+        },
+        orderBy: {
+          name: 'asc'
+        },
+        include: {
+          jobs: true,
+          location: true
+        }
+      })
+    }
+    data = await prisma.companies.findMany({
       skip: p ? (p - 1) * l : 0,
       take: l ? l : 10,
-      where: {
-        location: {
-          name: location
-        }
-      },
+
       orderBy: {
         name: 'asc'
       },
