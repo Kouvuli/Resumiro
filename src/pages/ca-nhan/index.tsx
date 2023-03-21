@@ -38,8 +38,18 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
               {data.about && (
                 <AboutMeCard style={{ marginTop: '16px' }} about={data.about} />
               )}
-              <ExperienceCard style={{ marginTop: '16px' }} />
-              <EducationCard style={{ marginTop: '16px' }} />
+              {data.experiences && (
+                <ExperienceCard
+                  style={{ marginTop: '16px' }}
+                  experiences={data.experiences}
+                />
+              )}
+              {data.certificates && (
+                <EducationCard
+                  style={{ marginTop: '16px' }}
+                  educations={data.certificates}
+                />
+              )}
               {data.candidates_skills && (
                 <SkillCard
                   style={{ marginTop: '16px' }}

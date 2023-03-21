@@ -1,14 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { jobs, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 export type Data = {
   message: string
   status: string
-  pagination?: {
-    total: string
-    page?: string | string[]
-    limit?: string | string[]
-  }
-  data: jobs[]
+  pagination?: object
+  data?: any
 }
 
 export default async function handler(
@@ -28,7 +24,8 @@ export default async function handler(
         create_at: 'desc'
       },
       include: {
-        company: true
+        company: true,
+        location: true
       }
     })
 

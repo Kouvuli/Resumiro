@@ -31,9 +31,9 @@ const CompanyDetailPage: React.FC<Company> = ({
             <CompanyDetailCard
               companyName={name}
               location={location}
-              website={website}
+              website={website!}
               about={about}
-              scale={scale}
+              scale={scale!}
               logo={logo}
             />
           </Grid>
@@ -72,7 +72,6 @@ export async function getServerSideProps(context: { query: { id: string } }) {
   const companyDetail = await resumiroApi
     .getCompanyById(id)
     .then(res => res.data)
-  console.log(companyDetail)
   return {
     props: companyDetail.data
   }

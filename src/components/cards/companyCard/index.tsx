@@ -14,12 +14,13 @@ import Image from 'next/image'
 import TagButton from '@components/ui/button/tagButton'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import Link from 'next/link'
+import { locations } from '@prisma/client'
 export interface CompanyCardProps {
   type?: number
   id: number
   logo: string
   companyName: string
-  location: string
+  location: locations
   scale: string
   hiringNumber: number
 }
@@ -181,7 +182,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                   textTransform: 'capitalize'
                 }}
               >
-                {location}
+                {location.name}
               </Typography>
             }
           />

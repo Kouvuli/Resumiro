@@ -29,12 +29,13 @@ export default async function handler(
                   }
                 },
                 include: {
+                  location: true,
                   company: true
                 }
               }
             }
           },
-
+          location: true,
           jobs_skills: {
             select: {
               skill: true

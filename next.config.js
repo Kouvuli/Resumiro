@@ -5,7 +5,8 @@ const nextConfig = {
     domains: [
       'cdn-icons-png.flaticon.com',
       'companieslogo.com',
-      'www.mhafbfun.com'
+      'www.mhafbfun.com',
+      'itviec.com'
     ]
   }
 }

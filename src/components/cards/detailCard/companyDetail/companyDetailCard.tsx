@@ -10,11 +10,12 @@ import styles from './companyDetailCardStyle.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
 import RoundButton from '@components/ui/button/roundButton'
+import { locations } from '@prisma/client'
 
 interface CompanyDetailCardProps {
   companyName: string
-  location: string
-  website: string | null
+  location: locations
+  website: string
   about: string | null
   scale: string
   logo: string
@@ -72,7 +73,7 @@ const CompanyDetailCard: React.FC<CompanyDetailCardProps> = ({
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <dl className={styles['description']}>
                 <dt>Địa điểm</dt>
-                <dd>{location}</dd>
+                <dd>{location.name}</dd>
                 <dt>Website</dt>
                 <dd>
                   <Link

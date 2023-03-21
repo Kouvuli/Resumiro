@@ -15,13 +15,13 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import ShareIcon from '@mui/icons-material/Share'
 import Image from 'next/image'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
-
+import { locations } from '@prisma/client'
 interface JobDetailCardProps {
   id: number
   jobTitle: string
   companyName: string
   companyLogo: string
-  location: string
+  location: locations
   salary: string
   experience: string
   position: string
@@ -84,7 +84,7 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
           </li>
           <li>
             <TagButton size="large" primary icon={<LocationOnIcon />}>
-              {location}
+              {location.name}
             </TagButton>
           </li>
           <li>

@@ -11,7 +11,6 @@ interface JobGridProps {
 }
 
 const JobGrid: React.FC<JobGridProps> = ({ totalPage, data, page }) => {
-  console.log(totalPage)
   return (
     <Grid container spacing={3} alignItems="center">
       {data.map((job, index) => (

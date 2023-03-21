@@ -15,14 +15,14 @@ import TagButton from '@components/ui/button/tagButton'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import Link from 'next/link'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
-
+import { locations } from '@prisma/client'
 export interface JobCardProps {
   type?: number
   id: number
   jobTitle: string
   logo: string
   companyName: string
-  location: string
+  location: locations
   salary: string
   experience: string
   createAt: Date
@@ -123,7 +123,7 @@ const JobCard: React.FC<JobCardProps> = ({
                   style={{ marginRight: '6px' }}
                   icon={<LocationOnIcon />}
                 >
-                  {location}
+                  {location.name}
                 </TagButton>
 
                 <TagButton icon={<WorkIcon />}>{experience}</TagButton>
@@ -201,7 +201,7 @@ const JobCard: React.FC<JobCardProps> = ({
               </li>
               <li>
                 <TagButton primary icon={<LocationOnIcon />}>
-                  {location}
+                  {location.name}
                 </TagButton>
               </li>
               <li>

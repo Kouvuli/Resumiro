@@ -18,15 +18,6 @@ const SkillItem: React.FC<SkillItemProps> = ({ image, name }) => {
   return (
     <CustomExperienceItem>
       <CardHeader
-        avatar={
-          <Image
-            style={{ borderRadius: '4px' }}
-            src="/images/Images_1.png"
-            width={55}
-            height={55}
-            alt="avatar"
-          />
-        }
         title={
           <Typography variant="h6" color="text.primary">
             {name}

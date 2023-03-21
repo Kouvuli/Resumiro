@@ -4,19 +4,23 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import Image from 'next/image'
 import { styled } from '@mui/material/styles'
+import { Experience } from '@shared/interfaces'
 const CustomExperienceItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
 }))
+interface ExperienceItemProps {
+  data: Experience
+}
 
-const ExperienceItem = () => {
+const ExperienceItem: React.FC<ExperienceItemProps> = ({ data }) => {
   return (
     <CustomExperienceItem>
       <CardHeader
         avatar={
           <Image
             style={{ borderRadius: '5px' }}
-            src="/images/Images_1.png"
+            src={data.company.logo}
             width={80}
             height={80}
             alt="avatar"
@@ -24,19 +28,16 @@ const ExperienceItem = () => {
         }
         title={
           <Typography variant="h6" color="text.primary" sx={{ mb: 1 }}>
-            QA/ QC Tester
+            {data.position}
           </Typography>
         }
         subheader={
           <>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              AngileOps . Full-time
+              {data.company.name}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              02/2023 - Nay
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Ho Chi Minh City, Viet Nam . On-site
+              {data.start} - {data.finish}
             </Typography>
           </>
         }

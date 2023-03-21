@@ -25,7 +25,13 @@ export default async function handler(
             select: {
               skill: true
             }
-          }
+          },
+          experiences: {
+            include: {
+              company: true
+            }
+          },
+          certificates: true
         }
       })
       .catch(() => {

@@ -13,7 +13,7 @@ import { motion, Variants } from 'framer-motion'
 interface CompanyBriefCardProps {
   id: number
   logo: string
-  scale: string
+  scale: string | null
   name: string
   website: string | null
   address: string | null

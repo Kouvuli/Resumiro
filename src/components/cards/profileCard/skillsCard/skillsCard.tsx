@@ -69,14 +69,14 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills }) => {
           <List disablePadding>
             {skills.map((item, index) => {
               return (
-                <>
-                  <CustomListItem key={index}>
+                <div key={index}>
+                  <CustomListItem>
                     <SkillItem name={item.skill.name} />
                   </CustomListItem>
                   {index !== skills.length - 1 && (
                     <Divider sx={{ borderWidth: '0.5px' }} />
                   )}
-                </>
+                </div>
               )
             })}
           </List>

@@ -1,8 +1,18 @@
-import { candidates, resumes, jobs, companies, skills } from '@prisma/client'
+import {
+  candidates,
+  resumes,
+  jobs,
+  companies,
+  skills,
+  certificates,
+  experiences,
+  locations
+} from '@prisma/client'
 
 export type Job = jobs & {
   company: companies
   jobs_skills: { skill: skills }[]
+  location: locations
 }
 
 export type Resume = resumes & {
@@ -11,11 +21,18 @@ export type Resume = resumes & {
 
 export type Company = companies & {
   jobs: Job[]
+  location: locations
 }
 
 export type Candidate = candidates & {
   resumes: Resume[]
   candidates_skills: { skill: skills }[]
+  certificates: certificates[]
+  experiences: Experience[]
+}
+
+export type Experience = experiences & {
+  company: companies
 }
 
 export interface Field {

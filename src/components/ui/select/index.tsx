@@ -66,7 +66,6 @@ const RoundSelect: React.FC<RoundSelectProps> = ({ type, style, outlined }) => {
 
   const handleChange = (value: SelectProps) => {
     setAge(value)
-    console.log(value)
   }
   if (type === 2) {
     return (

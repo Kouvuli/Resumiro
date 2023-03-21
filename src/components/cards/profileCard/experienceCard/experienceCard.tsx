@@ -11,9 +11,10 @@ import ListItem from '@mui/material/ListItem'
 import ExperienceItem from './experienceItem'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
-
+import { Experience } from '@shared/interfaces'
 interface ExperienceCardProps {
   style?: React.CSSProperties
+  experiences?: Experience[]
 }
 
 const variants: Variants = {
@@ -32,7 +33,10 @@ const CustomListItem = styled(ListItem)(({}) => ({
   paddingRight: 'unset'
 }))
 
-const ExperienceCard: React.FC<ExperienceCardProps> = ({ style }) => {
+const ExperienceCard: React.FC<ExperienceCardProps> = ({
+  style,
+  experiences
+}) => {
   return (
     <motion.div
       style={style}
@@ -66,15 +70,11 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ style }) => {
         />
         <CardContent sx={{ py: 'unset' }}>
           <List disablePadding>
-            <CustomListItem>
-              <ExperienceItem />
-            </CustomListItem>
-            <CustomListItem>
-              <ExperienceItem />
-            </CustomListItem>
-            <CustomListItem>
-              <ExperienceItem />
-            </CustomListItem>
+            {experiences!.map((item, index) => (
+              <CustomListItem key={index}>
+                <ExperienceItem data={item} />
+              </CustomListItem>
+            ))}
           </List>
         </CardContent>
       </Card>

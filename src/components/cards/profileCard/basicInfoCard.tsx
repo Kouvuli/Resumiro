@@ -13,7 +13,7 @@ import OvalButton from '@components/ui/button/ovalButton'
 
 interface BasicInfoCardProps {
   username: string
-  fullName: string | null
+  fullName?: string | null
   avatar: string | null
   role: string
 }
@@ -35,17 +35,19 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
       <CardHeader
         avatar={
           <div style={{ position: 'relative', width: '170px' }}>
-            <Avatar
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                height: '170px',
-                width: '170px'
-              }}
-              alt={fullName}
-              src={avatar}
-            />
+            {avatar && (
+              <Avatar
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  height: '170px',
+                  width: '170px'
+                }}
+                alt={fullName}
+                src={avatar}
+              />
+            )}
           </div>
         }
         title={

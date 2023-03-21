@@ -11,8 +11,10 @@ import ListItem from '@mui/material/ListItem'
 import EducationItem from './educationItem'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
+import { certificates } from '@prisma/client'
 interface EducationCardProps {
   style?: React.CSSProperties
+  educations?: certificates[]
 }
 
 const variants: Variants = {
@@ -31,7 +33,7 @@ const CustomListItem = styled(ListItem)(({}) => ({
   paddingRight: 'unset'
 }))
 
-const EducationCard: React.FC<EducationCardProps> = ({ style }) => {
+const EducationCard: React.FC<EducationCardProps> = ({ style, educations }) => {
   return (
     <motion.div
       style={style}
@@ -65,15 +67,11 @@ const EducationCard: React.FC<EducationCardProps> = ({ style }) => {
         />
         <CardContent sx={{ py: 'unset' }}>
           <List disablePadding>
-            <CustomListItem>
-              <EducationItem />
-            </CustomListItem>
-            <CustomListItem>
-              <EducationItem />
-            </CustomListItem>
-            <CustomListItem>
-              <EducationItem />
-            </CustomListItem>
+            {educations!.map((education, index) => (
+              <CustomListItem key={index}>
+                <EducationItem data={education} />
+              </CustomListItem>
+            ))}
           </List>
         </CardContent>
       </Card>

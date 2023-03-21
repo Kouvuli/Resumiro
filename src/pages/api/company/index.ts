@@ -21,13 +21,16 @@ export default async function handler(
       skip: p ? (p - 1) * l : 0,
       take: l ? l : 10,
       where: {
-        location: location as string
+        location: {
+          name: location
+        }
       },
       orderBy: {
         name: 'asc'
       },
       include: {
-        jobs: true
+        jobs: true,
+        location: true
       }
     })
 
