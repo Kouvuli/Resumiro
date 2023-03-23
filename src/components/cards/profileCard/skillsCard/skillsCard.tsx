@@ -92,8 +92,8 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills, allSkills }) => {
               <IconButton onClick={handleOpen}>
                 <AddIcon />
               </IconButton>
-              <IconButton>
-                <CreateIcon onClick={modifyToggleHandler} />
+              <IconButton onClick={modifyToggleHandler}>
+                <CreateIcon />
               </IconButton>
             </>
           }
@@ -173,8 +173,10 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills, allSkills }) => {
                   native: true
                 }}
               >
-                {allSkills.map((skill: skills) => (
-                  <option value={skill.id}>{skill.name}</option>
+                {allSkills.map((skill: skills, i) => (
+                  <option value={skill.id} key={i}>
+                    {skill.name}
+                  </option>
                 ))}
               </TextField>
             </Grid>

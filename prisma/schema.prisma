@@ -24,13 +24,13 @@ model candidates {
   full_name         String?             @db.VarChar(100)
   email             String?             @db.VarChar(100)
   phone             String?             @db.VarChar(100)
-  about             String?             @db.VarChar(100)
+  about             String?             @db.VarChar(5000)
   role              roles
   candidates_skills candidates_skills[]
-  certificates      certificates[]
-  experiences       experiences[]
   jobs_applicants   jobs_applicants[]
   resumes           resumes[]
+  certificates      certificates[]
+  experiences       experiences[]
 }
 
 model candidates_skills {
@@ -51,12 +51,12 @@ model companies {
   scale        String?       @db.VarChar(100)
   website      String?       @db.VarChar(1000)
   location_id  Int
+  location     locations     @relation(fields: [location_id], references: [id])
   address      String?       @db.VarChar(100)
   introduction String?       @db.VarChar(100)
-  location     locations     @relation(fields: [location_id], references: [id])
-  experiences  experiences[]
   jobs         jobs[]
   recruiters   recruiters[]
+  experiences  experiences[]
 }
 
 model jobs {
@@ -71,6 +71,8 @@ model jobs {
   update_at       DateTime?         @db.Timestamp(6)
   company_id      Int
   salary          String            @db.VarChar(1000)
+  job_type_id     Int
+  job_type        job_types         @relation(fields: [job_type_id], references: [id])
   company         companies         @relation(fields: [company_id], references: [id])
   location        locations         @relation(fields: [location_id], references: [id])
   jobs_applicants jobs_applicants[]
@@ -151,6 +153,12 @@ model locations {
   name      String      @db.VarChar(100)
   companies companies[]
   jobs      jobs[]
+}
+
+model job_types {
+  id   Int    @id(map: "pk_job_types") @default(autoincrement())
+  name String @db.VarChar(100)
+  jobs jobs[]
 }
 
 enum roles {

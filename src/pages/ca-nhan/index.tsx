@@ -11,7 +11,7 @@ import ArticleLayout from '@components/layouts/article'
 import { useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-
+import _ from 'lodash'
 import {
   fetchAllCompanies,
   fetchAllSkills,
@@ -33,6 +33,7 @@ const ProfilePage = () => {
   useEffect(() => {
     dispatch(fetchCandidateById(session!.user!.name!))
   }, [showMessage])
+
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
       <ArticleLayout title="Cá nhân">
@@ -58,23 +59,23 @@ const ProfilePage = () => {
                 background={user.background}
                 email={user.email}
               />
-              {user.about && (
+              {user.role === 'candidate' && (
                 <AboutMeCard style={{ marginTop: '16px' }} about={user.about} />
               )}
-              {user.experiences && (
+              {user.role === 'candidate' && user.experiences && (
                 <ExperienceCard
                   style={{ marginTop: '16px' }}
                   experiences={user.experiences}
                   allCompanies={allCompanies}
                 />
               )}
-              {user.certificates && (
+              {user.role === 'candidate' && user.experiences && (
                 <EducationCard
                   style={{ marginTop: '16px' }}
                   educations={user.certificates}
                 />
               )}
-              {user.candidates_skills && (
+              {user.role === 'candidate' && user.candidates_skills && (
                 <SkillCard
                   style={{ marginTop: '16px' }}
                   skills={user.candidates_skills}

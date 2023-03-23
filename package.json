@@ -30,6 +30,7 @@
     "dotenv": "^16.0.3",
     "framer-motion": "^10.2.3",
     "html-react-parser": "^3.0.12",
+    "lodash": "^4.17.21",
     "next": "13.2.3",
     "next-auth": "^4.20.1",
     "nuka-carousel": "^5.4.1",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/lodash": "^4.14.191",
     "@types/react-redux": "^7.1.25",
     "eslint": "^8.35.0",
     "eslint-config-next": "13.2.3",

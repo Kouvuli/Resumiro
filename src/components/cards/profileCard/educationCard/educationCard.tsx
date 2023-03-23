@@ -93,8 +93,8 @@ const EducationCard: React.FC<EducationCardProps> = ({ style, educations }) => {
               <IconButton onClick={handleOpen}>
                 <AddIcon />
               </IconButton>
-              <IconButton>
-                <CreateIcon onClick={modifyToggleHandler} />
+              <IconButton onClick={modifyToggleHandler}>
+                <CreateIcon />
               </IconButton>
             </>
           }

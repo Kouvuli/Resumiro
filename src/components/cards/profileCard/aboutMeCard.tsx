@@ -115,8 +115,8 @@ const AboutMeCard: React.FC<AboutMeCardProps> = ({ style, about }) => {
                     showCount
                     name="about"
                     rows={6}
-                    placeholder="Tối đa 100 ký tự"
-                    maxLength={100}
+                    placeholder="Tối đa 5000 ký tự"
+                    maxLength={5000}
                   />
                 </Grid>
 

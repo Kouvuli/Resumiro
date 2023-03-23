@@ -185,8 +185,10 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
                   native: true
                 }}
               >
-                {allCompanies.map((company: companies) => (
-                  <option value={company.id}>{company.name}</option>
+                {allCompanies.map((company: companies, i) => (
+                  <option value={company.id} key={i}>
+                    {company.name}
+                  </option>
                 ))}
               </TextField>
             </Grid>

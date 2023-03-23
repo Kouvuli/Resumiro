@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
         }
         console.log(isValid)
         prisma.$disconnect()
-        return { name: user.id, image: user.avatar, email: user.email }
+        return { name: user.id, image: user.avatar, email: user.role }
       }
     })
   ]
