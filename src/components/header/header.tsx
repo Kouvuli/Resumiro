@@ -15,6 +15,8 @@ import { useRouter } from 'next/router'
 import MyPopover from '@components/ui/popover'
 import Link from 'next/link'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
+import { signOut, useSession } from 'next-auth/react'
+import Button from '@mui/material/Button'
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -190,25 +192,6 @@ const CustomNavToggler = styled('button')(({ theme }) => ({
   }
 }))
 
-const userContent = (
-  <List>
-    <ListItem disablePadding>
-      <ListItemButton>
-        <Link href="/ca-nhan">
-          <ListItemText primary="Hồ sơ" />
-        </Link>
-      </ListItemButton>
-    </ListItem>
-    <ListItem disablePadding>
-      <ListItemButton>
-        <Link href="/dang-nhap">
-          <ListItemText primary="Đăng xuất" />
-        </Link>
-      </ListItemButton>
-    </ListItem>
-  </List>
-)
-
 const variants: Variants = {
   initial: {
     opacity: 0
@@ -222,6 +205,7 @@ const variants: Variants = {
 }
 
 const Header = () => {
+  const { data: session } = useSession()
   const router = useRouter()
   const navTogglerRef = useRef<HTMLButtonElement>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -235,6 +219,29 @@ const Header = () => {
       navNode!.removeAttribute('style')
     }
   }
+  const signOutHandler = async () => {
+    // event.preventDefault()
+    const result = await signOut({ redirect: false })
+    if (result) {
+      router.replace('/dang-nhap')
+    }
+  }
+  const userContent = (
+    <List>
+      <ListItem disablePadding>
+        <ListItemButton>
+          <Link href="/ca-nhan">
+            <ListItemText primary="Cá nhân" />
+          </Link>
+        </ListItemButton>
+      </ListItem>
+      <ListItem disablePadding>
+        <ListItemButton onClick={signOutHandler}>
+          <ListItemText primary="Đăng xuất" />
+        </ListItemButton>
+      </ListItem>
+    </List>
+  )
   if (router.pathname === '/') {
     return (
       <AnimatePresence mode="wait">
@@ -268,27 +275,71 @@ const Header = () => {
                   </ul>
                 </nav>
                 <div style={{ flexGrow: 1 }} />
-                <RoundSelect
-                  type={2}
-                  style={{
-                    marginRight: '16px'
-                  }}
-                />
-                <IconButton
-                  sx={{
-                    mr: 2,
-                    color: 'primary.contrastText'
-                  }}
-                >
-                  <FavoriteBorderOutlinedIcon />
-                </IconButton>
-                <MyPopover
-                  placement="bottomRight"
-                  content={userContent}
-                  trigger="click"
-                >
-                  <Avatar alt="Remy Sharp" src="/images/Images_1.png" />
-                </MyPopover>
+                {session && (
+                  <>
+                    <IconButton
+                      sx={{
+                        mr: 2,
+                        color: 'primary.contrastText'
+                      }}
+                    >
+                      <FavoriteBorderOutlinedIcon />
+                    </IconButton>
+                    <MyPopover
+                      placement="bottomRight"
+                      content={userContent}
+                      trigger="click"
+                    >
+                      <Avatar src={session.user!.image!} />
+                    </MyPopover>
+                  </>
+                )}
+                {!session && (
+                  <>
+                    <Button
+                      disableElevation
+                      variant="outlined"
+                      sx={{
+                        color: '#fff',
+                        borderColor: '#fff',
+                        py: 1.3,
+                        px: 2,
+                        textTransform: 'capitalize',
+                        fontSize: '1rem',
+                        '&:hover': {
+                          borderColor: '#e0e0e0',
+                          color: '#e0e0e0'
+                        }
+                      }}
+                    >
+                      <Link
+                        href="/dang-ky"
+                        style={{ textTransform: 'capitalize' }}
+                      >
+                        Đăng ký
+                      </Link>
+                    </Button>
+                    <Button
+                      disableElevation
+                      variant="contained"
+                      color="secondary"
+                      sx={{
+                        ml: 3,
+                        py: 1.3,
+                        px: 2,
+                        textTransform: 'capitalize',
+                        fontSize: '1rem'
+                      }}
+                    >
+                      <Link
+                        href="/dang-nhap"
+                        style={{ textTransform: 'capitalize' }}
+                      >
+                        Đăng nhập
+                      </Link>
+                    </Button>
+                  </>
+                )}
                 <CustomNavToggler
                   type="button"
                   ref={navTogglerRef}
@@ -320,11 +371,7 @@ const Header = () => {
             <nav ref={navRef} className="nav">
               <ul>
                 <li>
-                  <Link href="/viec-lam">
-                    {/* <a href="#" className="active"> */}
-                    Việc làm
-                    {/* </a> */}
-                  </Link>
+                  <Link href="/viec-lam">Việc làm</Link>
                 </li>
                 <li>
                   <Link href="/ho-so-cv">Hồ sơ & CV</Link>
@@ -335,17 +382,58 @@ const Header = () => {
               </ul>
             </nav>
             <div style={{ flexGrow: 1 }} />
-            <RoundSelect style={{ marginRight: '16px' }} />
-            <IconButton sx={{ mr: 2 }}>
-              <FavoriteBorderOutlinedIcon />
-            </IconButton>
-            <MyPopover
-              placement="bottomRight"
-              content={userContent}
-              trigger="click"
-            >
-              <Avatar alt="Remy Sharp" src="/images/Images_1.png" />
-            </MyPopover>
+            {session && (
+              <>
+                <IconButton sx={{ mr: 2 }}>
+                  <FavoriteBorderOutlinedIcon />
+                </IconButton>
+                <MyPopover
+                  placement="bottomRight"
+                  content={userContent}
+                  trigger="click"
+                >
+                  <Avatar src={session.user!.image!} />
+                </MyPopover>
+              </>
+            )}
+            {!session && (
+              <>
+                <Button
+                  disableElevation
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    py: 1.3,
+                    px: 2,
+                    textTransform: 'capitalize',
+                    fontSize: '1rem'
+                  }}
+                >
+                  <Link href="/dang-ky" style={{ textTransform: 'capitalize' }}>
+                    Đăng ký
+                  </Link>
+                </Button>
+                <Button
+                  disableElevation
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    ml: 3,
+                    py: 1.3,
+                    px: 2,
+                    textTransform: 'capitalize',
+                    fontSize: '1rem'
+                  }}
+                >
+                  <Link
+                    href="/dang-nhap"
+                    style={{ textTransform: 'capitalize' }}
+                  >
+                    Đăng nhập
+                  </Link>
+                </Button>
+              </>
+            )}
             <CustomNavToggler
               type="button"
               ref={navTogglerRef}

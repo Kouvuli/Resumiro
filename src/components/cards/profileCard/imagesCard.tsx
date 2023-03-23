@@ -79,7 +79,7 @@ const ImagesCard = () => {
               textTransform: 'capitalize'
             }}
           >
-            John Doe
+            Hình ảnh
           </Typography>
         }
       />

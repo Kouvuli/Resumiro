@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
@@ -13,9 +14,19 @@ import { Button, CardActions, Divider } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
 import { skills } from '@prisma/client'
+import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
+import Modal from '@mui/material/Modal'
+import TextField from '@mui/material/TextField'
+import { useSession } from 'next-auth/react'
+import { CircularProgress } from '@mui/material'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { profileSelector } from '@redux/selectors'
+import { createCandidateSkill } from '@redux/reducers/profileSlice'
 interface SkillCardProps {
   style?: React.CSSProperties
   skills: { skill: skills }[]
+  allSkills: skills[]
 }
 
 const variants: Variants = {
@@ -34,7 +45,29 @@ const CustomListItem = styled(ListItem)(({}) => ({
   paddingRight: 'unset'
 }))
 
-const SkillCard: React.FC<SkillCardProps> = ({ style, skills }) => {
+const SkillCard: React.FC<SkillCardProps> = ({ style, skills, allSkills }) => {
+  const dispatch = useAppDispatch()
+  const { data: session } = useSession()
+  const [isModify, setIsModify] = useState(false)
+  const { loading } = useAppSelector(profileSelector)
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const skill = data.get('skill')!.toString()
+    dispatch(
+      createCandidateSkill({
+        id: session!.user!.name!,
+        skill_id: Number(skill)
+      })
+    )
+    setOpen(false)
+  }
+  const modifyToggleHandler = () => {
+    setIsModify(prev => !prev)
+  }
   return (
     <motion.div
       style={style}
@@ -56,11 +89,11 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills }) => {
           }
           action={
             <>
-              <IconButton>
+              <IconButton onClick={handleOpen}>
                 <AddIcon />
               </IconButton>
               <IconButton>
-                <CreateIcon />
+                <CreateIcon onClick={modifyToggleHandler} />
               </IconButton>
             </>
           }
@@ -71,7 +104,11 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills }) => {
               return (
                 <div key={index}>
                   <CustomListItem>
-                    <SkillItem name={item.skill.name} />
+                    <SkillItem
+                      id={item.skill.id}
+                      name={item.skill.name}
+                      isModify={isModify}
+                    />
                   </CustomListItem>
                   {index !== skills.length - 1 && (
                     <Divider sx={{ borderWidth: '0.5px' }} />
@@ -105,6 +142,86 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills }) => {
           </div>
         </CardActions>
       </Card>
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit}
+          sx={{
+            borderRadius: '5px',
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                select
+                name="skill"
+                id="skill"
+                label="Skill"
+                defaultValue={10}
+                SelectProps={{
+                  native: true
+                }}
+              >
+                {allSkills.map((skill: skills) => (
+                  <option value={skill.id}>{skill.name}</option>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid item xs={12}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'end',
+                  marginTop: '1rem'
+                }}
+              >
+                <Button
+                  variant="contained"
+                  disableElevation
+                  disableRipple
+                  color="primary"
+                  onClick={handleClose}
+                  sx={{
+                    mr: 1,
+                    p: 1.5,
+                    textTransform: 'capitalize',
+                    fontSize: '1rem'
+                  }}
+                >
+                  Huỷ
+                </Button>
+                <Button
+                  type="submit"
+                  disableElevation
+                  disableRipple
+                  variant="contained"
+                  color="secondary"
+                  endIcon={loading && <CircularProgress size={18} />}
+                  sx={{
+                    p: 1.5,
+                    textTransform: 'capitalize',
+                    fontSize: '1rem'
+                  }}
+                >
+                  OK
+                </Button>
+              </div>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
     </motion.div>
   )
 }

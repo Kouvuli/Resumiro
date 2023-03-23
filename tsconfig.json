@@ -26,7 +26,7 @@
       "@hooks/*": ["./src/hooks/*"],
       "@context/*": ["./src/context/*"],
       "@shared/*": ["./src/shared/*"],
-      "@config/*": ["./src/config/*"],
+      "@redux/*": ["./src/redux/*"],
       "@apis/*": ["./src/apis/*"],
       "@constants/*": ["./src/constants/*"],
       "@database/*": ["./src/database/*"]

@@ -4,23 +4,34 @@ import '@styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Inter } from 'next/font/google'
 import lightTheme from '@styles/themes/light'
+import { Provider } from 'react-redux'
 import { AnimatePresence } from 'framer-motion'
+import { SessionProvider } from 'next-auth/react'
+import store from '@redux/store'
 const inter = Inter({ subsets: ['latin'] })
-export default function App({ Component, pageProps, router }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+  router
+}: AppProps) {
   return (
     <ThemeProvider theme={lightTheme}>
-      <Layout className={inter.className}>
-        <AnimatePresence
-          mode="wait"
-          onExitComplete={() => {
-            if (typeof window !== 'undefined') {
-              window.scrollTo({ top: 0 })
-            }
-          }}
-        >
-          <Component {...pageProps} key={router.route} />
-        </AnimatePresence>
-      </Layout>
+      <Provider store={store}>
+        <SessionProvider session={session}>
+          <Layout className={inter.className}>
+            <AnimatePresence
+              mode="wait"
+              onExitComplete={() => {
+                if (typeof window !== 'undefined') {
+                  window.scrollTo({ top: 0 })
+                }
+              }}
+            >
+              <Component {...pageProps} key={router.route} />
+            </AnimatePresence>
+          </Layout>
+        </SessionProvider>
+      </Provider>
     </ThemeProvider>
   )
 }

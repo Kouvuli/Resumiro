@@ -26,17 +26,17 @@ model candidates {
   phone             String?             @db.VarChar(100)
   about             String?             @db.VarChar(100)
   role              roles
-  resumes           resumes[]
   candidates_skills candidates_skills[]
-  jobs_applicants   jobs_applicants[]
   certificates      certificates[]
   experiences       experiences[]
+  jobs_applicants   jobs_applicants[]
+  resumes           resumes[]
 }
 
 model candidates_skills {
   candidate_id Int
-  candidate    candidates @relation(fields: [candidate_id], references: [id])
   skill_id     Int
+  candidate    candidates @relation(fields: [candidate_id], references: [id])
   skill        skills     @relation(fields: [skill_id], references: [id])
 
   @@id([candidate_id, skill_id], map: "pk_candidates_skills")
@@ -51,19 +51,18 @@ model companies {
   scale        String?       @db.VarChar(100)
   website      String?       @db.VarChar(1000)
   location_id  Int
-  location     locations?    @relation(fields: [location_id], references: [id])
   address      String?       @db.VarChar(100)
   introduction String?       @db.VarChar(100)
+  location     locations     @relation(fields: [location_id], references: [id])
+  experiences  experiences[]
   jobs         jobs[]
   recruiters   recruiters[]
-  experiences  experiences[]
 }
 
 model jobs {
   id              Int               @id(map: "pk_jobs") @default(autoincrement())
   title           String            @db.VarChar(100)
   location_id     Int
-  location        locations?        @relation(fields: [location_id], references: [id])
   position        String            @db.VarChar(100)
   experience      String            @db.VarChar(1000)
   requirements    String?           @db.VarChar(1000)
@@ -73,23 +72,24 @@ model jobs {
   company_id      Int
   salary          String            @db.VarChar(1000)
   company         companies         @relation(fields: [company_id], references: [id])
+  location        locations         @relation(fields: [location_id], references: [id])
   jobs_applicants jobs_applicants[]
   jobs_skills     jobs_skills[]
 }
 
 model jobs_applicants {
   job_id       Int
-  job          jobs       @relation(fields: [job_id], references: [id])
   applicant_id Int
   applicant    candidates @relation(fields: [applicant_id], references: [id])
+  job          jobs       @relation(fields: [job_id], references: [id])
 
   @@id([job_id, applicant_id], map: "pk_jobs_applicants")
 }
 
 model jobs_skills {
   job_id   Int
-  job      jobs   @relation(fields: [job_id], references: [id])
   skill_id Int
+  job      jobs   @relation(fields: [job_id], references: [id])
   skill    skills @relation(fields: [skill_id], references: [id])
 
   @@id([job_id, skill_id], map: "pk_jobs_skills")
@@ -105,19 +105,19 @@ model recruiters {
   full_name      String?    @db.VarChar(100)
   email          String?    @db.VarChar(100)
   phone          String?    @db.VarChar(100)
-  company_id     Int
-  company        companies? @relation(fields: [company_id], references: [id])
-  position       String     @db.VarChar(100)
+  company_id     Int?
+  position       String?    @db.VarChar(100)
   role           roles
+  company        companies? @relation(fields: [company_id], references: [id])
 }
 
 model resumes {
   id        Int        @id(map: "pk_resumes") @default(autoincrement())
   data      String     @db.VarChar(1000)
   owner_id  Int
-  owner     candidates @relation(fields: [owner_id], references: [id])
   title     String?    @db.VarChar(100)
   create_at DateTime   @db.Timestamp(6)
+  owner     candidates @relation(fields: [owner_id], references: [id])
 }
 
 model skills {
@@ -128,11 +128,11 @@ model skills {
 }
 
 model certificates {
-  id           Int         @id(map: "pk_educational_institutions") @default(autoincrement())
-  name         String      @db.VarChar(100)
-  verified_at  DateTime    @db.Timestamp(6)
+  id           Int        @id(map: "pk_educational_institutions") @default(autoincrement())
+  name         String     @db.VarChar(100)
+  verified_at  DateTime   @db.Timestamp(6)
   candidate_id Int
-  candidate    candidates? @relation(fields: [candidate_id], references: [id])
+  candidate    candidates @relation(fields: [candidate_id], references: [id])
 }
 
 model experiences {
@@ -141,8 +141,8 @@ model experiences {
   start      String     @db.VarChar(50)
   finish     String     @db.VarChar(50)
   company_id Int
-  company    companies  @relation(fields: [company_id], references: [id])
   user_id    Int
+  company    companies  @relation(fields: [company_id], references: [id])
   candidate  candidates @relation(fields: [user_id], references: [id])
 }
 

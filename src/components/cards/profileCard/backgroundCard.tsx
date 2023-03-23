@@ -18,10 +18,10 @@ const BackgroundCard: React.FC<BackgroundProps> = ({ src, alt }) => {
     >
       <CardMedia
         component="img"
-        src={src}
+        src={src ? src : '/images/Images_1.png'}
         width="100%"
         height="350px"
-        alt={alt}
+        alt={alt!}
       />
     </Card>
   )

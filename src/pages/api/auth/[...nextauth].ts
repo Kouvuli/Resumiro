@@ -2,10 +2,14 @@ import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaClient } from '@prisma/client'
 import { verifyPassword } from '@utils/authUtils'
+import { NextAuthOptions } from 'next-auth'
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   jwt: {
     maxAge: 30 * 24 * 60 * 60 // 30 days
+  },
+  session: {
+    strategy: 'jwt'
   },
   secret: process.env.SECRET,
   providers: [
@@ -29,16 +33,24 @@ export default NextAuth({
         })
 
         if (!user) {
+          prisma.$disconnect()
           throw new Error('No user found')
         }
 
-        const isValid = verifyPassword(credentials!.password, user.password)
+        const isValid = await verifyPassword(
+          credentials!.password,
+          user.password
+        )
         if (!isValid) {
+          prisma.$disconnect()
           throw new Error('Could not log you in')
         }
+        console.log(isValid)
         prisma.$disconnect()
-        return { username: user.username }
+        return { name: user.id, image: user.avatar, email: user.email }
       }
     })
   ]
-})
+}
+
+export default NextAuth(authOptions)

@@ -1,6 +1,6 @@
 import SkillCard from '@components/cards/profileCard/skillsCard/skillsCard'
 import { Container, Grid } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ExperienceCard from '@components/cards/profileCard/experienceCard/experienceCard'
 import AboutMeCard from '@components/cards/profileCard/aboutMeCard'
 import EducationCard from '@components/cards/profileCard/educationCard/educationCard'
@@ -8,16 +8,36 @@ import BasicInfoCard from '@components/cards/profileCard/basicInfoCard'
 import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import ImagesCard from '@components/cards/profileCard/imagesCard'
 import ArticleLayout from '@components/layouts/article'
-import resumiroApi from '@apis/resumiroApi'
-import { Candidate } from '@shared/interfaces'
-interface ProfilePageProps {
-  data: Candidate
-}
+import { useSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../api/auth/[...nextauth]'
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
+import {
+  fetchAllCompanies,
+  fetchAllSkills,
+  fetchCandidateById
+} from '@redux/reducers/profileSlice'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { profileSelector } from '@redux/selectors'
+import MySnackBar from '@components/ui/bar/snackbar'
+
+const ProfilePage = () => {
+  const { data: session } = useSession()
+  const dispatch = useAppDispatch()
+  const { showMessage, user, allCompanies, allSkills } =
+    useAppSelector(profileSelector)
+  useEffect(() => {
+    dispatch(fetchAllCompanies())
+    dispatch(fetchAllSkills())
+  }, [])
+  useEffect(() => {
+    dispatch(fetchCandidateById(session!.user!.name!))
+  }, [showMessage])
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
       <ArticleLayout title="Cá nhân">
+        <MySnackBar />
+
         <Container
           sx={{
             paddingTop: '2rem ',
@@ -26,34 +46,39 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
         >
           <Grid container columnSpacing={{ md: 2, xs: 0 }}>
             <Grid item xs={12}>
-              <BackgroundCard src={data.background} alt={data.full_name} />
+              <BackgroundCard src={user.background} alt={user.full_name} />
             </Grid>
             <Grid item xs={12} md={8}>
               <BasicInfoCard
-                avatar={data.avatar}
-                fullName={data.full_name}
-                username={data.username}
-                role={data.role}
+                avatar={user.avatar}
+                fullName={user.full_name}
+                username={user.username}
+                role={user.role}
+                phone={user.phone}
+                background={user.background}
+                email={user.email}
               />
-              {data.about && (
-                <AboutMeCard style={{ marginTop: '16px' }} about={data.about} />
+              {user.about && (
+                <AboutMeCard style={{ marginTop: '16px' }} about={user.about} />
               )}
-              {data.experiences && (
+              {user.experiences && (
                 <ExperienceCard
                   style={{ marginTop: '16px' }}
-                  experiences={data.experiences}
+                  experiences={user.experiences}
+                  allCompanies={allCompanies}
                 />
               )}
-              {data.certificates && (
+              {user.certificates && (
                 <EducationCard
                   style={{ marginTop: '16px' }}
-                  educations={data.certificates}
+                  educations={user.certificates}
                 />
               )}
-              {data.candidates_skills && (
+              {user.candidates_skills && (
                 <SkillCard
                   style={{ marginTop: '16px' }}
-                  skills={data.candidates_skills}
+                  skills={user.candidates_skills}
+                  allSkills={allSkills}
                 />
               )}
             </Grid>
@@ -67,14 +92,23 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
   )
 }
 
-export async function getServerSideProps() {
-  const candidate = await resumiroApi
-    .getCandidateById('1')
-    .then(res => res.data)
+export async function getServerSideProps(context: { req: any; res: any }) {
+  const session = await getServerSession(context.req, context.res, authOptions)
 
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/dang-nhap',
+        permanent: false
+      }
+    }
+  }
+  // const candidate = await resumiroApi
+  //   .getCandidateById(session!.user!.name!)
+  //   .then(res => res.data)
   return {
     props: {
-      data: candidate.data
+      session: session
     }
   }
 }
