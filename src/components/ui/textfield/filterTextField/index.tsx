@@ -6,6 +6,7 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 
 interface FilterTextFieldProps {
   label: string
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const CustomFilterTextField = styled(OutlinedInput)(({}) => ({
@@ -17,7 +18,10 @@ const CustomFilterTextField = styled(OutlinedInput)(({}) => ({
   }
 }))
 
-const FilterTextField: React.FC<FilterTextFieldProps> = ({ label }) => {
+const FilterTextField: React.FC<FilterTextFieldProps> = ({
+  label,
+  onChange
+}) => {
   return (
     <FormControl variant="standard">
       <InputLabel
@@ -26,7 +30,7 @@ const FilterTextField: React.FC<FilterTextFieldProps> = ({ label }) => {
       >
         {label}
       </InputLabel>
-      <CustomFilterTextField />
+      <CustomFilterTextField onChange={onChange} />
     </FormControl>
   )
 }

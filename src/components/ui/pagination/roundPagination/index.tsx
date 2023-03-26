@@ -1,6 +1,7 @@
 import React from 'react'
 import Pagination from '@mui/material/Pagination'
 import { styled } from '@mui/material/styles'
+import { useRouter } from 'next/router'
 
 interface RoundPaginationProps {
   page: number
@@ -22,10 +23,17 @@ const RoundPagination: React.FC<RoundPaginationProps> = ({
   totalPage,
   page
 }) => {
+  const router = useRouter()
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    router.query.page = value.toString()
+    router.push(router)
+  }
   return (
     <CustomRoundPagination
-      count={totalPage}
-      page={page}
+      count={Number(totalPage)}
+      onChange={handleChange}
+      page={Number(page)}
       variant="outlined"
       shape="rounded"
       color="primary"

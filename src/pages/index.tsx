@@ -24,6 +24,7 @@ import AdvertiseCard from '@components/cards/advertiseCard'
 import ArticleLayout from '@components/layouts/article'
 import { Achievement, Blog, FeatureType, Field, Job } from '@shared/interfaces'
 import resumiroApi from '@apis/resumiroApi'
+import { fields, jobs } from '@prisma/client'
 const titleVariants: Variants = {
   initial: {
     opacity: 0,
@@ -161,9 +162,10 @@ const blogList: Blog[] = [
 
 interface HomePageProps {
   latestJobLists: JobCardProps[]
+  jobTypeList: Field[]
 }
 
-const Home: React.FC<HomePageProps> = ({ latestJobLists }) => {
+const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
   return (
     <>
       <section>
@@ -219,8 +221,6 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists }) => {
                   viewport={{ once: true }}
                 >
                   <Typography variant="h4">Tin tuyển dụng</Typography>
-
-                  <RoundSelect outlined />
                 </motion.div>
               </Grid>
               {latestJobLists.map((job, index) => (
@@ -267,7 +267,7 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists }) => {
                   </Typography>
                 </motion.div>
               </Grid>
-              {fieldLists.map((field, index) => (
+              {jobTypeList.map((field, index) => (
                 <Grid item xs={12} md={6} key={index}>
                   <FieldCard {...field} />
                 </Grid>
@@ -363,9 +363,22 @@ export async function getServerSideProps() {
       createAt: job.create_at
     }
   })
+  const jobFields = await resumiroApi.getFields().then(res => res.data)
+  const jobFieldsList = jobFields.data.map(
+    (item: fields & { jobs: jobs[] }) => {
+      return {
+        id: item.id,
+        fieldTitle: item.name,
+        description: item.description,
+        vacantNumber: item.jobs.length
+      }
+    }
+  )
+
   return {
     props: {
-      latestJobLists
+      latestJobLists,
+      jobTypeList: jobFieldsList
     }
   }
 }

@@ -1,9 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
+import companySlice from './reducers/companySlice'
+import jobSlice from './reducers/jobSlice'
 import profileSlice from './reducers/profileSlice'
+import resumeSlice from './reducers/resumeSlice'
 
 const store = configureStore({
   reducer: {
-    profile: profileSlice.reducer
+    profile: profileSlice.reducer,
+    job: jobSlice.reducer,
+    company: companySlice.reducer,
+    resume: resumeSlice.reducer
   }
 })
 

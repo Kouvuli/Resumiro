@@ -11,15 +11,17 @@ import ArticleLayout from '@components/layouts/article'
 import { useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-import _ from 'lodash'
 import {
   fetchAllCompanies,
   fetchAllSkills,
-  fetchCandidateById
+  fetchCandidateById,
+  fetchRecruiterById
 } from '@redux/reducers/profileSlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
+import CompanyCard from '@components/cards/companyCard'
+import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
 
 const ProfilePage = () => {
   const { data: session } = useSession()
@@ -31,7 +33,11 @@ const ProfilePage = () => {
     dispatch(fetchAllSkills())
   }, [])
   useEffect(() => {
-    dispatch(fetchCandidateById(session!.user!.name!))
+    if (session?.user?.email === 'candidate') {
+      dispatch(fetchCandidateById(session!.user!.name!))
+    } else {
+      dispatch(fetchRecruiterById(session!.user!.name!))
+    }
   }, [showMessage])
 
   return (
@@ -59,6 +65,12 @@ const ProfilePage = () => {
                 background={user.background}
                 email={user.email}
               />
+              {user.role === 'recruiter' && user.company && (
+                <CompanyBasicCard
+                  style={{ marginTop: '16px' }}
+                  company={user.company}
+                />
+              )}
               {user.role === 'candidate' && (
                 <AboutMeCard style={{ marginTop: '16px' }} about={user.about} />
               )}

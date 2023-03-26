@@ -36,12 +36,7 @@ export default function SignUpPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    // console.log({
-    //   username: data.get('username')?.toString(),
-    //   password: data.get('password')?.toString(),
-    //   email: data.get('wallet_address')?.toString(),
-    //   role: data.get('role')?.toString()
-    // })
+
     const username = data.get('username')
     const password = data.get('password')
     const address_wallet = data.get('wallet_address')

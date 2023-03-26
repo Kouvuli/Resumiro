@@ -9,9 +9,18 @@ interface ResumeGridProps {
   page: number
   totalPage: number
   data: ResumeCardProps[]
+  title?: string
+  type?: number
 }
 
-const ResumeGrid: React.FC<ResumeGridProps> = ({ data, page, totalPage }) => {
+const ResumeGrid: React.FC<ResumeGridProps> = ({
+  data,
+  page,
+  totalPage,
+  title,
+  type
+}) => {
+  console.log(data)
   return (
     <Grid
       container
@@ -20,12 +29,14 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({ data, page, totalPage }) => {
       alignItems="center"
       justifyContent="center"
     >
-      <Grid item xs={12}>
-        <Typography variant="h5">CV được tải lên</Typography>
-      </Grid>
+      {title && (
+        <Grid item xs={12}>
+          <Typography variant="h5">{title}</Typography>
+        </Grid>
+      )}
       {data.map((resume, index) => (
         <Grid item xs={12} sm={6} key={index}>
-          <ResumeCard {...resume} />
+          <ResumeCard {...resume} type={type} />
         </Grid>
       ))}
 

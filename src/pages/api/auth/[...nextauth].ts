@@ -12,26 +12,26 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt'
   },
   secret: process.env.SECRET,
+
   providers: [
     CredentialsProvider({
-      credentials: {
-        domain: {
-          label: 'Domain',
-          type: 'text ',
-          placeholder: 'CORPNET',
-          value: 'CORPNET'
-        },
-        username: { label: 'Username', type: 'text ', placeholder: 'jsmith' },
-        password: { label: 'Password', type: 'password' }
-      },
-      async authorize(credentials) {
+      async authorize(credentials: {
+        username: string
+        password: string
+        role: string
+      }) {
         const prisma = new PrismaClient()
         prisma.$connect()
-
-        const user = await prisma.candidates.findFirst({
-          where: { username: credentials!.username }
-        })
-
+        let user
+        if (credentials!.role === 'candidate') {
+          user = await prisma.candidates.findFirst({
+            where: { username: credentials!.username }
+          })
+        } else {
+          user = await prisma.recruiters.findFirst({
+            where: { username: credentials!.username }
+          })
+        }
         if (!user) {
           prisma.$disconnect()
           throw new Error('No user found')

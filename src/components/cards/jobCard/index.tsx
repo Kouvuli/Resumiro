@@ -14,7 +14,7 @@ import Image from 'next/image'
 import TagButton from '@components/ui/button/tagButton'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import Link from 'next/link'
-import { getCurrentTimeDiff } from '@utils/timeUtil'
+import { convertMonthToYear, getCurrentTimeDiff } from '@utils/timeUtil'
 import { locations } from '@prisma/client'
 export interface JobCardProps {
   type?: number
@@ -23,8 +23,8 @@ export interface JobCardProps {
   logo: string
   companyName: string
   location: locations
-  salary: string
-  experience: string
+  salary: number
+  experience: number
   createAt: Date
 }
 
@@ -116,7 +116,7 @@ const JobCard: React.FC<JobCardProps> = ({
                   style={{ marginRight: '6px' }}
                   icon={<MonetizationOnIcon />}
                 >
-                  {salary}
+                  {salary} VND/ tháng
                 </TagButton>
 
                 <TagButton
@@ -126,7 +126,9 @@ const JobCard: React.FC<JobCardProps> = ({
                   {location.name}
                 </TagButton>
 
-                <TagButton icon={<WorkIcon />}>{experience}</TagButton>
+                <TagButton icon={<WorkIcon />}>
+                  {convertMonthToYear(experience)}
+                </TagButton>
               </div>
             </CardContent>
             <CardActions sx={{ padding: '0 12px 12px 12px' }}>
@@ -196,7 +198,7 @@ const JobCard: React.FC<JobCardProps> = ({
             <ul style={{ listStyleType: 'none' }}>
               <li>
                 <TagButton primary icon={<MonetizationOnIcon />}>
-                  {salary}
+                  {salary} VND/ tháng
                 </TagButton>
               </li>
               <li>
@@ -206,7 +208,7 @@ const JobCard: React.FC<JobCardProps> = ({
               </li>
               <li>
                 <TagButton primary icon={<WorkIcon />}>
-                  {experience}
+                  {convertMonthToYear(experience)}
                 </TagButton>
               </li>
               <li style={{ paddingTop: '8px' }}>

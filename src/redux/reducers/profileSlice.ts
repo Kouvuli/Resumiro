@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
-import { stat } from 'fs'
 
 const initialState = {
   loading: false,
@@ -18,6 +17,16 @@ export const fetchCandidateById = createAsyncThunk(
   async (id: string) => {
     const { data } = await resumiroApi
       .getCandidateById(id)
+      .then(res => res.data)
+    return data
+  }
+)
+
+export const fetchRecruiterById = createAsyncThunk(
+  'get-recruiter',
+  async (id: string) => {
+    const { data } = await resumiroApi
+      .getRecruiterById(id)
       .then(res => res.data)
     return data
   }
@@ -150,6 +159,18 @@ const profileSlice = createSlice({
       .addCase(fetchCandidateById.rejected, (state, action) => {
         state.loading = false
       })
+
+      .addCase(fetchRecruiterById.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchRecruiterById.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+      })
+      .addCase(fetchRecruiterById.rejected, (state, action) => {
+        state.loading = false
+      })
+
       .addCase(fetchAllCompanies.pending, (state, action) => {
         state.loading = true
       })

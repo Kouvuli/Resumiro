@@ -10,3 +10,11 @@ export const getCurrentTimeDiff = (currentTime: Date) => {
     return `${Math.floor(diff)} giờ`
   }
 }
+
+export const convertMonthToYear = (month: number) => {
+  if (month > 12) {
+    return `${Math.floor(month / 12)} năm`
+  } else {
+    return `${month} tháng`
+  }
+}

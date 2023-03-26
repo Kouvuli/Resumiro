@@ -9,6 +9,10 @@ const resumiroApi = {
     const url = '/job'
     return request.get(url, { params })
   },
+  getResumes: (params: object) => {
+    const url = '/resume'
+    return request.get(url, { params })
+  },
   getJobById: (id: string) => {
     const url = `/job/${id}`
     return request.get(url)
@@ -137,6 +141,14 @@ const resumiroApi = {
   deleteCandidateSkill: (id: string, data: { skill_id: number }) => {
     const url = '/candidate/' + id + '/skill'
     return request.delete(url, { data })
+  },
+  getRecruiterById: (id: string) => {
+    const url = `/recruiter/${id}`
+    return request.get(url)
+  },
+  getFields: () => {
+    const url = `/field`
+    return request.get(url)
   }
 
   // updatePost: (id, data) => {

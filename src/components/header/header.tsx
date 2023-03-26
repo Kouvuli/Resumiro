@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Container from '@mui/material/Container'
 import { styled } from '@mui/material/styles'
 import {
@@ -8,7 +8,6 @@ import {
   ListItemButton,
   ListItemText
 } from '@mui/material'
-import RoundSelect from '@components/ui/select'
 import IconButton from '@mui/material/IconButton'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { useRouter } from 'next/router'
@@ -17,6 +16,8 @@ import Link from 'next/link'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { signOut, useSession } from 'next-auth/react'
 import Button from '@mui/material/Button'
+import { useAppSelector } from '@hooks/index'
+import { profileSelector } from '@redux/selectors'
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -206,6 +207,7 @@ const variants: Variants = {
 
 const Header = () => {
   const { data: session } = useSession()
+  const { showMessage, user } = useAppSelector(profileSelector)
   const router = useRouter()
   const navTogglerRef = useRef<HTMLButtonElement>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -219,6 +221,7 @@ const Header = () => {
       navNode!.removeAttribute('style')
     }
   }
+
   const signOutHandler = async () => {
     // event.preventDefault()
     const result = await signOut({ redirect: false })
@@ -266,9 +269,15 @@ const Header = () => {
                         {/* </a> */}
                       </Link>
                     </li>
-                    <li>
-                      <Link href="/ho-so-cv">Hồ sơ & CV</Link>
-                    </li>
+                    {session && (
+                      <li>
+                        {user.role === 'candidate' ? (
+                          <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
+                        ) : (
+                          <Link href="/ho-so-cv">Hồ sơ & CV</Link>
+                        )}
+                      </li>
+                    )}
                     <li>
                       <Link href="/cong-ty">Công ty</Link>
                     </li>
@@ -290,7 +299,7 @@ const Header = () => {
                       content={userContent}
                       trigger="click"
                     >
-                      <Avatar src={session.user!.image!} />
+                      <Avatar src={session!.user!.image!} />
                     </MyPopover>
                   </>
                 )}
@@ -373,9 +382,15 @@ const Header = () => {
                 <li>
                   <Link href="/viec-lam">Việc làm</Link>
                 </li>
-                <li>
-                  <Link href="/ho-so-cv">Hồ sơ & CV</Link>
-                </li>
+                {session && (
+                  <li>
+                    {user.role === 'candidate' ? (
+                      <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
+                    ) : (
+                      <Link href="/ho-so-cv">Hồ sơ & CV</Link>
+                    )}
+                  </li>
+                )}
                 <li>
                   <Link href="/cong-ty">Công ty</Link>
                 </li>
@@ -392,7 +407,7 @@ const Header = () => {
                   content={userContent}
                   trigger="click"
                 >
-                  <Avatar src={session.user!.image!} />
+                  <Avatar src={session!.user!.image!} />
                 </MyPopover>
               </>
             )}

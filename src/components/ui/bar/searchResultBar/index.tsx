@@ -9,10 +9,16 @@ import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
 import RoundSelect from '@components/ui/select'
 
 interface SearchResultBarProps {
-  type?: number
+  numberSearch: number
+  handleChange?: (value: string) => void
+  options: { value: string; label: string }[]
 }
 
-const SearchResultBar: React.FC<SearchResultBarProps> = ({ type }) => {
+const SearchResultBar: React.FC<SearchResultBarProps> = ({
+  numberSearch,
+  handleChange,
+  options
+}) => {
   const [formats, setFormats] = React.useState(() => ['bold', 'italic'])
 
   const handleFormat = (
@@ -21,13 +27,23 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({ type }) => {
   ) => {
     setFormats(newFormats)
   }
+
   return (
     <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
       <Typography sx={{ flexGrow: 1 }} variant="h5">
-        Title
+        Đã tìm thấy{' '}
+        <span>
+          <Typography
+            variant="h5"
+            sx={{ display: 'inline-block', color: 'info.dark' }}
+          >
+            {numberSearch}
+          </Typography>
+        </span>{' '}
+        kết quả
       </Typography>
-      <RoundSelect outlined />
-      {type === 2 && (
+      <RoundSelect options={options} handleChange={handleChange} />
+      {
         <ToggleButtonGroup
           value={formats}
           onChange={handleFormat}
@@ -36,7 +52,7 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({ type }) => {
           <Toggle icon={<ViewHeadlineOutlinedIcon />}></Toggle>
           <Toggle icon={<GridViewOutlinedIcon />}></Toggle>
         </ToggleButtonGroup>
-      )}
+      }
     </Grid>
   )
 }

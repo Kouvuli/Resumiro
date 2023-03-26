@@ -1,59 +1,62 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { styled } from '@mui/material/styles'
 import { Select, SelectProps } from 'antd'
 import styles from './styles.module.css'
+import { DefaultOptionType } from 'antd/es/select'
+import { useAppDispatch } from '@hooks/index'
+import jobSlice from '@redux/reducers/jobSlice'
 const { Option } = Select
 interface RoundSelectProps {
-  type?: number
   style?: React.CSSProperties
-  outlined?: boolean
+  handleChange?: (value: string) => void
+  options: { value: string; label: string }[]
 }
 
-const CustomRoundSelectType1Outlined = styled(Select)(({ theme }) => ({
-  '&:hover': {
-    '& .ant-select-selector': {
-      borderColor: `${theme.palette.primary.main}!important`
-    }
-  },
-  '& .ant-select-selector': {
-    backgroundColor: 'transparent!important',
-    boxShadow: 'none!important'
-  }
-}))
+// const CustomRoundSelectType1Outlined = styled(Select)(({ theme }) => ({
+//   '&:hover': {
+//     '& .ant-select-selector': {
+//       borderColor: `${theme.palette.primary.main}!important`
+//     }
+//   },
+//   '& .ant-select-selector': {
+//     backgroundColor: 'transparent!important',
+//     boxShadow: 'none!important'
+//   }
+// }))
 
-const CustomRoundSelectType1 = styled(Select)(({}) => ({
-  '&:hover': {
-    '& .ant-select-selector': {
-      borderColor: `transparent!important`
-    }
-  },
+// const CustomRoundSelectType1 = styled(Select)(({}) => ({
+//   '&:hover': {
+//     '& .ant-select-selector': {
+//       borderColor: `transparent!important`
+//     }
+//   },
 
-  '& .ant-select-selector': {
-    borderColor: `transparent!important`,
-    backgroundColor: 'transparent!important',
-    boxShadow: 'none!important'
-  }
-}))
+//   '& .ant-select-selector': {
+//     borderColor: `transparent!important`,
+//     backgroundColor: 'transparent!important',
+//     boxShadow: 'none!important'
+//   }
+// }))
 
-const CustomRoundSelectType2 = styled(Select)(({ theme }) => ({
-  '&:hover': {
-    '& .ant-select-selector': {
-      borderColor: `${theme.palette.primary.main}!important`
-    }
-  },
-  '& .ant-select-selector': {
-    borderColor: `transparent!important`,
-    backgroundColor: 'transparent!important',
-    boxShadow: 'none!important',
-    color: theme.palette.primary.contrastText
-  },
-  '& .ant-select-arrow': {
-    color: theme.palette.primary.contrastText
-  },
-  '&.ant-select-open .ant-select-selection-item': {
-    color: theme.palette.primary.contrastText
-  }
-}))
+// const CustomRoundSelectType2 = styled(Select)(({ theme }) => ({
+//   '&:hover': {
+//     '& .ant-select-selector': {
+//       borderColor: `${theme.palette.primary.main}!important`
+//     }
+//   },
+//   '& .ant-select-selector': {
+//     borderColor: `transparent!important`,
+//     backgroundColor: 'transparent!important',
+//     boxShadow: 'none!important',
+//     color: theme.palette.primary.contrastText
+//   },
+//   '& .ant-select-arrow': {
+//     color: theme.palette.primary.contrastText
+//   },
+//   '&.ant-select-open .ant-select-selection-item': {
+//     color: theme.palette.primary.contrastText
+//   }
+// }))
 
 // const CustomOption = styled(Option)(({ theme }) => ({
 //     '& .ant-select-open:hover': {
@@ -61,50 +64,26 @@ const CustomRoundSelectType2 = styled(Select)(({ theme }) => ({
 //     }
 // }))
 
-const RoundSelect: React.FC<RoundSelectProps> = ({ type, style, outlined }) => {
-  const [age, setAge] = useState('one')
-
-  const handleChange = (value: SelectProps) => {
-    setAge(value)
-  }
-  if (type === 2) {
-    return (
-      <CustomRoundSelectType2
-        defaultValue={age}
-        style={style}
-        // bordered={false}
-        onChange={handleChange}
-      >
-        <Option value="one">Option 1</Option>
-        <Option value="two">Option 2</Option>
-        <Option value="three">Option 3</Option>
-      </CustomRoundSelectType2>
-    )
-  }
+const RoundSelect: React.FC<RoundSelectProps> = ({
+  style,
+  options,
+  handleChange
+}) => {
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(jobSlice.actions.changeOrderBy(options[0].value))
+  }, [])
 
   return (
     <>
-      {outlined ? (
-        <CustomRoundSelectType1Outlined
-          defaultValue={age}
+      {
+        <Select
           style={style}
+          defaultValue={options[0].value}
           onChange={handleChange}
-        >
-          <Option value="one">Option 1</Option>
-          <Option value="two">Option 2</Option>
-          <Option value="three">Option 3</Option>
-        </CustomRoundSelectType1Outlined>
-      ) : (
-        <CustomRoundSelectType1
-          defaultValue={age}
-          style={style}
-          onChange={handleChange}
-        >
-          <Option value="one">Option 1</Option>
-          <Option value="two">Option 2</Option>
-          <Option value="three">Option 3</Option>
-        </CustomRoundSelectType1>
-      )}
+          options={options}
+        />
+      }
     </>
   )
 }

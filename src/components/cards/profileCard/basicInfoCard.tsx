@@ -62,6 +62,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
         }
       })
     )
+    session!.user!.image = data.get('avatar')!.toString()
     setOpen(false)
   }
   return (
@@ -192,7 +193,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                 fullWidth
                 id="background"
                 defaultValue={background}
-                label="Avatar"
+                label="Background"
                 autoFocus
                 color="primary"
                 sx={{

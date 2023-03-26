@@ -14,7 +14,7 @@ import CardActions from '@mui/material/CardActions'
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import ShareIcon from '@mui/icons-material/Share'
 import Image from 'next/image'
-import { getCurrentTimeDiff } from '@utils/timeUtil'
+import { convertMonthToYear, getCurrentTimeDiff } from '@utils/timeUtil'
 import { locations } from '@prisma/client'
 interface JobDetailCardProps {
   id: number
@@ -22,9 +22,9 @@ interface JobDetailCardProps {
   companyName: string
   companyLogo: string
   location: locations
-  salary: string
-  experience: string
-  position: string
+  salary: number
+  experience: number
+  job_type: string
 
   createAt: Date
   updateAt: Date | null
@@ -43,7 +43,7 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
   location,
   salary,
   experience,
-  position,
+  job_type,
   createAt,
   updateAt
 }) => {
@@ -79,7 +79,7 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
         <ul style={{ listStyleType: 'none' }}>
           <li>
             <TagButton size="large" primary icon={<MonetizationOnIcon />}>
-              {salary}
+              {salary} VND/ tháng
             </TagButton>
           </li>
           <li>
@@ -89,12 +89,12 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
           </li>
           <li>
             <TagButton size="large" primary icon={<LocationOnIcon />}>
-              {position}
+              {job_type}
             </TagButton>
           </li>
           <li>
             <TagButton size="large" primary icon={<WorkIcon />}>
-              {experience}
+              {convertMonthToYear(experience)}
             </TagButton>
           </li>
           <li

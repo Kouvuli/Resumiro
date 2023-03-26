@@ -7,6 +7,7 @@ interface RoundButtonProps {
   startIcon?: React.ReactNode
   style?: React.CSSProperties
   primary?: boolean
+  onClick?: () => void
 }
 
 const CustomRoundButton = styled(Button)(({ theme }) => ({
@@ -20,7 +21,8 @@ const RoundButton: React.FC<RoundButtonProps> = ({
   style,
   primary,
   children,
-  startIcon
+  startIcon,
+  onClick
 }) => {
   return (
     <CustomRoundButton
@@ -29,6 +31,7 @@ const RoundButton: React.FC<RoundButtonProps> = ({
       disableElevation
       disableFocusRipple
       startIcon={startIcon}
+      onClick={onClick}
       sx={style}
     >
       {children}

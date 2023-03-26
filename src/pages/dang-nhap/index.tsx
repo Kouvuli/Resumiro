@@ -15,17 +15,36 @@ import { useRouter } from 'next/router'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
 
+const roles = [
+  {
+    value: 'candidate',
+    label: 'Candidate'
+  },
+  {
+    value: 'recruiter',
+    label: 'Recruiter'
+  }
+]
+
 export default function SignInPage() {
   const router = useRouter()
-  const [username, setUsername] = React.useState<string>('')
-  const [password, setPassword] = React.useState<string>('')
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const role = data.get('role')
+    const username = data.get('username')
+    const password = data.get('password')
+    // console.log({
+    //   username: username,
+    //   password: password,
+    //   role: role
+    // })
     const result = await signIn('credentials', {
       redirect: false,
       username: username,
-      password: password
+      password: password,
+      role: role
     })
     if (!result!.error) {
       router.replace('/')
@@ -77,8 +96,6 @@ export default function SignInPage() {
               name="username"
               autoComplete="username"
               autoFocus
-              value={username}
-              onChange={e => setUsername(e.target.value)}
               color="primary"
               sx={{
                 borderRadius: '5px'
@@ -93,13 +110,30 @@ export default function SignInPage() {
               type="password"
               id="password"
               autoComplete="current-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
               color="primary"
               sx={{
                 borderRadius: '5px'
               }}
             />
+            <TextField
+              required
+              fullWidth
+              select
+              name="role"
+              id="role"
+              label="Role"
+              defaultValue="candidate"
+              sx={{ mt: 2 }}
+              SelectProps={{
+                native: true
+              }}
+            >
+              {roles.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
             <Grid container>
               <Grid item xs={6}>
                 <FormControlLabel

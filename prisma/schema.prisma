@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -63,16 +64,16 @@ model jobs {
   id              Int               @id(map: "pk_jobs") @default(autoincrement())
   title           String            @db.VarChar(100)
   location_id     Int
-  position        String            @db.VarChar(100)
-  experience      String            @db.VarChar(1000)
+  job_type        String            @db.VarChar(100)
+  experience      Int
   requirements    String?           @db.VarChar(1000)
   benefits        String?           @db.VarChar(1000)
   create_at       DateTime          @db.Timestamp(6)
   update_at       DateTime?         @db.Timestamp(6)
   company_id      Int
-  salary          String            @db.VarChar(1000)
-  job_type_id     Int
-  job_type        job_types         @relation(fields: [job_type_id], references: [id])
+  salary          Int
+  field_id        Int
+  field           fields            @relation(fields: [field_id], references: [id])
   company         companies         @relation(fields: [company_id], references: [id])
   location        locations         @relation(fields: [location_id], references: [id])
   jobs_applicants jobs_applicants[]
@@ -155,10 +156,11 @@ model locations {
   jobs      jobs[]
 }
 
-model job_types {
-  id   Int    @id(map: "pk_job_types") @default(autoincrement())
-  name String @db.VarChar(100)
-  jobs jobs[]
+model fields {
+  id          Int     @id(map: "pk_job_types") @default(autoincrement())
+  name        String  @db.VarChar(100)
+  description String? @db.VarChar(5000)
+  jobs        jobs[]
 }
 
 enum roles {

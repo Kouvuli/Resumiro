@@ -16,7 +16,9 @@ export type Job = jobs & {
 }
 
 export type Resume = resumes & {
-  onwer: candidates
+  owner: candidates & {
+    candidates_skills: { candidate_id: number; skill_id: number }[]
+  }
 }
 
 export type Company = companies & {

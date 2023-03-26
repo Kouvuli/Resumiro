@@ -23,7 +23,6 @@ const DetailJobList = styled(`ul`)(({ theme }) => ({
     '&:before': {
       display: 'inline-block',
       content: '""',
-      '-webkit-border-radius': '0.375rem',
       borderRadius: '0.375rem',
       height: '0.4rem',
       width: '0.4rem',
@@ -102,7 +101,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     location,
     salary,
     experience,
-    position,
+    job_type,
     requirements,
     benefits,
     create_at,
@@ -122,7 +121,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
               location={location}
               salary={salary}
               experience={experience}
-              position={position}
+              job_type={job_type}
               createAt={create_at}
               updateAt={update_at}
             />
@@ -216,64 +215,6 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
 
 export async function getServerSideProps(context: { query: { id: string } }) {
   const { id } = context.query
-
-  // const jobDetail: Job = {
-  //   id: 1,
-  //   jobTitle: 'Java Intern',
-  //   companyName: 'DXC Technology Vietnam',
-  //   companyLogo: '/images/Images_1.png',
-
-  //   location: ' Hồ Chí Minh',
-  //   salary: ' VND 5.000.000/Tháng',
-  //   experience: 'Từ 1-3 năm',
-  //   position: 'Thực tập',
-  //   requirements: `
-  //       <li>
-  //           <p>
-  //               Sinh viên năm cuối, sắp tốt nghiệp
-  //               các ngành CNTT, Công nghệ phần mềm,
-  //               Khoa học máy tính hoặc các ngành
-  //               khác có liên quan.
-  //           </p>
-  //       </li>
-  //       <li>
-  //           <p>
-  //               Nắm vững kiến thức và đã từng làm
-  //               qua các dự án sử dụng Java/Java
-  //               Spring Boot,...
-  //           </p>
-  //       </li>
-  //       <li>
-  //           <p>Có thể làm việc fulltime.</p>
-  //       </li>`,
-  //   benefits: `
-  //       <li>
-  //           <p>
-  //               Nhận mức trợ cấp 5.000.000 VND/
-  //               tháng.
-  //           </p>
-  //       </li>
-  //       <li>
-  //           <p>
-  //               Nắm vững kiến thức và đã từng làm
-  //               qua các dự án sử dụng Java/Java
-  //               Spring Boot,...
-  //           </p>
-  //       </li>
-  //       <li>
-  //           <p>Có thể làm việc fulltime.</p>
-  //       </li>
-  //       `,
-  //   skills: [
-  //     { id: 1, name: 'Java' },
-  //     { id: 2, name: 'Java Spring Boot' },
-  //     { id: 3, name: 'Object-Oriented Programming (OOP)' },
-  //     { id: 4, name: 'Java Swing' },
-  //     { id: 5, name: 'Spring Framework' }
-  //   ],
-  //   createAt: new Date('2023-02-16').getTime(),
-  //   updateAt: new Date('2023-03-10').getTime()
-  // }
 
   const jobDetail = await resumiroApi.getJobById(id).then(res => res.data)
   const sameCompanyJob: JobCardProps[] = jobDetail.data.company.jobs.map(
