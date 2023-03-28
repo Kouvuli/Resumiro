@@ -6,12 +6,14 @@ import {
   skills,
   certificates,
   experiences,
-  locations
+  locations,
+  recruiters,
+  jobs_skills
 } from '@prisma/client'
 
 export type Job = jobs & {
   company: companies
-  jobs_skills: { skill: skills }[]
+  jobs_skills: { job_id: number; skill_id: number; skill: skills }[]
   location: locations
 }
 
@@ -31,6 +33,10 @@ export type Candidate = candidates & {
   candidates_skills: { skill: skills }[]
   certificates: certificates[]
   experiences: Experience[]
+}
+
+export type Recruiter = recruiters & {
+  company: Company[]
 }
 
 export type Experience = experiences & {

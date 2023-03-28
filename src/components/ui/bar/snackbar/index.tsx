@@ -1,21 +1,19 @@
-import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { Alert, Snackbar } from '@mui/material'
-import profileSlice from '@redux/reducers/profileSlice'
-import { profileSelector } from '@redux/selectors'
 import React from 'react'
 
-const MySnackBar = ({}) => {
-  const { showMessage, message, messageType } = useAppSelector(profileSelector)
-  const dispatch = useAppDispatch()
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    // if (reason === 'clickaway') {
-    //   dispatch(profileSlice.actions.toggleSnackBar({ showMessage: false }))
-    // }
-    dispatch(profileSlice.actions.toggleSnackBar({ showMessage: false }))
-  }
+interface MySnackBarProps {
+  showMessage: boolean
+  message: string
+  messageType: 'success' | 'error' | 'info' | 'warning'
+  handleClose: (event?: React.SyntheticEvent | Event, reason?: string) => void
+}
+
+const MySnackBar: React.FC<MySnackBarProps> = ({
+  showMessage,
+  message,
+  messageType,
+  handleClose
+}) => {
   return (
     <Snackbar
       open={showMessage}

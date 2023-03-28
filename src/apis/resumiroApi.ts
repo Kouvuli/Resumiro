@@ -149,8 +149,66 @@ const resumiroApi = {
   getFields: () => {
     const url = `/field`
     return request.get(url)
+  },
+  getLocations: () => {
+    const url = `/location`
+    return request.get(url)
+  },
+  updateRecruiterById: (
+    id: string,
+    data: {
+      avatar: string
+      background: string
+      phone: string
+      full_name: string
+      email: string
+    }
+  ) => {
+    const url = `/recruiter/${id}`
+    return request.patch(url, data)
+  },
+  updateRecruiterCompany: (
+    id: number,
+    data: {
+      company_id: number
+    }
+  ) => {
+    const url = `/recruiter/${id}/company`
+    return request.patch(url, data)
+  },
+  insertJob: (data: {
+    title: string
+    location_id: number
+    salary: number
+    field_id: number
+    company_id: number
+    experience: number
+    owner_id: number
+    job_type: string
+    skill: string
+  }) => {
+    const url = '/job'
+    return request.post(url, data)
+  },
+  deleteJob: (id: number) => {
+    const url = `/job/${id}`
+    return request.delete(url)
+  },
+  updateJob: (
+    id: number,
+    data: {
+      title: string
+      location_id: number
+      salary: number
+      field_id: number
+      experience: number
+      job_type: string
+      skill: string
+    }
+  ) => {
+    const url = `/job/${id}`
+    return request.patch(url, data)
   }
-
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`
   //     return request.put(url, data, { headers: authHeader() })

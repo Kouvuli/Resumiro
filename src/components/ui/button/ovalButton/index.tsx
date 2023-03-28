@@ -7,6 +7,7 @@ interface OvalButtonProps {
   children: React.ReactNode
   startIcon?: React.ReactNode
   style?: React.CSSProperties
+  onClick?: () => void
 }
 
 const CustomOvalButton = styled(Button)(({}) => ({
@@ -20,7 +21,8 @@ const OvalButton: React.FC<OvalButtonProps> = ({
   outlined,
   children,
   startIcon,
-  style
+  style,
+  onClick
 }) => {
   return (
     <CustomOvalButton
@@ -28,6 +30,7 @@ const OvalButton: React.FC<OvalButtonProps> = ({
       color={primary ? 'primary' : 'secondary'}
       disableElevation
       disableFocusRipple
+      onClick={onClick}
       startIcon={startIcon}
       sx={style}
     >

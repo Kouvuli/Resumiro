@@ -49,6 +49,14 @@ const ResumePage: React.FC<ResumePageProps> = ({
 
 export async function getServerSideProps(context: { req: any; res: any }) {
   const session = await getServerSession(context.req, context.res, authOptions)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/dang-nhap',
+        permanent: false
+      }
+    }
+  }
   if (session?.user?.email === 'recruiter') {
     return {
       redirect: {

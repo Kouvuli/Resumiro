@@ -15,7 +15,13 @@ export default async function handler(
   const prisma = new PrismaClient()
   prisma.$connect()
   if (req.method === 'GET') {
-    const { page = 1, limit = 8, order_by, q, skill } = req.query
+    const {
+      page = 1,
+      limit = 8,
+      order_by = 'create_at_desc',
+      q,
+      skill
+    } = req.query
     let p = Number(page)
     let l = Number(limit)
     let skillArr: any

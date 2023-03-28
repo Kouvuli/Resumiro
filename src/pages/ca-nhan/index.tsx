@@ -11,8 +11,10 @@ import ArticleLayout from '@components/layouts/article'
 import { useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-import {
+import profileSlice, {
   fetchAllCompanies,
+  fetchAllFields,
+  fetchAllLocations,
   fetchAllSkills,
   fetchCandidateById,
   fetchRecruiterById
@@ -22,15 +24,26 @@ import { profileSelector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
 import CompanyCard from '@components/cards/companyCard'
 import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
+import OwnedJobCard from '@components/cards/profileCard/ownedJobCard/ownedJobCard'
 
 const ProfilePage = () => {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
-  const { showMessage, user, allCompanies, allSkills } =
-    useAppSelector(profileSelector)
+  const {
+    showMessage,
+    allFields,
+    allLocations,
+    message,
+    messageType,
+    user,
+    allCompanies,
+    allSkills
+  } = useAppSelector(profileSelector)
   useEffect(() => {
     dispatch(fetchAllCompanies())
     dispatch(fetchAllSkills())
+    dispatch(fetchAllLocations())
+    dispatch(fetchAllFields())
   }, [])
   useEffect(() => {
     if (session?.user?.email === 'candidate') {
@@ -40,10 +53,21 @@ const ProfilePage = () => {
     }
   }, [showMessage])
 
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(profileSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
       <ArticleLayout title="Cá nhân">
-        <MySnackBar />
+        <MySnackBar
+          handleClose={handleClose}
+          message={message}
+          messageType={messageType}
+          showMessage={showMessage}
+        />
 
         <Container
           sx={{
@@ -65,29 +89,40 @@ const ProfilePage = () => {
                 background={user.background}
                 email={user.email}
               />
-              {user.role === 'recruiter' && user.company && (
+
+              {user.role === 'recruiter' && (
                 <CompanyBasicCard
                   style={{ marginTop: '16px' }}
                   company={user.company}
+                  allCompanies={allCompanies}
+                />
+              )}
+              {user.role === 'recruiter' && (
+                <OwnedJobCard
+                  style={{ marginTop: '16px' }}
+                  jobs={user.jobs}
+                  allSkills={allSkills}
+                  allFields={allFields}
+                  allLocations={allLocations}
                 />
               )}
               {user.role === 'candidate' && (
                 <AboutMeCard style={{ marginTop: '16px' }} about={user.about} />
               )}
-              {user.role === 'candidate' && user.experiences && (
+              {user.role === 'candidate' && (
                 <ExperienceCard
                   style={{ marginTop: '16px' }}
                   experiences={user.experiences}
                   allCompanies={allCompanies}
                 />
               )}
-              {user.role === 'candidate' && user.experiences && (
+              {user.role === 'candidate' && (
                 <EducationCard
                   style={{ marginTop: '16px' }}
                   educations={user.certificates}
                 />
               )}
-              {user.role === 'candidate' && user.candidates_skills && (
+              {user.role === 'candidate' && (
                 <SkillCard
                   style={{ marginTop: '16px' }}
                   skills={user.candidates_skills}

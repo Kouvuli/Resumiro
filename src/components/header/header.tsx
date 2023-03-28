@@ -16,8 +16,9 @@ import Link from 'next/link'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { signOut, useSession } from 'next-auth/react'
 import Button from '@mui/material/Button'
-import { useAppSelector } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector } from '@redux/selectors'
+import profileSlice from '@redux/reducers/profileSlice'
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -207,6 +208,7 @@ const variants: Variants = {
 
 const Header = () => {
   const { data: session } = useSession()
+  const dispatch = useAppDispatch()
   const { showMessage, user } = useAppSelector(profileSelector)
   const router = useRouter()
   const navTogglerRef = useRef<HTMLButtonElement>(null)
@@ -224,6 +226,7 @@ const Header = () => {
 
   const signOutHandler = async () => {
     // event.preventDefault()
+    dispatch(profileSlice.actions.reset())
     const result = await signOut({ redirect: false })
     if (result) {
       router.replace('/dang-nhap')

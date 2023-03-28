@@ -19,7 +19,7 @@ export default async function handler(
       page = 1,
       limit = 8,
       location,
-      order_by = 'create_at_asc',
+      order_by = 'create_at_desc',
       job_type,
       experience,
       min_salary,
@@ -257,6 +257,63 @@ export default async function handler(
         page: page,
         limit: limit
       },
+      data: data
+    })
+    prisma.$disconnect()
+    return
+  } else if (req.method === 'POST') {
+    const {
+      title,
+      location_id,
+      salary,
+      field_id,
+      company_id,
+      experience,
+      job_type,
+      owner_id,
+      skill
+    } = req.body
+
+    let data = await prisma.jobs.create({
+      data: {
+        title: title,
+        location_id: location_id,
+        salary: salary,
+        field_id: field_id,
+        experience: experience,
+        job_type: job_type,
+        company_id: company_id,
+        owner_id: owner_id,
+        create_at: new Date()
+      }
+    })
+
+    if (skill && skill !== '') {
+      const skills = skill?.toString().split(',')
+      const skillsData = skills?.map((item: string) => {
+        return {
+          job_id: data.id,
+          skill_id: Number(item)
+        }
+      })
+      console.log(skillsData)
+      await prisma.jobs_skills.createMany({
+        data: skillsData
+      })
+    }
+
+    if (!data) {
+      res.status(400).json({
+        message: 'Cannot create job',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
+    res.status(200).json({
+      message: 'Successfully create job',
+      status: 'ok',
       data: data
     })
     prisma.$disconnect()

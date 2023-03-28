@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Card,
   CardHeader,
@@ -9,6 +9,9 @@ import {
   ImageList,
   ImageListItem
 } from '@mui/material'
+import { motion, Variants, useAnimationControls } from 'framer-motion'
+import { profileSelector } from '@redux/selectors'
+import { useAppSelector } from '@hooks/index'
 
 const itemData = [
   {
@@ -61,53 +64,80 @@ const itemData = [
   }
 ]
 
+const variants: Variants = {
+  initial: {
+    opacity: 0,
+    y: '20px'
+  },
+  visible: {
+    opacity: 1,
+    y: 0
+  }
+}
+
 const ImagesCard = () => {
+  const { loading } = useAppSelector(profileSelector)
+  const controls = useAnimationControls()
+  useEffect(() => {
+    controls.stop()
+    if (!loading) {
+      controls.start('visible')
+    }
+  }, [loading])
   return (
-    <Card
-      sx={{
-        borderTopRightRadius: '0px',
-        borderTopLeftRadius: '0px'
-      }}
+    <motion.div
+      animate={controls}
+      variants={variants}
+      initial="initial"
+      // whileInView="visible"
+      viewport={{ once: true }}
     >
-      <CardHeader
-        title={
-          <Typography
-            variant="h5"
-            color="text.primary"
-            sx={{
-              fontSize: '20px',
-              textTransform: 'capitalize'
-            }}
+      <Card
+        sx={{
+          borderTopRightRadius: '0px',
+          borderTopLeftRadius: '0px'
+        }}
+      >
+        <CardHeader
+          title={
+            <Typography
+              variant="h5"
+              color="text.primary"
+              sx={{
+                fontSize: '20px',
+                textTransform: 'capitalize'
+              }}
+            >
+              Hình ảnh
+            </Typography>
+          }
+        />
+        <CardContent sx={{ py: 0 }}>
+          <ImageList cols={3} rowHeight={164} sx={{ borderRadius: '5px' }}>
+            {itemData.map(item => (
+              <ImageListItem key={item.img}>
+                <img
+                  src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                  srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                  alt={item.title}
+                  loading="lazy"
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        </CardContent>
+        <CardActions sx={{ py: 'unset' }}>
+          <div style={{ flexGrow: 1 }}></div>
+          <Button
+            variant="text"
+            color="primary"
+            sx={{ textTransform: 'capitalize', my: 1.5 }}
           >
-            Hình ảnh
-          </Typography>
-        }
-      />
-      <CardContent sx={{ py: 0 }}>
-        <ImageList cols={3} rowHeight={164} sx={{ borderRadius: '5px' }}>
-          {itemData.map(item => (
-            <ImageListItem key={item.img}>
-              <img
-                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                alt={item.title}
-                loading="lazy"
-              />
-            </ImageListItem>
-          ))}
-        </ImageList>
-      </CardContent>
-      <CardActions sx={{ py: 'unset' }}>
-        <div style={{ flexGrow: 1 }}></div>
-        <Button
-          variant="text"
-          color="primary"
-          sx={{ textTransform: 'capitalize', my: 1.5 }}
-        >
-          Xem tất cả
-        </Button>
-      </CardActions>
-    </Card>
+            Xem tất cả
+          </Button>
+        </CardActions>
+      </Card>
+    </motion.div>
   )
 }
 

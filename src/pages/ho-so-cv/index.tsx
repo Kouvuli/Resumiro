@@ -202,7 +202,14 @@ export async function getServerSideProps(context: {
   res: any
 }) {
   const session = await getServerSession(context.req, context.res, authOptions)
-
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/dang-nhap',
+        permanent: false
+      }
+    }
+  }
   if (session?.user?.email === 'candidate') {
     return {
       redirect: {

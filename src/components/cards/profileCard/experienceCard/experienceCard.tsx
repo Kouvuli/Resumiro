@@ -27,6 +27,7 @@ import { profileSelector } from '@redux/selectors'
 import profileSlice, { createExperience } from '@redux/reducers/profileSlice'
 
 interface ExperienceCardProps {
+  type?: number
   style?: React.CSSProperties
   experiences?: Experience[]
   allCompanies: companies[]
@@ -59,6 +60,7 @@ const CustomListItem = styled(ListItem)(({}) => ({
 }))
 
 const ExperienceCard: React.FC<ExperienceCardProps> = ({
+  type,
   style,
   experiences,
   allCompanies
@@ -93,6 +95,45 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
     )
 
     setOpen(false)
+  }
+  if (type === 2) {
+    return (
+      <motion.div
+        style={style}
+        variants={variants}
+        initial="initial"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <Card sx={{ width: '100%' }}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h5"
+                color="text.primary"
+                sx={{ fontSize: '20px' }}
+              >
+                Kinh nghiệm
+              </Typography>
+            }
+            sx={{ pb: 1 }}
+          />
+          <CardContent sx={{ py: 'unset' }}>
+            <List disablePadding>
+              {experiences!.map((item, index) => (
+                <CustomListItem key={index}>
+                  <ExperienceItem
+                    data={item}
+                    allCompanies={allCompanies}
+                    isModify={isModify}
+                  />
+                </CustomListItem>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      </motion.div>
+    )
   }
 
   return (

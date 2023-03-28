@@ -73,6 +73,8 @@ model jobs {
   company_id      Int
   salary          Int
   field_id        Int
+  owner_id        Int
+  owner           recruiters        @relation(fields: [owner_id], references: [id])
   field           fields            @relation(fields: [field_id], references: [id])
   company         companies         @relation(fields: [company_id], references: [id])
   location        locations         @relation(fields: [location_id], references: [id])
@@ -112,6 +114,7 @@ model recruiters {
   position       String?    @db.VarChar(100)
   role           roles
   company        companies? @relation(fields: [company_id], references: [id])
+  jobs           jobs[]
 }
 
 model resumes {

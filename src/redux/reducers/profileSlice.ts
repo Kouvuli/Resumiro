@@ -9,7 +9,9 @@ const initialState = {
   messageType: 'success',
   user: {},
   allCompanies: [],
-  allSkills: []
+  allSkills: [],
+  allFields: [],
+  allLocations: []
 }
 
 export const fetchCandidateById = createAsyncThunk(
@@ -42,6 +44,19 @@ export const fetchAllCompanies = createAsyncThunk(
 
 export const fetchAllSkills = createAsyncThunk('get-all-skills', async () => {
   const { data } = await resumiroApi.getAllSkills().then(res => res.data)
+  return data
+})
+
+export const fetchAllLocations = createAsyncThunk(
+  'get-all-locations',
+  async () => {
+    const { data } = await resumiroApi.getLocations().then(res => res.data)
+    return data
+  }
+)
+
+export const fetchAllFields = createAsyncThunk('get-all-fields', async () => {
+  const { data } = await resumiroApi.getFields().then(res => res.data)
   return data
 })
 
@@ -93,6 +108,26 @@ export const updateCandidateAbout = createAsyncThunk(
   }
 )
 
+export const updateRecruiterBasicInfo = createAsyncThunk(
+  'update-recruiter-basic-info',
+  async (input: any) => {
+    const data = await resumiroApi
+      .updateRecruiterById(input.id, input.data)
+      .then(res => res.data)
+    return data
+  }
+)
+
+export const updateRecruiterCompany = createAsyncThunk(
+  'update-recruiter-company',
+  async (input: any) => {
+    const data = await resumiroApi
+      .updateRecruiterCompany(input.id, input.data)
+      .then(res => res.data)
+    return data
+  }
+)
+
 export const deleteExperience = createAsyncThunk(
   'delete-experience',
   async (id: any) => {
@@ -139,12 +174,29 @@ export const deleteCandidateSkill = createAsyncThunk(
   }
 )
 
+export const deleteJob = createAsyncThunk('delete-job', async (id: any) => {
+  const data = await resumiroApi.deleteJob(id).then(res => res.data)
+  return data
+})
+
+export const updateJob = createAsyncThunk('update-job', async (input: any) => {
+  const data = await resumiroApi
+    .updateJob(input.id, input.data)
+    .then(res => res.data)
+  return data
+})
+
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
+    reset: () => initialState,
     toggleSnackBar: (state, action) => {
       state.showMessage = action.payload.showMessage
+    },
+    changeSnackBarMessage: (state, action) => {
+      state.message = action.payload.message
+      state.messageType = action.payload.messageType
     }
   },
   extraReducers: builder => {
@@ -221,6 +273,28 @@ const profileSlice = createSlice({
         state.allSkills = action.payload
       })
       .addCase(fetchAllSkills.rejected, (state, action) => {
+        state.loading = false
+      })
+
+      .addCase(fetchAllLocations.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchAllLocations.fulfilled, (state, action) => {
+        state.loading = false
+        state.allLocations = action.payload
+      })
+      .addCase(fetchAllLocations.rejected, (state, action) => {
+        state.loading = false
+      })
+
+      .addCase(fetchAllFields.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchAllFields.fulfilled, (state, action) => {
+        state.loading = false
+        state.allFields = action.payload
+      })
+      .addCase(fetchAllFields.rejected, (state, action) => {
         state.loading = false
       })
 
@@ -346,6 +420,70 @@ const profileSlice = createSlice({
         state.loading = false
       })
       .addCase(deleteCandidateSkill.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(updateRecruiterCompany.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(updateRecruiterCompany.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(updateRecruiterCompany.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(updateRecruiterBasicInfo.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(updateRecruiterBasicInfo.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(updateRecruiterBasicInfo.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(deleteJob.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(deleteJob.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(deleteJob.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(updateJob.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(updateJob.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(updateJob.rejected, (state, action) => {
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'

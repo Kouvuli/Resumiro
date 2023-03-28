@@ -24,6 +24,7 @@ import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector } from '@redux/selectors'
 import { createCandidateSkill } from '@redux/reducers/profileSlice'
 interface SkillCardProps {
+  type?: number
   style?: React.CSSProperties
   skills: { skill: skills }[]
   allSkills: skills[]
@@ -45,7 +46,12 @@ const CustomListItem = styled(ListItem)(({}) => ({
   paddingRight: 'unset'
 }))
 
-const SkillCard: React.FC<SkillCardProps> = ({ style, skills, allSkills }) => {
+const SkillCard: React.FC<SkillCardProps> = ({
+  type,
+  style,
+  skills,
+  allSkills
+}) => {
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
   const [isModify, setIsModify] = useState(false)
@@ -68,6 +74,53 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills, allSkills }) => {
   const modifyToggleHandler = () => {
     setIsModify(prev => !prev)
   }
+
+  if (type === 2) {
+    return (
+      <motion.div
+        style={style}
+        variants={variants}
+        initial="initial"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <Card sx={{ width: '100%' }}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h5"
+                color="text.primary"
+                sx={{ fontSize: '20px' }}
+              >
+                Kỹ năng
+              </Typography>
+            }
+          />
+          <CardContent sx={{ paddingTop: 'unset', paddingBottom: 'unset' }}>
+            <List disablePadding>
+              {skills.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <CustomListItem>
+                      <SkillItem
+                        id={item.skill.id}
+                        name={item.skill.name}
+                        isModify={isModify}
+                      />
+                    </CustomListItem>
+                    {index !== skills.length - 1 && (
+                      <Divider sx={{ borderWidth: '0.5px' }} />
+                    )}
+                  </div>
+                )
+              })}
+            </List>
+          </CardContent>
+        </Card>
+      </motion.div>
+    )
+  }
+
   return (
     <motion.div
       style={style}
@@ -118,29 +171,6 @@ const SkillCard: React.FC<SkillCardProps> = ({ style, skills, allSkills }) => {
             })}
           </List>
         </CardContent>
-        <CardActions sx={{ padding: 'unset' }}>
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column'
-            }}
-          >
-            <Divider />
-            <Button
-              sx={{
-                py: 1.5,
-                color: 'text.secondary',
-                textTransform: 'none',
-                fontSize: '15px'
-              }}
-              variant="text"
-            >
-              Xem thêm
-            </Button>
-          </div>
-        </CardActions>
       </Card>
       <Modal open={open} onClose={handleClose}>
         <Box

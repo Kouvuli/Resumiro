@@ -23,6 +23,7 @@ import { createCertificate } from '@redux/reducers/profileSlice'
 import { CircularProgress } from '@mui/material'
 import { useSession } from 'next-auth/react'
 interface EducationCardProps {
+  type?: number
   style?: React.CSSProperties
   educations?: certificates[]
 }
@@ -43,7 +44,11 @@ const CustomListItem = styled(ListItem)(({}) => ({
   paddingRight: 'unset'
 }))
 
-const EducationCard: React.FC<EducationCardProps> = ({ style, educations }) => {
+const EducationCard: React.FC<EducationCardProps> = ({
+  type,
+  style,
+  educations
+}) => {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
   const [isModify, setIsModify] = useState(false)
@@ -69,6 +74,43 @@ const EducationCard: React.FC<EducationCardProps> = ({ style, educations }) => {
   const modifyToggleHandler = () => {
     setIsModify(prev => !prev)
   }
+
+  if (type === 2) {
+    return (
+      <motion.div
+        style={style}
+        variants={variants}
+        initial="initial"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <Card sx={{ width: '100%' }}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h5"
+                color="text.primary"
+                sx={{ fontSize: '20px' }}
+              >
+                Học vấn
+              </Typography>
+            }
+            sx={{ pb: 1 }}
+          />
+          <CardContent sx={{ py: 'unset' }}>
+            <List disablePadding>
+              {educations!.map((education, index) => (
+                <CustomListItem key={index}>
+                  <EducationItem data={education} isModify={isModify} />
+                </CustomListItem>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      </motion.div>
+    )
+  }
+
   return (
     <motion.div
       style={style}

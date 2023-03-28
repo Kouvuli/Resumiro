@@ -4,8 +4,8 @@ import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CreateIcon from '@mui/icons-material/Create'
-import React from 'react'
-import { motion, Variants } from 'framer-motion'
+import React, { useEffect } from 'react'
+import { motion, Variants, useAnimationControls } from 'framer-motion'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
@@ -20,6 +20,7 @@ import { updateCandidateAbout } from '@redux/reducers/profileSlice'
 
 const { TextArea } = Input
 interface AboutMeCardProps {
+  type?: number
   style?: React.CSSProperties
   about: string | null
 }
@@ -35,12 +36,18 @@ const variants: Variants = {
   }
 }
 
-const AboutMeCard: React.FC<AboutMeCardProps> = ({ style, about }) => {
+const AboutMeCard: React.FC<AboutMeCardProps> = ({ type, style, about }) => {
   const dispatch = useAppDispatch()
-
+  const controls = useAnimationControls()
   const { data: session } = useSession()
-  const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    controls.stop()
+    if (!loading) {
+      controls.start('visible')
+    }
+  }, [loading])
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,12 +66,44 @@ const AboutMeCard: React.FC<AboutMeCardProps> = ({ style, about }) => {
     // console.log(about)
     setOpen(false)
   }
+  if (type === 2) {
+    return (
+      <motion.div
+        style={style}
+        animate={controls}
+        variants={variants}
+        initial="initial"
+        // whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <Card>
+          <CardHeader
+            title={
+              <Typography
+                variant="h5"
+                color="text.primary"
+                sx={{ fontSize: '20px' }}
+              >
+                Về tôi
+              </Typography>
+            }
+          />
+          <CardContent>
+            <Typography variant="body2" color="text.secondary">
+              {about}
+            </Typography>
+          </CardContent>
+        </Card>
+      </motion.div>
+    )
+  }
   return (
     <motion.div
       style={style}
+      animate={controls}
       variants={variants}
       initial="initial"
-      whileInView="visible"
+      // whileInView="visible"
       viewport={{ once: true }}
     >
       <Card>
