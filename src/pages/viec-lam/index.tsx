@@ -45,7 +45,7 @@ interface JobPageProps {
   allSkills: Skill[]
   allFields: fields[]
   allLocations: locations[]
-  recruiter: Recruiter
+  recruiter?: Recruiter
 }
 
 const orderOptions = [
@@ -172,7 +172,7 @@ const JobPage: React.FC<JobPageProps> = ({
     const salary = data.get('salary')!.toString()
     const field = data.get('field')!.toString()
 
-    if (recruiter.company_id === null) {
+    if (recruiter!.company_id === null) {
       // alert('Bạn chưa có công ty')
 
       dispatch(
@@ -211,8 +211,8 @@ const JobPage: React.FC<JobPageProps> = ({
         job_type: jobType,
         salary: Number(salary),
         field_id: Number(field),
-        owner_id: recruiter.id,
-        company_id: recruiter.company_id
+        owner_id: recruiter!.id,
+        company_id: recruiter!.company_id
       })
     )
     // dispatch(createJob())
@@ -484,8 +484,8 @@ export async function getServerSideProps(context: {
       createAt: job.create_at
     }
   })
-  let recruiter
-  if (session) {
+  let recruiter: any = { data: {} }
+  if (session!.user!.name === 'recruiter') {
     recruiter = await resumiroApi
       .getRecruiterById(session!.user!.name!)
       .then(res => res.data)
