@@ -67,7 +67,7 @@ const resumiroApi = {
     address_wallet: string
     role: string
   }) => {
-    const url = `/auth/signUp`
+    const url = `/auth/signup`
 
     return request.post(url, {
       role,

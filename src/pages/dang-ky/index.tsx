@@ -65,8 +65,9 @@ export default function SignUpPage() {
       .catch(err => {
         console.log(err)
       })
-
-    router.push('/dang-nhap')
+    if (result) {
+      router.push('/dang-nhap')
+    }
   }
 
   const [showPassword, setShowPassword] = React.useState(false)
