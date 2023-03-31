@@ -194,6 +194,16 @@ const resumiroApi = {
     const url = `/job/${id}`
     return request.delete(url)
   },
+  applyJob: (
+    id: number,
+    data: {
+      candidate_id: number
+    }
+  ) => {
+    const url = `/job/${id}/candidate`
+    return request.post(url, data)
+  },
+
   updateJob: (
     id: number,
     data: {
@@ -208,6 +218,27 @@ const resumiroApi = {
   ) => {
     const url = `/job/${id}`
     return request.patch(url, data)
+  },
+  uploadImage: (data: any) => {
+    const url = '/upload'
+    console.log(data)
+    return request.post(url, data)
+  },
+  insertResume: (data: { title: string; data: string; owner_id: number }) => {
+    const url = '/resume'
+    return request.post(url, data)
+  },
+  deleteResume: (id: number) => {
+    const url = `/resume/${id}`
+    return request.delete(url)
+  },
+  checkCandidateIsApplied: (candidateId: number, jobId: number) => {
+    const url = `/job/${jobId}/candidate/${candidateId}`
+    return request.get(url)
+  },
+  cancelJob: (candidateId: number, jobId: number) => {
+    const url = `/job/${jobId}/candidate/${candidateId}`
+    return request.delete(url)
   }
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`

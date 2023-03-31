@@ -18,9 +18,9 @@ const request = (url: string) => {
     // if (config.url === '/auth/signin') {
     //   config.method = 'POST'
     // }
-    // if (config.url === '/file') {
-    //   config.headers['content-Type'] = 'multipart/form-data'
-    // }
+    if (config.url === '/upload') {
+      config.headers['content-Type'] = 'multipart/form-data'
+    }
     return config
   })
   axiosClient.interceptors.response.use(

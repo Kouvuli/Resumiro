@@ -4,27 +4,13 @@ import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CreateIcon from '@mui/icons-material/Create'
-import AddIcon from '@mui/icons-material/Add'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import OwnedJobItem from './ownedJobItem'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
-import { Experience, Job, Skill } from '@shared/interfaces'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
-import Modal from '@mui/material/Modal'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import resumiroApi from '@apis/resumiroApi'
-import { companies } from '@prisma/client'
-import { useSession } from 'next-auth/react'
-import { CircularProgress } from '@mui/material'
-import MySnackBar from '@components/ui/bar/snackbar'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
-import profileSlice, { createExperience } from '@redux/reducers/profileSlice'
+import { Job, Skill } from '@shared/interfaces'
 import { fields, locations } from '@prisma/client'
 interface OwnedJobCardProps {
   style?: React.CSSProperties
@@ -44,16 +30,6 @@ const variants: Variants = {
     y: 0
   }
 }
-// const style = {
-//   position: 'absolute' as 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: 400,
-//   bgcolor: 'background.paper',
-//   boxShadow: 24,
-//   p: 4
-// }
 
 const CustomListItem = styled(ListItem)(({}) => ({
   paddingLeft: 'unset',
@@ -67,34 +43,10 @@ const OwnedJobCard: React.FC<OwnedJobCardProps> = ({
   allFields,
   allLocations
 }) => {
-  const dispatch = useAppDispatch()
   const [isModify, setIsModify] = useState(false)
-  const { data: session } = useSession()
-
-  const { loading } = useAppSelector(profileSelector)
 
   const modifyToggleHandler = () => {
     setIsModify(prev => !prev)
-  }
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    const position = data.get('position')!.toString()
-    const company = data.get('company')!.toString()
-    const start = data.get('start')!.toString()
-    const finish = data.get('finish')!.toString()
-
-    dispatch(
-      createExperience({
-        position: position,
-        company_id: Number(company),
-        start: start,
-        finish: finish,
-        user_id: Number(session!.user!.name)
-      })
-    )
-
-    setOpen(false)
   }
 
   return (

@@ -20,7 +20,6 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
   title,
   type
 }) => {
-  console.log(data)
   return (
     <Grid
       container

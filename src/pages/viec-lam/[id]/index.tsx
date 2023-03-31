@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import Container from '@mui/material/Container'
 import ArticleLayout from '@components/layouts/article'
@@ -14,6 +14,15 @@ import { Company, Job, Skill } from '@shared/interfaces'
 import { JobCardProps } from '@components/cards/jobCard'
 import parse from 'html-react-parser'
 import resumiroApi from '@apis/resumiroApi'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { jobDetailSelector } from '@redux/selectors'
+import { useSession } from 'next-auth/react'
+import jobDetailSlice, {
+  applyJob,
+  cancelJob,
+  checkIsApplied
+} from '@redux/reducers/jobDetailSlice'
+import MySnackBar from '@components/ui/bar/snackbar'
 
 const DetailJobList = styled(`ul`)(({ theme }) => ({
   listStyle: 'none',
@@ -71,26 +80,30 @@ const DetailJobList = styled(`ul`)(({ theme }) => ({
 //     createAt: new Date('2023-03-16')
 //   }
 // ]
-interface JobDetail {
-  id: number
-  title: string
-  company: Company
-  location: string
-  salary: string
-  experience: string
-  position: string
-  requirements: string
-  benefits: string
-  jobs_skills: { skill: Skill }[]
-  createAt: string
-  updateAt: string | undefined
-  // jobs_applicants:[]
-}
+// interface JobDetail {
+//   id: number
+//   title: string
+//   company: Company
+//   location: string
+//   salary: string
+//   experience: string
+//   position: string
+//   requirements: string
+//   benefits: string
+//   jobs_skills: { skill: Skill }[]
+//   createAt: string
+//   updateAt: string | undefined
+//   // jobs_applicants:[]
+// }
 
 interface JobDetailProps {
   data: Job
   sameCompanyJob: JobCardProps[]
 }
+
+const CustomListItem = styled(ListItem)(({}) => ({
+  paddingLeft: 'unset'
+}))
 
 const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
   const {
@@ -108,12 +121,62 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     update_at,
     jobs_skills
   } = data
+  const dispatch = useAppDispatch()
+  const { data: session } = useSession()
+  const { isApplied, showMessage, message, messageType, loading } =
+    useAppSelector(jobDetailSelector)
+
+  useEffect(() => {
+    if (session) {
+      dispatch(
+        checkIsApplied({
+          candidateId: session!.user!.name!,
+          jobId: id
+        })
+      )
+    }
+  }, [session])
+  const applyHandler = () => {
+    if (!isApplied) {
+      dispatch(
+        applyJob({
+          id: id,
+          data: {
+            candidate_id: session!.user!.name!
+          }
+        })
+      )
+      dispatch(jobDetailSlice.actions.changeApplyStatus({ isApplied: true }))
+    } else {
+      dispatch(
+        cancelJob({
+          candidateId: session!.user!.name!,
+          jobId: id
+        })
+      )
+      dispatch(jobDetailSlice.actions.changeApplyStatus({ isApplied: false }))
+    }
+  }
+  const handleSnackBarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(jobDetailSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
   return (
     <ArticleLayout title="Chi tiết việc làm">
       <Container>
+        <MySnackBar
+          handleClose={handleSnackBarClose}
+          message={message}
+          messageType={messageType}
+          showMessage={showMessage}
+        />
         <Grid container marginTop="1rem " marginBottom="5rem">
           <Grid item xs={12} md={7.5}>
             <JobDetailCard
+              isApply={isApplied}
+              applyHandler={applyHandler}
               id={id}
               jobTitle={title}
               companyName={company.name}
@@ -126,10 +189,10 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
               updateAt={update_at}
             />
             <List>
-              <ListItem>
+              <CustomListItem>
                 <Typography variant="h5">Skills</Typography>
-              </ListItem>
-              <ListItem sx={{ flexWrap: 'wrap' }}>
+              </CustomListItem>
+              <CustomListItem sx={{ flexWrap: 'wrap' }}>
                 {jobs_skills.map(({ skill }) => (
                   <DenseChip
                     style={{
@@ -141,9 +204,9 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
                     label={skill.name}
                   />
                 ))}
-              </ListItem>
+              </CustomListItem>
 
-              <ListItem
+              <CustomListItem
                 sx={{
                   diplay: 'flex',
                   flexDirection: 'column',
@@ -191,8 +254,8 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
                     <p>{benefits}</p>
                   </li>
                 </DetailJobList>
-              </ListItem>
-              <ListItem>
+              </CustomListItem>
+              <CustomListItem>
                 <CompanyBriefCard
                   name={company.name}
                   logo={company.logo}
@@ -201,7 +264,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
                   website={company.website}
                   id={company.id}
                 />
-              </ListItem>
+              </CustomListItem>
             </List>
           </Grid>
           <Grid item xs={12} md={4.5}>

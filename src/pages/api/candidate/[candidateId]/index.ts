@@ -20,7 +20,11 @@ export default async function handler(
       .findFirst({
         where: { id: id },
         include: {
-          resumes: true,
+          resumes: {
+            orderBy: {
+              create_at: 'desc'
+            }
+          },
           candidates_skills: {
             select: {
               skill: true

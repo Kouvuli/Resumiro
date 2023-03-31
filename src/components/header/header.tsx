@@ -274,7 +274,7 @@ const Header = () => {
                     </li>
                     {session && (
                       <li>
-                        {user.role === 'candidate' ? (
+                        {session!.user!.email! === 'candidate' ? (
                           <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
                         ) : (
                           <Link href="/ho-so-cv">Hồ sơ & CV</Link>
@@ -387,7 +387,7 @@ const Header = () => {
                 </li>
                 {session && (
                   <li>
-                    {user.role === 'candidate' ? (
+                    {session!.user!.email! === 'candidate' ? (
                       <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
                     ) : (
                       <Link href="/ho-so-cv">Hồ sơ & CV</Link>

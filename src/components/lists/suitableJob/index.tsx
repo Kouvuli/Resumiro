@@ -7,6 +7,7 @@ import RoundButton from '@components/ui/button/roundButton'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 import Typography from '@mui/material/Typography'
 interface SuitableJobProps {
+  openHandler?: () => void
   isResumePage?: boolean
   title: string
   items: JobCardProps[]
@@ -22,6 +23,7 @@ const CustomListItem = styled(ListItem)(({ theme }) => ({
 }))
 
 const SuitableJob: React.FC<SuitableJobProps> = ({
+  openHandler,
   isResumePage,
   title,
   items
@@ -31,6 +33,7 @@ const SuitableJob: React.FC<SuitableJobProps> = ({
       {isResumePage && (
         <CustomListItem>
           <RoundButton
+            onClick={openHandler}
             primary={true}
             startIcon={<FileUploadIcon />}
             style={{ fontSize: '1rem', padding: '10px 12px' }}

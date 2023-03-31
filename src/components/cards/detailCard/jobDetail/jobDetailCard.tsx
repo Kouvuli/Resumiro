@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import { styled } from '@mui/material/styles'
+import { styled, SxProps } from '@mui/material/styles'
 import TagButton from '@components/ui/button/tagButton'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
@@ -16,7 +16,10 @@ import ShareIcon from '@mui/icons-material/Share'
 import Image from 'next/image'
 import { convertMonthToYear, getCurrentTimeDiff } from '@utils/timeUtil'
 import { locations } from '@prisma/client'
+import { useSession } from 'next-auth/react'
 interface JobDetailCardProps {
+  isApply: boolean
+  applyHandler: () => void
   id: number
   jobTitle: string
   companyName: string
@@ -30,13 +33,32 @@ interface JobDetailCardProps {
   updateAt: Date | null
 }
 
+const activeStyle: SxProps = {
+  background: 'white',
+  border: 1,
+  borderColor: 'primary.main',
+  '&:hover': {
+    background: 'white'
+  },
+  color: 'primary.main',
+
+  padding: 1.5,
+  fontSize: '1.1rem'
+}
+const normalStyle: SxProps = {
+  padding: 1.5,
+  fontSize: '1.1rem'
+}
 const CustomJobCard = styled(Card)(({ theme }) => ({
   borderRadius: '0',
   boxShadow: 'unset',
+
   borderBottom: `1px solid ${theme.palette.text.disabled}`
 }))
 
 const JobDetailCard: React.FC<JobDetailCardProps> = ({
+  isApply,
+  applyHandler,
   jobTitle,
   companyName,
   companyLogo,
@@ -47,10 +69,11 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
   createAt,
   updateAt
 }) => {
+  const { data: session } = useSession()
   return (
     <CustomJobCard>
       <CardHeader
-        sx={{ alignItems: 'start', padding: '24px 24px 12px 24px' }}
+        sx={{ alignItems: 'start', padding: '24px 24px 12px 0' }}
         avatar={
           <Image
             style={{ borderRadius: '5px' }}
@@ -73,7 +96,7 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
       />
       <CardContent
         sx={{
-          padding: '0 24px 0 24px'
+          padding: '0 24px 0 0'
         }}
       >
         <ul style={{ listStyleType: 'none' }}>
@@ -124,23 +147,29 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
           </li>
         </ul>
       </CardContent>
-      <CardActions sx={{ padding: '24px' }}>
-        <RoundButton primary style={{ padding: '12px', fontSize: '1.1rem' }}>
-          Ứng tuyển nhanh
-        </RoundButton>
-        <RoundButton
-          style={{ padding: '12px', fontSize: '1.1rem' }}
-          startIcon={<FavoriteBorderOutlinedIcon />}
-        >
-          Thích
-        </RoundButton>
-        <RoundButton
-          style={{ padding: '12px', fontSize: '1.1rem' }}
-          startIcon={<ShareIcon />}
-        >
-          Chia sẻ
-        </RoundButton>
-      </CardActions>
+      {session && (
+        <CardActions sx={{ padding: '24px 24px 24px 0' }}>
+          <RoundButton
+            primary
+            style={isApply ? activeStyle : normalStyle}
+            onClick={applyHandler}
+          >
+            Ứng tuyển nhanh
+          </RoundButton>
+          <RoundButton
+            style={{ padding: '12px', fontSize: '1.1rem' }}
+            startIcon={<FavoriteBorderOutlinedIcon />}
+          >
+            Thích
+          </RoundButton>
+          <RoundButton
+            style={{ padding: '12px', fontSize: '1.1rem' }}
+            startIcon={<ShareIcon />}
+          >
+            Chia sẻ
+          </RoundButton>
+        </CardActions>
+      )}
     </CustomJobCard>
   )
 }

@@ -24,7 +24,12 @@ export default async function handler(
             include: {
               location: true,
               company: true,
-              jobs_skills: true
+              jobs_skills: true,
+              jobs_applicants: {
+                include: {
+                  applicant: true
+                }
+              }
             }
           }
         }

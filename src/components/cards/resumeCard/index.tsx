@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
@@ -13,7 +13,12 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
 import { candidates } from '@prisma/client'
+import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
+import CircularProgress from '@mui/material/CircularProgress/'
+import { useAppDispatch } from '@hooks/index'
+import { deleteResume } from '@redux/reducers/resumeSlice'
+import { useRouter } from 'next/router'
 export interface ResumeCardProps {
   index?: number
   type?: number
@@ -48,10 +53,30 @@ const resumeCardVariants: Variants = {
 const ResumeCard: React.FC<ResumeCardProps> = ({
   resumeTitle,
   data,
+  id,
   owner,
   createAt,
   type
 }) => {
+  const [page, setPage] = useState(1)
+  const canvasRef = useRef(null)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const { pdfDocument, pdfPage } = usePdf({
+    file: data,
+    canvasRef,
+    page
+
+    // scale: 0.65
+  })
+
+  const deleteHandler = () => {
+    dispatch(deleteResume(id))
+    router.push({
+      pathname: router.pathname
+    })
+  }
+
   if (type === 2) {
     return (
       <motion.div
@@ -73,6 +98,8 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                 color="secondary"
                 disableElevation
                 disableFocusRipple
+                target="_blank"
+                href={data}
                 sx={{
                   boxShadow: 'unset',
                   textTransform: 'capitalize'
@@ -115,13 +142,20 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
           className={styles['content']}
         >
           <CardMedia
-            component="img"
-            src={data}
-            alt="green iguana"
-            style={{
-              height: '100%'
+            component="canvas"
+            ref={canvasRef}
+            sx={{
+              width: '100%!important',
+              height: '100%!important',
+              objectFit: 'cover'
             }}
+            // src={data}
+            // alt="green iguana"
           />
+          {!pdfDocument && (
+            <CircularProgress sx={{ display: 'flex', margin: 'auto' }} />
+          )}
+
           <CardContent
             sx={{
               backgroundColor: 'background.paper',
@@ -160,7 +194,11 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             <Button
               variant="contained"
               size="large"
+              href={data}
               color="secondary"
+              target="_blank"
+              disableElevation
+              disableFocusRipple
               sx={{
                 boxShadow: 'unset',
                 textTransform: 'capitalize'
@@ -198,6 +236,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             <Button
               variant="text"
               size="small"
+              onClick={deleteHandler}
               startIcon={<DeleteOutlineRoundedIcon />}
               sx={{ textTransform: 'none', color: 'grey[200]' }}
             >
@@ -215,13 +254,19 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
         className={styles['content']}
       >
         <CardMedia
-          component="img"
-          src={data}
-          alt="green iguana"
-          style={{
-            height: '100%'
+          component="canvas"
+          ref={canvasRef}
+          sx={{
+            width: '100%!important',
+            height: '100%!important',
+            objectFit: 'cover'
           }}
+          // src={data}
+          // alt="green iguana"
         />
+        {!pdfDocument && (
+          <CircularProgress sx={{ display: 'flex', margin: 'auto' }} />
+        )}
         <CardContent
           sx={{
             backgroundColor: 'background.paper',

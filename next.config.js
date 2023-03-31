@@ -6,7 +6,8 @@ const nextConfig = {
       'cdn-icons-png.flaticon.com',
       'companieslogo.com',
       'www.mhafbfun.com',
-      'itviec.com'
+      'itviec.com',
+      'cdn.24h.com.vn'
     ]
   }
 }

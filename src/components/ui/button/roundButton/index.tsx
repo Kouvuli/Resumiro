@@ -1,11 +1,11 @@
 import { Button } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { styled, SxProps } from '@mui/material/styles'
 import React from 'react'
 
 interface RoundButtonProps {
   children: React.ReactNode
   startIcon?: React.ReactNode
-  style?: React.CSSProperties
+  style?: SxProps
   primary?: boolean
   onClick?: () => void
 }

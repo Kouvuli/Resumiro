@@ -20,6 +20,8 @@ import { TextField } from '@mui/material'
 import { useState } from 'react'
 import { profileSelector } from '@redux/selectors'
 import { CircularProgress } from '@mui/material'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
 import {
   FormControl,
   InputLabel,
@@ -31,7 +33,9 @@ import {
 import InputAdornment from '@mui/material/InputAdornment'
 import { convertMonthToYear } from '@utils/timeUtil'
 import { fields, locations, skills } from '@prisma/client'
-const CustomExperienceItem = styled(Card)(({}) => ({
+import ReorderIcon from '@mui/icons-material/Reorder'
+import JobApplicantItem from './jobApplicantIem'
+const CustomOwnedJobItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
 }))
@@ -65,13 +69,16 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
   allLocations,
   isModify
 }) => {
-  const [open, setOpen] = useState(false)
+  const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [applicantModalOpen, setApplicantModalOpen] = useState(false)
   const [skill, setSkill] = React.useState<string[]>(
     data.jobs_skills.map(item => item.skill_id.toString())
   )
   const { loading } = useAppSelector(profileSelector)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleOpenUpdateModal = () => setUpdateModalOpen(true)
+  const handleCloseUpdateModal = () => setUpdateModalOpen(false)
+  const handleOpenApplicantModel = () => setApplicantModalOpen(true)
+  const handleCloseApplicantModel = () => setApplicantModalOpen(false)
   const dispatch = useAppDispatch()
   const handleChange = (event: SelectChangeEvent<typeof skill>) => {
     const {
@@ -83,7 +90,7 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
       typeof value === 'string' ? value.split(',') : value
     )
   }
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const updateJobHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const title = formData.get('title')!.toString()
@@ -125,13 +132,13 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
       })
     )
 
-    setOpen(false)
+    setUpdateModalOpen(false)
   }
-  const deleteHandler = () => {
+  const deleteJobHandler = () => {
     dispatch(deleteJob(data.id))
   }
   return (
-    <CustomExperienceItem>
+    <CustomOwnedJobItem>
       <CardHeader
         avatar={
           <Image
@@ -164,11 +171,14 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
             <div style={{ flexGrow: 1 }} />
             {isModify && (
               <div>
-                <IconButton onClick={handleOpen}>
+                <IconButton onClick={handleOpenApplicantModel}>
+                  <ReorderIcon />
+                </IconButton>
+                <IconButton onClick={handleOpenUpdateModal}>
                   <CreateIcon />
                 </IconButton>
                 <IconButton>
-                  <DeleteIcon onClick={deleteHandler} />
+                  <DeleteIcon onClick={deleteJobHandler} />
                 </IconButton>
               </div>
             )}
@@ -176,11 +186,11 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
         }
         sx={{ padding: '0', alignItems: 'start' }}
       />
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={updateModalOpen} onClose={handleCloseUpdateModal}>
         <Box
           component="form"
           noValidate
-          onSubmit={handleSubmit}
+          onSubmit={updateJobHandler}
           sx={{
             borderRadius: '5px',
             position: 'absolute' as 'absolute',
@@ -343,7 +353,7 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
                   disableElevation
                   disableRipple
                   color="primary"
-                  onClick={handleClose}
+                  onClick={handleCloseUpdateModal}
                   sx={{
                     mr: 1,
                     p: 1.5,
@@ -373,7 +383,33 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
           </Grid>
         </Box>
       </Modal>
-    </CustomExperienceItem>
+      <Modal open={applicantModalOpen} onClose={handleCloseApplicantModel}>
+        <Box
+          sx={{
+            borderRadius: '5px',
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 600,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4
+          }}
+        >
+          <List disablePadding>
+            <ListItem>
+              <Typography variant="h6">Danh sách ứng viên</Typography>
+            </ListItem>
+            {data.jobs_applicants.map((item, index) => (
+              <ListItem key={index}>
+                <JobApplicantItem data={item.applicant} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Modal>
+    </CustomOwnedJobItem>
   )
 }
 

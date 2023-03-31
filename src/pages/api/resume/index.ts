@@ -14,6 +14,7 @@ export default async function handler(
 ) {
   const prisma = new PrismaClient()
   prisma.$connect()
+
   if (req.method === 'GET') {
     const {
       page = 1,
@@ -48,7 +49,7 @@ export default async function handler(
           {
             owner: {
               candidates_skills: {
-                some: {
+                every: {
                   skill: {
                     OR: skillArr
                   }
@@ -132,6 +133,49 @@ export default async function handler(
         page: page,
         limit: limit
       },
+      data: data
+    })
+    prisma.$disconnect()
+    return
+  } else if (req.method === 'POST') {
+    const { title, resume, owner_id } = req.body
+
+    const existingOwner = await prisma.candidates.findFirst({
+      where: {
+        id: owner_id
+      }
+    })
+
+    if (!existingOwner) {
+      res.status(400).json({
+        message: 'User not exist',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
+    const data = await prisma.resumes.create({
+      data: {
+        title: title,
+        create_at: new Date(),
+        data: resume,
+        owner_id: owner_id
+      }
+    })
+
+    if (!data) {
+      res.status(400).json({
+        message: 'Cannot create resume',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
+    res.status(200).json({
+      message: 'Successfully create resume',
+      status: 'ok',
       data: data
     })
     prisma.$disconnect()
