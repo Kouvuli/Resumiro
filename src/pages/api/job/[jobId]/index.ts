@@ -148,6 +148,11 @@ export default async function handler(
         job_id: id
       }
     })
+    await prisma.jobs_applicants.deleteMany({
+      where: {
+        job_id: id
+      }
+    })
     const data = await prisma.jobs
       .delete({
         where: {
