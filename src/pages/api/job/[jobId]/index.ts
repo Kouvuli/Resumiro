@@ -14,6 +14,22 @@ export default async function handler(
   const { jobId } = req.query
   prisma.$connect()
   let id = Number(jobId)
+
+  const existingJob = prisma.jobs.findFirst({
+    where: {
+      id: id
+    }
+  })
+
+  if (!existingJob) {
+    res.status(404).json({
+      message: 'Job not found',
+      status: 'error'
+    })
+    prisma.$disconnect()
+    return
+  }
+
   if (req.method === 'GET') {
     const jobs = await prisma.jobs
       .findFirst({
@@ -126,16 +142,21 @@ export default async function handler(
     })
     prisma.$disconnect()
     return
-  } else if ((req.method = 'DELETE')) {
+  } else if (req.method === 'DELETE') {
+    await prisma.jobs_skills.deleteMany({
+      where: {
+        job_id: id
+      }
+    })
     const data = await prisma.jobs
       .delete({
         where: {
           id: id
         }
       })
-      .catch(() => {
+      .catch(e => {
         res.status(500).json({
-          message: 'Something went wrong',
+          message: e.message,
           status: 'error'
         })
         prisma.$disconnect()
