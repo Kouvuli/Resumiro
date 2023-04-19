@@ -35,6 +35,7 @@ import { convertMonthToYear } from '@utils/timeUtil'
 import { fields, locations, skills } from '@prisma/client'
 import ReorderIcon from '@mui/icons-material/Reorder'
 import JobApplicantItem from './jobApplicantIem'
+import Paper from '@mui/material/Paper'
 const CustomOwnedJobItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -384,7 +385,7 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
         </Box>
       </Modal>
       <Modal open={applicantModalOpen} onClose={handleCloseApplicantModel}>
-        <Box
+        <Paper
           sx={{
             borderRadius: '5px',
             position: 'absolute' as 'absolute',
@@ -407,7 +408,7 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
               </ListItem>
             ))}
           </List>
-        </Box>
+        </Paper>
       </Modal>
     </CustomOwnedJobItem>
   )

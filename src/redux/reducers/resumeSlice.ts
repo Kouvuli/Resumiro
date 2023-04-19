@@ -27,7 +27,7 @@ export const fetchAllSkills = createAsyncThunk('get-all-skills', async () => {
 export const uploadResume = createAsyncThunk(
   'upload-resume',
   async (body: any) => {
-    const data = await resumiroApi.uploadImage(body).then(res => res.data)
+    const data = await resumiroApi.uploadFile(body).then(res => res.data)
     return data
   }
 )
@@ -67,7 +67,8 @@ const resumeSlice = createSlice({
     changeSnackBarMessage: (state, action) => {
       state.message = action.payload.message
       state.messageType = action.payload.messageType
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: builder => {
     builder

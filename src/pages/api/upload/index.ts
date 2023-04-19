@@ -15,14 +15,16 @@ type Data = {
 }
 const outputFolderName = './public/uploads'
 let timeNow = 0
+let fileExtension = ''
 // SET STORAGE
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, outputFolderName)
   },
   filename: function (req, file, cb) {
+    fileExtension = file.originalname.split('.').pop()!
     timeNow = Date.now()
-    cb(null, `${file.fieldname}-${timeNow}.pdf`)
+    cb(null, `${file.fieldname}-${timeNow}.${fileExtension}`)
   }
 })
 
@@ -42,7 +44,7 @@ const apiRoute = nc<MulterRequest, NextApiResponse<Data>>({
   }
 })
 
-apiRoute.use(upload.single('resume'))
+apiRoute.use(upload.single('file'))
 
 apiRoute.post(async (req, res) => {
   const file = req.file
@@ -56,7 +58,7 @@ apiRoute.post(async (req, res) => {
     token: `${process.env.WEB3_STORAGE_API_KEY}`
   })
 
-  const fileName = `${file.fieldname}-${timeNow}.pdf`
+  const fileName = `${file.fieldname}-${timeNow}.${fileExtension}`
   const pathFile = await getFilesFromPath(`${outputFolderName}/${fileName}`)
   const cid = await storageWeb3.put(pathFile, { name: fileName })
   const url = `https://ipfs.io/ipfs/${cid}/${fileName}`

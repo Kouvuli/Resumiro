@@ -112,6 +112,7 @@ model recruiters {
   phone          String?    @db.VarChar(100)
   company_id     Int?
   position       String?    @db.VarChar(100)
+  is_admin       Boolean?   @default(false)
   role           roles
   company        companies? @relation(fields: [company_id], references: [id])
   jobs           jobs[]

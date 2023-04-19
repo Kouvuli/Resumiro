@@ -15,6 +15,7 @@ import profileSlice, {
   fetchAllCompanies,
   fetchAllFields,
   fetchAllLocations,
+  fetchAllRecruiterSameCompany,
   fetchAllSkills,
   fetchCandidateById,
   fetchRecruiterById
@@ -22,9 +23,9 @@ import profileSlice, {
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
-import CompanyCard from '@components/cards/companyCard'
 import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
 import OwnedJobCard from '@components/cards/profileCard/ownedJobCard/ownedJobCard'
+import OwnedRecruiterCard from '@components/cards/profileCard/ownedRecruiterCard/ownedRecruiterCard'
 
 const ProfilePage = () => {
   const { data: session } = useSession()
@@ -37,7 +38,8 @@ const ProfilePage = () => {
     messageType,
     user,
     allCompanies,
-    allSkills
+    allSkills,
+    recruitersSameCompany
   } = useAppSelector(profileSelector)
   useEffect(() => {
     dispatch(fetchAllCompanies())
@@ -50,6 +52,9 @@ const ProfilePage = () => {
       dispatch(fetchCandidateById(session!.user!.name!))
     } else {
       dispatch(fetchRecruiterById(session!.user!.name!))
+      if (user.is_admin) {
+        dispatch(fetchAllRecruiterSameCompany(user.company_id))
+      }
     }
   }, [showMessage])
 
@@ -85,6 +90,7 @@ const ProfilePage = () => {
                 fullName={user.full_name}
                 username={user.username}
                 role={user.role}
+                is_admin={user.is_admin}
                 phone={user.phone}
                 background={user.background}
                 email={user.email}
@@ -94,7 +100,8 @@ const ProfilePage = () => {
                 <CompanyBasicCard
                   style={{ marginTop: '16px' }}
                   company={user.company}
-                  allCompanies={allCompanies}
+                  isAdmin={user.is_admin}
+                  allLocations={allLocations}
                 />
               )}
               {user.role === 'recruiter' && (
@@ -104,6 +111,13 @@ const ProfilePage = () => {
                   allSkills={allSkills}
                   allFields={allFields}
                   allLocations={allLocations}
+                />
+              )}
+              {user.role === 'recruiter' && user.is_admin && (
+                <OwnedRecruiterCard
+                  style={{ marginTop: '16px' }}
+                  recruiters={recruitersSameCompany}
+                  companyId={user.company_id}
                 />
               )}
               {user.role === 'candidate' && (

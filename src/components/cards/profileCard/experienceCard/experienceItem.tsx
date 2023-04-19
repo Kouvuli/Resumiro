@@ -94,7 +94,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
                 {data.start} - {data.finish}
               </Typography>
             </div>
-            <div style={{ flexGrow: 1 }} />
+            <div style={{ flexGrow: 1 }}></div>
             {isModify && (
               <div>
                 <IconButton onClick={handleOpen}>

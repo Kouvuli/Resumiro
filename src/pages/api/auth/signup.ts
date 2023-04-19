@@ -78,24 +78,48 @@ export default async function handler(
       prisma.$disconnect()
       return
     }
-    newUser = await prisma.recruiters
-      .create({
-        data: {
-          username: username,
-          password: hashedPassword,
-          address_wallet: address_wallet,
 
-          role: roles.recruiter
-        }
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: 'Internal server error',
-          status: 'error'
+    if (role === 'admin_recruiter') {
+      newUser = await prisma.recruiters
+        .create({
+          data: {
+            username: username,
+            password: hashedPassword,
+            address_wallet: address_wallet,
+
+            role: roles.recruiter,
+            is_admin: true
+          }
         })
-        prisma.$disconnect()
-        return
-      })
+        .catch(() => {
+          res.status(500).json({
+            message: 'Internal server error',
+            status: 'error'
+          })
+          prisma.$disconnect()
+          return
+        })
+    } else {
+      newUser = await prisma.recruiters
+        .create({
+          data: {
+            username: username,
+            password: hashedPassword,
+            address_wallet: address_wallet,
+
+            role: roles.recruiter,
+            is_admin: false
+          }
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: 'Internal server error',
+            status: 'error'
+          })
+          prisma.$disconnect()
+          return
+        })
+    }
   }
   prisma.$disconnect()
   res

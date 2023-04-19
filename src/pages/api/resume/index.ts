@@ -25,6 +25,11 @@ export default async function handler(
     } = req.query
     let p = Number(page)
     let l = Number(limit)
+    let qArr: any
+    if (q !== '' || q !== null) {
+      qArr = q?.toString().split(' ')
+    }
+
     let skillArr: any
     if (skill && skill.toString() !== '') {
       const skills = skill?.toString().split(',')
@@ -59,7 +64,7 @@ export default async function handler(
           },
           {
             title: {
-              search: q?.toString()
+              search: q ? qArr.join('|') : undefined
             }
           }
         ]
@@ -119,7 +124,7 @@ export default async function handler(
           },
           {
             title: {
-              search: q?.toString()
+              search: q ? qArr.join('|') : undefined
             }
           }
         ]

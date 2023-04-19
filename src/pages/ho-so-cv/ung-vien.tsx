@@ -48,7 +48,10 @@ const ResumePage: React.FC<ResumePageProps> = ({
     uploadedResume
   } = useAppSelector(resumeSelector)
   const [openModal, setOpenModal] = useState(false)
-  const handleOpenModal = () => setOpenModal(true)
+  const handleOpenModal = () => {
+    dispatch(resumeSlice.actions.reset())
+    setOpenModal(true)
+  }
   const handleCloseModal = () => setOpenModal(false)
   const addResumeHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -83,7 +86,7 @@ const ResumePage: React.FC<ResumePageProps> = ({
     if (data) {
       const body = new FormData()
 
-      body.append('resume', data)
+      body.append('file', data)
       dispatch(uploadResume(body))
     }
   }
