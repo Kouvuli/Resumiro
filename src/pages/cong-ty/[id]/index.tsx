@@ -7,6 +7,7 @@ import CompanyDescriptionCard from '@components/cards/detailCard/companyDetail/c
 // import ImagesCard from '@components/cards/profileCard/imagesCard'
 import { Company } from '@shared/interfaces'
 import resumiroApi from '@apis/resumiroApi'
+import { smootherstep } from 'three/src/math/MathUtils'
 
 const CompanyDetailPage: React.FC<Company> = ({
   background,
