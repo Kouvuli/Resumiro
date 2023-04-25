@@ -11,7 +11,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import RoundButton from '@components/ui/button/roundButton'
 import { locations } from '@prisma/client'
-
+import { Job } from '@shared/interfaces'
+import { useRouter } from 'next/router'
 interface CompanyDetailCardProps {
   companyName: string
   location: locations
@@ -29,6 +30,7 @@ const CompanyDetailCard: React.FC<CompanyDetailCardProps> = ({
   scale,
   logo
 }) => {
+  const router = useRouter()
   return (
     <Card sx={{ borderTopRightRadius: '0px', borderTopLeftRadius: '0px' }}>
       <CardHeader
@@ -95,7 +97,12 @@ const CompanyDetailCard: React.FC<CompanyDetailCardProps> = ({
         <Divider sx={{ mb: 2 }} />
 
         <div style={{ display: 'flex', justifyContent: 'end' }}>
-          <RoundButton style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,0.25)' }}>
+          <RoundButton
+            style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,0.25)' }}
+            onClick={() => {
+              router.push(`/cong-ty/${router.query.id}/viec-lam`)
+            }}
+          >
             Xem việc làm đang tuyển
           </RoundButton>
         </div>

@@ -27,6 +27,11 @@ export default async function handler(
     } = req.query
     let p = Number(page)
     let l = Number(limit)
+    let qArr: any
+    if (q !== '' || q !== null) {
+      qArr = q?.toString().split(' ')
+    }
+
     let locationArr: any
     if (location && location.toString() !== '') {
       const locations = location?.toString().split(',')
@@ -184,7 +189,7 @@ export default async function handler(
           },
           {
             title: {
-              search: q?.toString()
+              search: q ? qArr.join('|') : undefined
             }
           }
         ]
@@ -245,7 +250,7 @@ export default async function handler(
           }
         ],
         title: {
-          search: q?.toString()
+          search: q ? qArr.join('|') : undefined
         }
       }
     })
@@ -296,7 +301,7 @@ export default async function handler(
           skill_id: Number(item)
         }
       })
-      console.log(skillsData)
+
       await prisma.jobs_skills.createMany({
         data: skillsData
       })

@@ -92,29 +92,29 @@ const featureLists: FeatureType[] = [
 //   }
 // ]
 
-const fieldLists: Field[] = [
-  {
-    id: 1,
-    fieldTitle: 'Nhân sự/ Human Resource/ HR',
-    description:
-      'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-    vacantNumber: 1022
-  },
-  {
-    id: 2,
-    fieldTitle: 'Nhân sự/ Human Resource/ HR',
-    description:
-      'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-    vacantNumber: 1022
-  },
-  {
-    id: 3,
-    fieldTitle: 'Nhân sự/ Human Resource/ HR',
-    description:
-      'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-    vacantNumber: 1022
-  }
-]
+// const fieldLists: Field[] = [
+//   {
+//     id: 1,
+//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
+//     description:
+//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
+//     vacantNumber: 1022
+//   },
+//   {
+//     id: 2,
+//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
+//     description:
+//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
+//     vacantNumber: 1022
+//   },
+//   {
+//     id: 3,
+//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
+//     description:
+//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
+//     vacantNumber: 1022
+//   }
+// ]
 
 const achievementLists: Achievement[] = [
   {

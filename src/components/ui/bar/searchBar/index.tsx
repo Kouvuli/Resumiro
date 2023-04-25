@@ -9,10 +9,14 @@ import { useSession } from 'next-auth/react'
 import RoundSelect from '@components/ui/select'
 
 interface SearchBarProps {
-  handleChange?: (value: string) => void
+  handleChangeLocation?: (value: string) => void
   handleSearch: () => void
   handleSearchTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleAddJob?: () => void
+  handleAddCompany?: () => void
+  hasAddJob?: boolean
+  hasLocationSelect?: boolean
+  hasAddCompany?: boolean
 }
 
 const options = [
@@ -31,44 +35,58 @@ const options = [
 ]
 
 const SearchBar: React.FC<SearchBarProps> = ({
-  handleChange,
+  handleChangeLocation,
   handleSearch,
   handleSearchTextChange,
-  handleAddJob
+  handleAddJob,
+  handleAddCompany,
+  hasAddJob,
+  hasLocationSelect,
+  hasAddCompany
 }) => {
   const router = useRouter()
   const { data: session } = useSession()
-  console.log(session)
   return (
     <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
       <SearchTextField
         style={{ flexGrow: 1 }}
         handleSearchTextChange={handleSearchTextChange}
       />
-      {router.pathname === '/cong-ty' && (
+      {hasLocationSelect && (
         <RoundSelect
-          handleChange={handleChange}
+          handleChange={handleChangeLocation}
           style={{ marginLeft: '8px' }}
           options={options}
         />
       )}
-      {router.pathname === '/viec-lam' &&
-        session &&
-        session.user?.email === 'recruiter' && (
-          <RoundButton
-            primary
-            style={{
-              padding: '7px 15px',
-              fontSize: '15px',
-              marginLeft: '8px',
-              textTransform: 'none'
-            }}
-            onClick={handleAddJob}
-          >
-            Thêm công việc
-          </RoundButton>
-        )}
-
+      {hasAddJob && (
+        <RoundButton
+          primary
+          style={{
+            padding: '7px 15px',
+            fontSize: '15px',
+            marginLeft: '8px',
+            textTransform: 'none'
+          }}
+          onClick={handleAddJob}
+        >
+          Thêm công việc
+        </RoundButton>
+      )}
+      {hasAddCompany && (
+        <RoundButton
+          primary
+          style={{
+            padding: '7px 15px',
+            fontSize: '15px',
+            marginLeft: '8px',
+            textTransform: 'none'
+          }}
+          onClick={handleAddCompany}
+        >
+          Thêm công ty
+        </RoundButton>
+      )}
       <RoundButton
         style={{
           padding: '7px 15px',

@@ -45,7 +45,6 @@ export const authOptions: NextAuthOptions = {
           prisma.$disconnect()
           throw new Error('Could not log you in')
         }
-        console.log(isValid)
         prisma.$disconnect()
         return { name: user.id, image: user.avatar, email: user.role }
       }

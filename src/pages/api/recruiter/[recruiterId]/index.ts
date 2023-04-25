@@ -95,5 +95,35 @@ export default async function handler(
     })
     prisma.$disconnect()
     return
+  } else if (req.method === 'DELETE') {
+    const data = await prisma.recruiters
+      .delete({
+        where: {
+          id: Number(recruiterId)
+        }
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: 'Something went wrong',
+          status: 'error'
+        })
+        prisma.$disconnect()
+        return
+      })
+    if (!data) {
+      res.status(400).json({
+        message: 'Cannot delete recruiter',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+    res.status(200).json({
+      message: 'Successfully delete recruiter',
+      status: 'ok',
+      data: data
+    })
+    prisma.$disconnect()
+    return
   }
 }

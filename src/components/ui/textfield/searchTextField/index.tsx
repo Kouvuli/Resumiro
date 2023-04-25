@@ -8,7 +8,7 @@ import { useAppDispatch } from '@hooks/index'
 import jobSlice from '@redux/reducers/jobSlice'
 
 interface SearchTextFieldProps {
-  style: React.CSSProperties
+  style?: React.CSSProperties
   handleSearchTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 

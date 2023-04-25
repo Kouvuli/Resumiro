@@ -12,7 +12,6 @@ import { smootherstep } from 'three/src/math/MathUtils'
 const CompanyDetailPage: React.FC<Company> = ({
   background,
   name,
-  jobs,
   location,
   website,
   about,
@@ -55,20 +54,6 @@ const CompanyDetailPage: React.FC<Company> = ({
 
 export async function getServerSideProps(context: { query: { id: string } }) {
   const { id } = context.query
-  // const companyDetail: Company = {
-  //   id: 1,
-  //   logo: '/images/Images_1.png',
-  //   companyName: 'DXC Technology Vietnam',
-  //   location: 'Ho Chi Minh City, Vietnam',
-  //   background: '/images/Images_1.png',
-  //   about:
-  //     'DXC Technology is a Fortune 500 global IT services leader. Our more than 130,000 people in 70-plus countries are entrusted by our customers to deliver what matters most.',
-  //   scale: '1001-5000 nhân viên',
-  //   website: 'https://www.dxc.technology/',
-  //   address: '46 Bùi Thị Xuân, Quận 1, TP Hồ Chí Minh',
-  //   introduction:
-  //     'DXC Technology is a Fortune 500 global IT services leader. Our more than 130,000 people in 70-plus countries are entrusted by our customers to deliver what matters most.'
-  // }
 
   const companyDetail = await resumiroApi
     .getCompanyById(id)

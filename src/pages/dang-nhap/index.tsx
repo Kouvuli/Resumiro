@@ -23,6 +23,10 @@ const roles = [
   {
     value: 'recruiter',
     label: 'Recruiter'
+  },
+  {
+    value: 'admin_recruiter',
+    label: 'Admin Recruiter'
   }
 ]
 

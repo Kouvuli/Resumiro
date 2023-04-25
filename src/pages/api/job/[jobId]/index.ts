@@ -120,7 +120,6 @@ export default async function handler(
           skill_id: Number(item)
         }
       })
-      console.log(skillsData)
       await prisma.jobs_skills.createMany({
         data: skillsData
       })

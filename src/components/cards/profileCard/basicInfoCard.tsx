@@ -35,6 +35,7 @@ interface BasicInfoCardProps {
   phone: string | null
   background: string | null
   role: string
+  is_admin?: boolean
 }
 
 const variants: Variants = {
@@ -56,6 +57,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
   role,
   phone,
   background,
+  is_admin,
   email
 }) => {
   const dispatch = useAppDispatch()
@@ -134,7 +136,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                     width: '170px'
                   }}
                   alt={fullName!}
-                  src={avatar!}
+                  src={avatar || 'images/default-user.jpg'}
                 />
               </div>
             }
@@ -177,7 +179,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                   }}
                   color="text.primary"
                 >
-                  {role}
+                  {is_admin ? 'Admin Recruiter' : role}
                 </Typography>
               </>
             }
@@ -233,7 +235,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                   width: '170px'
                 }}
                 alt={fullName!}
-                src={avatar!}
+                src={avatar || 'images/default-user.jpg'}
               />
             </div>
           }
@@ -281,7 +283,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                 }}
                 color="text.primary"
               >
-                {role}
+                {is_admin ? 'Admin Recruiter' : role}
               </Typography>
             </>
           }

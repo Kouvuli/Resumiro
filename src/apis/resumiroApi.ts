@@ -67,7 +67,7 @@ const resumiroApi = {
     address_wallet: string
     role: string
   }) => {
-    const url = `/auth/signup`
+    const url = `/auth/signUp`
 
     return request.post(url, {
       role,
@@ -219,7 +219,7 @@ const resumiroApi = {
     const url = `/job/${id}`
     return request.patch(url, data)
   },
-  uploadImage: (data: any) => {
+  uploadFile: (data: any) => {
     const url = '/upload'
     console.log(data)
     return request.post(url, data)
@@ -239,6 +239,50 @@ const resumiroApi = {
   cancelJob: (candidateId: number, jobId: number) => {
     const url = `/job/${jobId}/candidate/${candidateId}`
     return request.delete(url)
+  },
+  insertCompany: (data: {
+    name: string
+    logo: string
+    background: string
+    about: string
+    location_id: number
+    scale: string
+  }) => {
+    const url = '/company'
+    return request.post(url, data)
+  },
+  getRecruitersByCompanyId(id: number) {
+    const url = `recruiter/company/${id}`
+    return request.get(url)
+  },
+  deleteRecruiter: (id: number) => {
+    const url = `/recruiter/${id}`
+    return request.delete(url)
+  },
+  getNonCompanyRecruiters: (params: object) => {
+    const url = `/recruiter/nonCompany`
+    return request.get(url, { params })
+  },
+  updateCompanyById: (
+    id: number,
+    data: {
+      name: string
+      logo: string
+      background: string
+      about: string
+      location_id: number
+      scale: string
+      website?: string
+      address?: string
+      introduction?: string
+    }
+  ) => {
+    const url = `/company/${id}`
+    return request.patch(url, data)
+  },
+  getJobsOfCompany: (id: string, params: object) => {
+    const url = `/company/${id}/job`
+    return request.get(url, { params })
   }
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`

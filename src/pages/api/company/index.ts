@@ -24,6 +24,11 @@ export default async function handler(
     let p = Number(page)
     let l = Number(limit)
     let data
+    let qArr: any
+    if (q !== '' || q !== null) {
+      qArr = q?.toString().split(' ')
+    }
+
     let locationId
     if (location && location !== '') {
       if (location === 'Ho_Chi_Minh') {
@@ -45,7 +50,7 @@ export default async function handler(
           },
           {
             name: {
-              search: q?.toString()
+              search: q ? qArr.join('|') : undefined
             }
           }
         ]
@@ -73,7 +78,7 @@ export default async function handler(
       where: {
         location_id: locationId,
         name: {
-          search: q?.toString()
+          search: q ? qArr.join('|') : undefined
         }
       }
     })
@@ -85,6 +90,35 @@ export default async function handler(
         page: page,
         limit: limit
       },
+      data: data
+    })
+    prisma.$disconnect()
+    return
+  } else if (req.method === 'POST') {
+    const { name, logo, background, about, location_id, scale } = req.body
+
+    let data = await prisma.companies.create({
+      data: {
+        name: name,
+        logo: logo,
+        background: background,
+        about: about,
+        location_id: location_id,
+        scale: scale
+      }
+    })
+    if (!data) {
+      res.status(400).json({
+        message: 'Cannot create company',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
+    res.status(200).json({
+      message: 'Successfully create company',
+      status: 'ok',
       data: data
     })
     prisma.$disconnect()

@@ -1,10 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
+import { Recruiter } from '@shared/interfaces'
 
 const initialState = {
   loading: false,
   created: false,
   showMessage: false,
+  recruitersSameCompany: [],
+  searchRecruiterNonCompanyText: '',
+  recruitersNonCompany: [],
+  uploadBackgroundLoading: false,
+  uploadLogoLoading: false,
+  uploadedLogo: '',
+  uploadedBackground: '',
+
   message: '',
   messageType: 'success',
   user: {},
@@ -30,10 +39,19 @@ export const fetchRecruiterById = createAsyncThunk(
     const { data } = await resumiroApi
       .getRecruiterById(id)
       .then(res => res.data)
+
     return data
   }
 )
-
+export const fetchAllRecruiterSameCompany = createAsyncThunk(
+  'get-all-recruiter-same-company',
+  async (id: any) => {
+    const { data } = await resumiroApi
+      .getRecruitersByCompanyId(id)
+      .then(res => res.data)
+    return data
+  }
+)
 export const fetchAllCompanies = createAsyncThunk(
   'get-all-companies',
   async () => {
@@ -59,6 +77,16 @@ export const fetchAllFields = createAsyncThunk('get-all-fields', async () => {
   const { data } = await resumiroApi.getFields().then(res => res.data)
   return data
 })
+
+export const fetchNonCompanyRecruiters = createAsyncThunk(
+  'get-non-company-recruiters',
+  async (input: any) => {
+    const { data } = await resumiroApi
+      .getNonCompanyRecruiters(input)
+      .then(res => res.data)
+    return data
+  }
+)
 
 export const createExperience = createAsyncThunk(
   'create-experience',
@@ -186,17 +214,56 @@ export const updateJob = createAsyncThunk('update-job', async (input: any) => {
   return data
 })
 
+export const deleteCompanyFromRecruiter = createAsyncThunk(
+  'delete-company-from-recruiter',
+  async (input: any) => {
+    const data = await resumiroApi
+      .updateRecruiterCompany(input.id, input.data)
+      .then(res => res.data)
+    return data
+  }
+)
+
+export const uploadLogo = createAsyncThunk('upload-logo', async (body: any) => {
+  const data = await resumiroApi.uploadFile(body).then(res => res.data)
+  return data
+})
+
+export const uploadBackground = createAsyncThunk(
+  'upload-background',
+  async (body: any) => {
+    const data = await resumiroApi.uploadFile(body).then(res => res.data)
+    return data
+  }
+)
+
+export const updateCompany = createAsyncThunk(
+  'update-company',
+  async (input: any) => {
+    const data = await resumiroApi
+      .updateCompanyById(input.id, input.data)
+      .then(res => res.data)
+    return data
+  }
+)
+
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
     reset: () => initialState,
+    clearNonCompanyRecruiters: state => {
+      state.recruitersNonCompany = []
+    },
     toggleSnackBar: (state, action) => {
       state.showMessage = action.payload.showMessage
     },
     changeSnackBarMessage: (state, action) => {
       state.message = action.payload.message
       state.messageType = action.payload.messageType
+    },
+    changeSearchRecruiterNonCompanyText: (state, action) => {
+      state.searchRecruiterNonCompanyText = action.payload
     }
   },
   extraReducers: builder => {
@@ -484,6 +551,60 @@ const profileSlice = createSlice({
         state.loading = false
       })
       .addCase(updateJob.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(fetchNonCompanyRecruiters.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchNonCompanyRecruiters.fulfilled, (state, action) => {
+        state.loading = false
+        state.recruitersNonCompany = action.payload
+      })
+      .addCase(fetchNonCompanyRecruiters.rejected, (state, action) => {
+        state.loading = false
+      })
+
+      .addCase(fetchAllRecruiterSameCompany.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchAllRecruiterSameCompany.fulfilled, (state, action) => {
+        state.loading = false
+        state.recruitersSameCompany = action.payload
+      })
+      .addCase(fetchAllRecruiterSameCompany.rejected, (state, action) => {
+        state.loading = false
+      })
+
+      .addCase(updateCompany.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(updateCompany.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(updateCompany.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(deleteCompanyFromRecruiter.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(deleteCompanyFromRecruiter.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(deleteCompanyFromRecruiter.rejected, (state, action) => {
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'

@@ -32,8 +32,8 @@ import {
 } from '@mui/material'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
+import { useSession } from 'next-auth/react'
 import MySnackBar from '@components/ui/bar/snackbar'
-import profileSlice from '@redux/reducers/profileSlice'
 type JobListPerPage = {
   perPage: number
   page: number
@@ -86,10 +86,17 @@ const JobPage: React.FC<JobPageProps> = ({
   recruiter
 }) => {
   const [open, setOpen] = useState(false)
-  const [skill, setSkill] = React.useState<string[]>([])
+  const [skill, setSkill] = useState<string[]>([])
+  const { data: session } = useSession()
+  const [hasAddJob, setHasAddJob] = useState(false)
+  useEffect(() => {
+    if (!_.isEmpty(recruiter)) {
+      setHasAddJob(true)
+    }
+  }, [])
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleOpenAddJobModal = () => setOpen(true)
+  const handleCloseAddJobModal = () => setOpen(false)
   const dispatch = useAppDispatch()
   const router = useRouter()
   const {
@@ -236,7 +243,7 @@ const JobPage: React.FC<JobPageProps> = ({
         showMessage={showMessage}
       />
       <Container>
-        <Modal open={open} onClose={handleClose}>
+        <Modal open={open} onClose={handleCloseAddJobModal}>
           <Box
             component="form"
             noValidate
@@ -397,7 +404,7 @@ const JobPage: React.FC<JobPageProps> = ({
                     disableElevation
                     disableRipple
                     color="primary"
-                    onClick={handleClose}
+                    onClick={handleCloseAddJobModal}
                     sx={{
                       mr: 1,
                       p: 1.5,
@@ -429,9 +436,10 @@ const JobPage: React.FC<JobPageProps> = ({
         </Modal>
         <Grid container marginTop="1rem " marginBottom="5rem" rowSpacing={2}>
           <SearchBar
-            handleAddJob={handleOpen}
             handleSearch={searchHandler}
             handleSearchTextChange={handleSearchTextChange}
+            handleAddJob={handleOpenAddJobModal}
+            hasAddJob={hasAddJob}
           />
 
           <SearchResultBar
