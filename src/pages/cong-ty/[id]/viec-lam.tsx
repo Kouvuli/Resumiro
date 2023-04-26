@@ -7,6 +7,7 @@ import Image from 'next/image'
 import JobGrid from '@components/grid/jobGrid'
 import ArticleLayout from '@components/layouts/article'
 import _ from 'lodash'
+
 type JobListPerPage = {
   perPage: number
   page: number
