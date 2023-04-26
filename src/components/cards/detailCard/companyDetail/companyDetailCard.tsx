@@ -76,16 +76,20 @@ const CompanyDetailCard: React.FC<CompanyDetailCardProps> = ({
               <dl className={styles['description']}>
                 <dt>Địa điểm</dt>
                 <dd>{location.name}</dd>
-                <dt>Website</dt>
-                <dd>
-                  <Link
-                    rel="nofollow noopener noreferrer"
-                    href={website}
-                    target="_blank"
-                  >
-                    {website}
-                  </Link>
-                </dd>
+                {website && (
+                  <>
+                    <dt>Website</dt>
+                    <dd>
+                      <Link
+                        rel="nofollow noopener noreferrer"
+                        href={website}
+                        target="_blank"
+                      >
+                        {website}
+                      </Link>
+                    </dd>
+                  </>
+                )}
                 <dt>Quy mô công ty</dt>
                 <dd>{scale}</dd>
               </dl>
