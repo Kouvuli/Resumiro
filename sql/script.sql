@@ -74,7 +74,7 @@ CREATE TABLE recruiters (
     company_id int,
 	position varchar(100),
 	role roles not null,
-
+	is_admin boolean,
 	CONSTRAINT pk_recruiters PRIMARY KEY(ID)
 );
 
@@ -96,7 +96,6 @@ CREATE TABLE companies (
     location_id INT NOT NULL,
 	address varchar(100),
 	introduction varchar(100),
-
 	CONSTRAINT pk_companies PRIMARY KEY(ID)
 );
 
@@ -213,23 +212,18 @@ INSERT INTO locations (name) VALUES
 ('Đà Nẵng'),
 ('Nha Trang');
 
--- Add companies
-INSERT INTO companies (id, name, logo, background, about, scale, website, location_id, address, introduction) VALUES
-(1, 'Google', 'https://cdn-icons-png.flaticon.com/512/281/281764.png?w=740&t=st=1678987111~exp=1678987711~hmac=d5b56dfe9ae4ede505dfcfcd33b37138ca4f8bdbc812b96d3fd9e4a7be021609', 'https://goldidea.vn/upload/y-nghia-logo-google.jpg', 'Google is a multinational technology company specializing in Internet-related services and products.', '1000 - 5000 nhân viên', 'https://www.google.com', 1,'35 Xô Viết Nghệ Tĩnh, Quận 9',null),
+-- -- Add companies
+-- INSERT INTO companies (id, name, logo, background, about, scale, website, location_id, address, introduction) VALUES
+-- (1, 'Google', 'https://cdn-icons-png.flaticon.com/512/281/281764.png?w=740&t=st=1678987111~exp=1678987711~hmac=d5b56dfe9ae4ede505dfcfcd33b37138ca4f8bdbc812b96d3fd9e4a7be021609', 'https://goldidea.vn/upload/y-nghia-logo-google.jpg', 'Google is a multinational technology company specializing in Internet-related services and products.', '1000 - 5000 nhân viên', 'https://www.google.com', 1,'35 Xô Viết Nghệ Tĩnh, Quận 9',null),
 
-(2, 'Facebook', 'https://www.mhafbfun.com/wp-content/uploads/2017/12/Facebook-Logo-Square-768x768-1.png', 'https://1000logos.net/wp-content/uploads/2016/11/Facebook-Logo-Meaning.jpg', 'Founded in 2004, Facebook’s mission is to give people the power to build community and bring the world closer together.', '1000 - 5000 nhân viên', 'https://www.facebook.com', 1 ,null,'46 Bùi Thị Xuân, Quận 1'),
+-- (2, 'Facebook', 'https://www.mhafbfun.com/wp-content/uploads/2017/12/Facebook-Logo-Square-768x768-1.png', 'https://1000logos.net/wp-content/uploads/2016/11/Facebook-Logo-Meaning.jpg', 'Founded in 2004, Facebook’s mission is to give people the power to build community and bring the world closer together.', '1000 - 5000 nhân viên', 'https://www.facebook.com', 1 ,null,'46 Bùi Thị Xuân, Quận 1'),
 
-(3, 'Amazon', 'https://companieslogo.com/img/orig/AMZN-e9f942e4.png?t=1632523695', 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg', 'Amazon.com, Inc. is an American multinational technology company based in Seattle, Washington, which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence.', '1000 - 5000 nhân viên', 'https://www.amazon.com', 2,'112 Trần Văn Ơn, Quận 5',null),
+-- (3, 'Amazon', 'https://companieslogo.com/img/orig/AMZN-e9f942e4.png?t=1632523695', 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg', 'Amazon.com, Inc. is an American multinational technology company based in Seattle, Washington, which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence.', '1000 - 5000 nhân viên', 'https://www.amazon.com', 2,'112 Trần Văn Ơn, Quận 5',null),
 
-(4, 'Hitachi Vantara', 'https://itviec.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMkcvR3c9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--b942ca3ef660be7577e778575d1af516f62e253f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBPZ2wzWldKd09oSnlaWE5wZW1WZmRHOWZabWwwV3dkcEFhb3ciLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--c92dff459e15c825e59a28180a8a086f8ec53bcd/Logo.png', 'https://modernising-justice.co.uk/wp-content/uploads/2020/06/hitachi-inspire-next-logo.png', 'Amazon.com, Inc. is an American multinational technology company based in Seattle, Washington, which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence.', '1000 - 5000 nhân viên', 'https://www.qtsc.com.vn/business/detail/74', 1,'4th Floor, Helios Building, Quang Trung Software City Ward, Tân Chánh Hiệp, Quận 12',null),
+-- (4, 'Hitachi Vantara', 'https://itviec.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBMkcvR3c9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--b942ca3ef660be7577e778575d1af516f62e253f/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBPZ2wzWldKd09oSnlaWE5wZW1WZmRHOWZabWwwV3dkcEFhb3ciLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--c92dff459e15c825e59a28180a8a086f8ec53bcd/Logo.png', 'https://modernising-justice.co.uk/wp-content/uploads/2020/06/hitachi-inspire-next-logo.png', 'Amazon.com, Inc. is an American multinational technology company based in Seattle, Washington, which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence.', '1000 - 5000 nhân viên', 'https://www.qtsc.com.vn/business/detail/74', 1,'4th Floor, Helios Building, Quang Trung Software City Ward, Tân Chánh Hiệp, Quận 12',null),
 
-(5, 'DXC Company', 'https://itviec.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBemJFSGc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c9c6112f7029be8e059b5b863a381f8229833797/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBPZ2wzWldKd09oSnlaWE5wZW1WZmRHOWZabWwwV3dkcEFhb3ciLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--c92dff459e15c825e59a28180a8a086f8ec53bcd/DXC%20Logo_Purple+Black%20RGB.png', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2s0HjjvLpn_jUgLY_afWGkw8Kv9xbqMFKag&usqp=CAU', 'Amazon.com, Inc. is an American multinational technology company based in Seattle, Washington, which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence.', '1000 - 5000 nhân viên', 'https://dxc.com/us/en', '2','4th Floor, Helios Building, Quang Trung Software City Ward, Tân Chánh Hiệp, Quận 12',null);
+-- (5, 'DXC Company', 'https://itviec.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBemJFSGc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c9c6112f7029be8e059b5b863a381f8229833797/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBPZ2wzWldKd09oSnlaWE5wZW1WZmRHOWZabWwwV3dkcEFhb3ciLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--c92dff459e15c825e59a28180a8a086f8ec53bcd/DXC%20Logo_Purple+Black%20RGB.png', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2s0HjjvLpn_jUgLY_afWGkw8Kv9xbqMFKag&usqp=CAU', 'Amazon.com, Inc. is an American multinational technology company based in Seattle, Washington, which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence.', '1000 - 5000 nhân viên', 'https://dxc.com/us/en', '2','4th Floor, Helios Building, Quang Trung Software City Ward, Tân Chánh Hiệp, Quận 12',null);
 
--- -- Add CVs
--- INSERT INTO resumes (owner_id, data, title, create_at) VALUES
--- (1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum libero id dui tincidunt viverra.', 'John Smith - Full-stack Developer', '2022-05-09 14:33:10'),
--- (1, 'Suspendisse commodo pellentesque neque, eu euismod velit eleifend quis. Maecenas posuere placerat finibus.', 'John Smith - Full-stack Developer (Version 2)', '2022-07-21 08:52:45'),
--- (2, 'Vivamus eget ante leo. Curabitur gravida mauris eu nisl luctus, et eleifend tortor rhoncus. Nulla sollicitudin, turpis vitae ultrices scelerisque, eros metus maximus erat, sed volutpat est nunc nec nibh.', 'Jane Doe - Software Engineer', '2022-07-21 08:52:45');
 
 
 INSERT INTO fields (name,description) VALUES
