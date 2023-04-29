@@ -19,19 +19,16 @@ export default async function handler(
   const prisma = new PrismaClient()
   prisma.$connect()
 
-  if (!username || !password) {
+  if (!username || !password || !address_wallet) {
     res.status(400).json({
-      message: 'Missing username or password',
+      message: 'Missing username, password or wallet address',
       status: 'error'
     })
     return
   }
 
-  prisma.$connect()
-
   let newUser
   const hashedPassword = await hashPassword(password)
-
   if (role === 'candidate') {
     const existingUser = await prisma.candidates.findFirst({
       where: {
@@ -86,7 +83,6 @@ export default async function handler(
             username: username,
             password: hashedPassword,
             address_wallet: address_wallet,
-
             role: roles.recruiter,
             is_admin: true
           }
@@ -106,7 +102,6 @@ export default async function handler(
             username: username,
             password: hashedPassword,
             address_wallet: address_wallet,
-
             role: roles.recruiter,
             is_admin: false
           }

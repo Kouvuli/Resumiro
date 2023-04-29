@@ -16,17 +16,22 @@ model allowed_recruiters_resumes {
 }
 
 model candidates {
-  id                Int                 @id(map: "pk_candidates") @default(autoincrement())
-  username          String              @db.VarChar(50)
-  password          String              @db.VarChar(100)
-  avatar            String?             @db.VarChar(1000)
-  background        String?             @db.VarChar(1000)
-  address_wallet    String              @unique @db.VarChar(100)
-  full_name         String?             @db.VarChar(100)
-  email             String?             @db.VarChar(100)
-  phone             String?             @db.VarChar(100)
-  about             String?             @db.VarChar(5000)
-  role              roles
+  id             Int           @id(map: "pk_candidates") @default(autoincrement())
+  username       String        @db.VarChar(50)
+  password       String        @db.VarChar(100)
+  avatar         String?       @db.VarChar(1000)
+  background     String?       @db.VarChar(1000)
+  address_wallet String        @unique @db.VarChar(100)
+  full_name      String?       @db.VarChar(100)
+  email          String?       @db.VarChar(100)
+  phone          String?       @db.VarChar(100)
+  about          String?       @db.VarChar(5000)
+  role           roles
+  nonce_id       Int?          @unique
+  nonce          crypto_nonce? @relation(fields: [nonce_id], references: [id])
+  room_id        Int?          @unique
+  room           rooms?        @relation(fields: [room_id], references: [id])
+
   candidates_skills candidates_skills[]
   jobs_applicants   jobs_applicants[]
   resumes           resumes[]
@@ -101,21 +106,26 @@ model jobs_skills {
 }
 
 model recruiters {
-  id             Int        @id(map: "pk_recruiters") @default(autoincrement())
-  username       String     @db.VarChar(50)
-  password       String     @db.VarChar(100)
-  avatar         String?    @db.VarChar(1000)
-  background     String?    @db.VarChar(1000)
-  address_wallet String     @unique @db.VarChar(100)
-  full_name      String?    @db.VarChar(100)
-  email          String?    @db.VarChar(100)
-  phone          String?    @db.VarChar(100)
+  id             Int           @id(map: "pk_recruiters") @default(autoincrement())
+  username       String        @db.VarChar(50)
+  password       String        @db.VarChar(100)
+  avatar         String?       @db.VarChar(1000)
+  background     String?       @db.VarChar(1000)
+  address_wallet String        @unique @db.VarChar(100)
+  full_name      String?       @db.VarChar(100)
+  email          String?       @db.VarChar(100)
+  phone          String?       @db.VarChar(100)
   company_id     Int?
-  position       String?    @db.VarChar(100)
-  is_admin       Boolean?   @default(false)
-  role           roles
-  company        companies? @relation(fields: [company_id], references: [id])
-  jobs           jobs[]
+  position       String?       @db.VarChar(100)
+  nonce_id       Int?          @unique
+  nonce          crypto_nonce? @relation(fields: [nonce_id], references: [id])
+  room_id        Int?          @unique
+  room           rooms?        @relation(fields: [room_id], references: [id])
+
+  is_admin Boolean?   @default(false)
+  role     roles
+  company  companies? @relation(fields: [company_id], references: [id])
+  jobs     jobs[]
 }
 
 model resumes {
@@ -161,10 +171,27 @@ model locations {
 }
 
 model fields {
-  id          Int     @id(map: "pk_job_types") @default(autoincrement())
+  id          Int     @id(map: "pk_fields") @default(autoincrement())
   name        String  @db.VarChar(100)
   description String? @db.VarChar(5000)
   jobs        jobs[]
+}
+
+model crypto_nonce {
+  id      Int      @id(map: "pk_crypto_nonces") @default(autoincrement())
+  nonce   String
+  expires DateTime
+
+  candidates candidates?
+  recruiters recruiters?
+}
+
+model rooms {
+  id    Int    @id(map: "pk_rooms") @default(autoincrement())
+  token String
+
+  candidates candidates?
+  recruiters recruiters?
 }
 
 enum roles {

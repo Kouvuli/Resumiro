@@ -2,7 +2,7 @@ import axiosClient from './axiosClient'
 
 // import authHeader from './auth-header'
 
-const request = axiosClient('http://localhost:3000/api')
+const request = axiosClient(process.env.NEXT_PUBLIC_API_URL!)
 
 const resumiroApi = {
   getJobs: (params: object) => {
@@ -56,12 +56,7 @@ const resumiroApi = {
     const url = `/candidate/${id}/about`
     return request.patch(url, data)
   },
-  registerUser: ({
-    username,
-    password,
-    address_wallet,
-    role
-  }: {
+  registerUser: (data: {
     username: string
     password: string
     address_wallet: string
@@ -69,12 +64,7 @@ const resumiroApi = {
   }) => {
     const url = `/auth/signup`
 
-    return request.post(url, {
-      role,
-      username,
-      password,
-      address_wallet
-    })
+    return request.post(url, data)
   },
 
   insertExperience: (data: {
@@ -283,6 +273,10 @@ const resumiroApi = {
   getJobsOfCompany: (id: string, params: object) => {
     const url = `/company/${id}/job`
     return request.get(url, { params })
+  },
+  generateNonce: (data: { address_wallet: string }) => {
+    const url = `/auth/crypto/generateNonce`
+    return request.post(url, data)
   }
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`
