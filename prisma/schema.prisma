@@ -8,15 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model allowed_recruiters_resumes {
-  recruiter_id Int
-  resume_id    Int
-
-  @@id([recruiter_id, resume_id], map: "pk_allowed_recruiters_resumes")
-}
-
-model candidates {
-  id             Int           @id(map: "pk_candidates") @default(autoincrement())
+model users {
+  id             Int           @id(map: "pk_users") @default(autoincrement())
   username       String        @db.VarChar(50)
   password       String        @db.VarChar(100)
   avatar         String?       @db.VarChar(1000)
@@ -31,38 +24,46 @@ model candidates {
   nonce          crypto_nonce? @relation(fields: [nonce_id], references: [id])
   room_id        Int?          @unique
   room           rooms?        @relation(fields: [room_id], references: [id])
+  is_admin       Boolean?      @default(false)
+  company_id     Int?
+  company        companies?    @relation(fields: [company_id], references: [id])
+  position       String?       @db.VarChar(100)
 
-  candidates_skills candidates_skills[]
-  jobs_applicants   jobs_applicants[]
-  resumes           resumes[]
-  certificates      certificates[]
-  experiences       experiences[]
+  users_skills        users_skills[]
+  jobs_applicants     jobs_applicants[]
+  resumes             resumes[]
+  certificates        certificates[]
+  experiences         experiences[]
+  jobs                jobs[]
+  notifications       notifications_users[]
+  owned_notifications notifications[]
 }
 
-model candidates_skills {
-  candidate_id Int
-  skill_id     Int
-  candidate    candidates @relation(fields: [candidate_id], references: [id])
-  skill        skills     @relation(fields: [skill_id], references: [id])
+model users_skills {
+  user_id  Int
+  skill_id Int
+  user     users  @relation(fields: [user_id], references: [id])
+  skill    skills @relation(fields: [skill_id], references: [id])
 
-  @@id([candidate_id, skill_id], map: "pk_candidates_skills")
+  @@id([user_id, skill_id], map: "pk_users_skills")
 }
 
 model companies {
-  id           Int           @id(map: "pk_companies") @default(autoincrement())
-  name         String        @db.VarChar(100)
-  logo         String        @db.VarChar(1000)
-  background   String        @db.VarChar(1000)
-  about        String        @db.VarChar(1000)
-  scale        String?       @db.VarChar(100)
-  website      String?       @db.VarChar(1000)
+  id           Int       @id(map: "pk_companies") @default(autoincrement())
+  name         String    @db.VarChar(100)
+  logo         String    @db.VarChar(1000)
+  background   String    @db.VarChar(1000)
+  about        String    @db.VarChar(1000)
+  scale        String?   @db.VarChar(100)
+  website      String?   @db.VarChar(1000)
   location_id  Int
-  location     locations     @relation(fields: [location_id], references: [id])
-  address      String?       @db.VarChar(100)
-  introduction String?       @db.VarChar(100)
+  location     locations @relation(fields: [location_id], references: [id])
+  address      String?   @db.VarChar(100)
+  introduction String?   @db.VarChar(100)
   jobs         jobs[]
-  recruiters   recruiters[]
-  experiences  experiences[]
+
+  experiences experiences[]
+  users       users[]
 }
 
 model jobs {
@@ -79,7 +80,7 @@ model jobs {
   salary          Int
   field_id        Int
   owner_id        Int
-  owner           recruiters        @relation(fields: [owner_id], references: [id])
+  owner           users             @relation(fields: [owner_id], references: [id])
   field           fields            @relation(fields: [field_id], references: [id])
   company         companies         @relation(fields: [company_id], references: [id])
   location        locations         @relation(fields: [location_id], references: [id])
@@ -90,8 +91,8 @@ model jobs {
 model jobs_applicants {
   job_id       Int
   applicant_id Int
-  applicant    candidates @relation(fields: [applicant_id], references: [id])
-  job          jobs       @relation(fields: [job_id], references: [id])
+  applicant    users @relation(fields: [applicant_id], references: [id])
+  job          jobs  @relation(fields: [job_id], references: [id])
 
   @@id([job_id, applicant_id], map: "pk_jobs_applicants")
 }
@@ -105,62 +106,40 @@ model jobs_skills {
   @@id([job_id, skill_id], map: "pk_jobs_skills")
 }
 
-model recruiters {
-  id             Int           @id(map: "pk_recruiters") @default(autoincrement())
-  username       String        @db.VarChar(50)
-  password       String        @db.VarChar(100)
-  avatar         String?       @db.VarChar(1000)
-  background     String?       @db.VarChar(1000)
-  address_wallet String        @unique @db.VarChar(100)
-  full_name      String?       @db.VarChar(100)
-  email          String?       @db.VarChar(100)
-  phone          String?       @db.VarChar(100)
-  company_id     Int?
-  position       String?       @db.VarChar(100)
-  nonce_id       Int?          @unique
-  nonce          crypto_nonce? @relation(fields: [nonce_id], references: [id])
-  room_id        Int?          @unique
-  room           rooms?        @relation(fields: [room_id], references: [id])
-
-  is_admin Boolean?   @default(false)
-  role     roles
-  company  companies? @relation(fields: [company_id], references: [id])
-  jobs     jobs[]
-}
-
 model resumes {
-  id        Int        @id(map: "pk_resumes") @default(autoincrement())
-  data      String     @db.VarChar(1000)
+  id        Int      @id(map: "pk_resumes") @default(autoincrement())
+  data      String   @db.VarChar(1000)
   owner_id  Int
-  title     String?    @db.VarChar(100)
-  create_at DateTime   @db.Timestamp(6)
-  owner     candidates @relation(fields: [owner_id], references: [id])
+  title     String?  @db.VarChar(100)
+  create_at DateTime @db.Timestamp(6)
+  owner     users    @relation(fields: [owner_id], references: [id])
 }
 
 model skills {
-  id                Int                 @id(map: "pk_skills") @default(autoincrement())
-  name              String              @db.VarChar(100)
-  candidates_skills candidates_skills[]
-  jobs_skills       jobs_skills[]
+  id   Int    @id(map: "pk_skills") @default(autoincrement())
+  name String @db.VarChar(100)
+
+  users_skills users_skills[]
+  jobs_skills  jobs_skills[]
 }
 
 model certificates {
-  id           Int        @id(map: "pk_educational_institutions") @default(autoincrement())
-  name         String     @db.VarChar(100)
-  verified_at  DateTime   @db.Timestamp(6)
-  candidate_id Int
-  candidate    candidates @relation(fields: [candidate_id], references: [id])
+  id          Int      @id(map: "pk_certificates") @default(autoincrement())
+  name        String   @db.VarChar(100)
+  verified_at DateTime @db.Timestamp(6)
+  user_id     Int
+  user        users    @relation(fields: [user_id], references: [id])
 }
 
 model experiences {
-  id         Int        @id(map: "pk_experiences") @default(autoincrement())
-  position   String     @db.VarChar(100)
-  start      String     @db.VarChar(50)
-  finish     String     @db.VarChar(50)
+  id         Int       @id(map: "pk_experiences") @default(autoincrement())
+  position   String    @db.VarChar(100)
+  start      String    @db.VarChar(50)
+  finish     String    @db.VarChar(50)
   company_id Int
   user_id    Int
-  company    companies  @relation(fields: [company_id], references: [id])
-  candidate  candidates @relation(fields: [user_id], references: [id])
+  company    companies @relation(fields: [company_id], references: [id])
+  user       users     @relation(fields: [user_id], references: [id])
 }
 
 model locations {
@@ -182,16 +161,44 @@ model crypto_nonce {
   nonce   String
   expires DateTime
 
-  candidates candidates?
-  recruiters recruiters?
+  users users?
 }
 
 model rooms {
   id    Int    @id(map: "pk_rooms") @default(autoincrement())
   token String
 
-  candidates candidates?
-  recruiters recruiters?
+  users users?
+}
+
+model notifications_users {
+  notification_id Int
+  user_id         Int
+  user            users         @relation(fields: [user_id], references: [id])
+  notification    notifications @relation(fields: [notification_id], references: [id])
+  is_read         Boolean       @default(false)
+
+  @@id([notification_id, user_id], map: "pk_notifications_users")
+}
+
+model notifications {
+  id                   Int                   @id(map: "pk_notifications") @default(autoincrement())
+  title                String?               @db.VarChar
+  content              String?               @db.VarChar
+  author_id            Int
+  author               users                 @relation(fields: [author_id], references: [id])
+  notification_type_id Int
+  notification_type    notification_types    @relation(fields: [notification_type_id], references: [id])
+  object_url           String?               @db.VarChar
+  create_at            DateTime              @db.Timestamp(6)
+  recipients           notifications_users[]
+}
+
+model notification_types {
+  id   Int    @id(map: "pk_notification_types") @default(autoincrement())
+  name String @db.VarChar
+
+  notifications notifications[]
 }
 
 enum roles {

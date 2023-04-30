@@ -50,6 +50,9 @@ const signUpSlice = createSlice({
         state.messageType = 'success'
         state.user = action.payload
         state.loading = false
+        setTimeout(() => {
+          state = initialState
+        }, 2000)
       })
       .addCase(signUp.rejected, (state, action) => {
         state.showMessage = true

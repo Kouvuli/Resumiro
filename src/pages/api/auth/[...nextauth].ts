@@ -21,31 +21,22 @@ export const authOptions: NextAuthOptions = {
         password: string
         signedNonce?: string
         address_wallet?: string
-        role: string
       }) {
         const prisma = new PrismaClient()
         prisma.$connect()
         if (!credentials) return null
 
-        const { username, password, signedNonce, role, address_wallet } =
-          credentials
+        const { username, password, signedNonce, address_wallet } = credentials
 
         let user
         if (address_wallet && signedNonce) {
-          user = await prisma.candidates.findFirst({
+          user = await prisma.users.findFirst({
             where: { address_wallet: address_wallet },
             include: {
               nonce: true
             }
           })
-          if (!user) {
-            user = await prisma.recruiters.findFirst({
-              where: { address_wallet: address_wallet },
-              include: {
-                nonce: true
-              }
-            })
-          }
+
           if (!user) {
             prisma.$disconnect()
             throw new Error('No user found')
@@ -66,15 +57,10 @@ export const authOptions: NextAuthOptions = {
             throw new Error('Token has expired!')
           }
         } else {
-          if (role === 'candidate') {
-            user = await prisma.candidates.findFirst({
-              where: { username: username }
-            })
-          } else {
-            user = await prisma.recruiters.findFirst({
-              where: { username: username }
-            })
-          }
+          user = await prisma.users.findFirst({
+            where: { username: username }
+          })
+
           if (!user) {
             prisma.$disconnect()
             throw new Error('No user found')

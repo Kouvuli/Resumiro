@@ -30,14 +30,12 @@ export default async function handler(
       return
     }
 
-    const existingSkillWithCandidate = await prisma.candidates_skills.findFirst(
-      {
-        where: {
-          candidate_id: Number(candidateId),
-          skill_id: Number(skill_id)
-        }
+    const existingSkillWithCandidate = await prisma.users_skills.findFirst({
+      where: {
+        user_id: Number(candidateId),
+        skill_id: Number(skill_id)
       }
-    )
+    })
 
     if (existingSkillWithCandidate) {
       res.status(400).json({
@@ -48,9 +46,9 @@ export default async function handler(
       return
     }
 
-    const data = await prisma.candidates_skills.create({
+    const data = await prisma.users_skills.create({
       data: {
-        candidate_id: Number(candidateId),
+        user_id: Number(candidateId),
         skill_id: Number(skill_id)
       }
     })
@@ -88,10 +86,10 @@ export default async function handler(
       return
     }
 
-    const data = await prisma.candidates_skills.delete({
+    const data = await prisma.users_skills.delete({
       where: {
-        candidate_id_skill_id: {
-          candidate_id: Number(candidateId),
+        user_id_skill_id: {
+          user_id: Number(candidateId),
           skill_id: Number(skill_id)
         }
       }

@@ -26,6 +26,7 @@
       "@hooks/*": ["./src/hooks/*"],
       "@context/*": ["./src/context/*"],
       "@shared/*": ["./src/shared/*"],
+      "@libs/*": ["./src/libs/*"],
       "@redux/*": ["./src/redux/*"],
       "@apis/*": ["./src/apis/*"],
       "@constants/*": ["./src/constants/*"],

@@ -35,7 +35,7 @@ export default async function generateNonce(
 
   let user
 
-  user = await prisma.candidates.update({
+  user = await prisma.users.update({
     where: { address_wallet: address_wallet },
     data: {
       nonce: {
@@ -52,25 +52,7 @@ export default async function generateNonce(
       }
     }
   })
-  if (!user) {
-    user = await prisma.recruiters.update({
-      where: { address_wallet: address_wallet },
-      data: {
-        nonce: {
-          upsert: {
-            create: {
-              nonce,
-              expires
-            },
-            update: {
-              nonce,
-              expires
-            }
-          }
-        }
-      }
-    })
-  }
+
   return res.status(200).json({
     nonce,
     expires: expires.toISOString()

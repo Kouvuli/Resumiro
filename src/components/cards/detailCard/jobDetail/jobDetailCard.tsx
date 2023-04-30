@@ -147,7 +147,7 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
           </li>
         </ul>
       </CardContent>
-      {session && (
+      {session && session!.user!.email! === 'candidate' && (
         <CardActions sx={{ padding: '24px 24px 24px 0' }}>
           <RoundButton
             primary

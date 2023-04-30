@@ -1,17 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
+import socket from '@libs/socket'
 
 const initialState = {
   isApplied: false,
   showMessage: false,
   message: '',
   messageType: 'success',
+  notification: null,
   loading: false,
-  success: '',
-  error: '',
-  page: 1,
-  limit: 8,
-  total: 0
+  room: null
 }
 
 export const checkIsApplied = createAsyncThunk(
@@ -38,6 +36,16 @@ export const cancelJob = createAsyncThunk('cancel-job', async (input: any) => {
   return data
 })
 
+export const createNotification = createAsyncThunk(
+  'create-notification',
+  async (input: any) => {
+    const data = await resumiroApi
+      .insertNotification(input)
+      .then(res => res.data)
+    return data
+  }
+)
+
 const jobDetailSlice = createSlice({
   name: 'jobDetail',
   initialState,
@@ -51,6 +59,9 @@ const jobDetailSlice = createSlice({
     },
     changeApplyStatus: (state, action) => {
       state.isApplied = action.payload.isApplied
+    },
+    changeRoom: (state, action) => {
+      state.room = action.payload.room
     }
   },
   extraReducers: builder => {
@@ -99,6 +110,22 @@ const jobDetailSlice = createSlice({
         state.loading = false
       })
       .addCase(checkIsApplied.rejected, (state, action) => {
+        state.loading = false
+      })
+
+      .addCase(createNotification.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(createNotification.fulfilled, (state, action) => {
+        state.loading = false
+        state.notification = action.payload.data
+
+        socket.emit('send_message', {
+          room: state.room,
+          message: action.payload.data
+        })
+      })
+      .addCase(createNotification.rejected, (state, action) => {
         state.loading = false
       })
   }

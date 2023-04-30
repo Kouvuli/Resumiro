@@ -23,21 +23,6 @@ import MySnackBar from '@components/ui/bar/snackbar'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { useSession } from 'next-auth/react'
 
-const roles = [
-  {
-    value: 'candidate',
-    label: 'Candidate'
-  },
-  {
-    value: 'recruiter',
-    label: 'Recruiter'
-  },
-  {
-    value: 'admin_recruiter',
-    label: 'Admin Recruiter'
-  }
-]
-
 export default function SignInPage() {
   const { message, messageType, showMessage, success } =
     useAppSelector(signInSelector)
@@ -48,11 +33,11 @@ export default function SignInPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    const role = data.get('role')
+
     const username = data.get('username')
     const password = data.get('password')
 
-    if (!username || !password || !role) {
+    if (!username || !password) {
       dispatch(
         signInSlice.actions.changeSnackBarMessage({
           message: 'Dữ liệu không hợp lệ',
@@ -65,8 +50,7 @@ export default function SignInPage() {
     dispatch(
       signInNormal({
         username: username,
-        password: password,
-        role: role
+        password: password
       })
     )
   }
@@ -173,25 +157,7 @@ export default function SignInPage() {
                 borderRadius: '5px'
               }}
             />
-            <TextField
-              required
-              fullWidth
-              select
-              name="role"
-              id="role"
-              label="Role"
-              defaultValue="candidate"
-              sx={{ mt: 2 }}
-              SelectProps={{
-                native: true
-              }}
-            >
-              {roles.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
+
             <Grid container>
               <Grid item xs={6}>
                 <FormControlLabel

@@ -1,3 +1,5 @@
+export const headerSelector = (state: { header: any }) => state.header
+
 export const signUpSelector = (state: { signUp: any }) => state.signUp
 
 export const signInSelector = (state: { signIn: any }) => state.signIn

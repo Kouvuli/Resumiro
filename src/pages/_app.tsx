@@ -9,6 +9,7 @@ import { AnimatePresence } from 'framer-motion'
 import { SessionProvider } from 'next-auth/react'
 import store from '@redux/store'
 const inter = Inter({ subsets: ['latin'] })
+
 export default function App({
   Component,
   pageProps: { session, ...pageProps },

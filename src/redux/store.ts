@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import companySlice from './reducers/companySlice'
+import headerSlice from './reducers/headerSlice'
 import jobDetailSlice from './reducers/jobDetailSlice'
 import jobSlice from './reducers/jobSlice'
 import profileSlice from './reducers/profileSlice'
@@ -15,7 +16,8 @@ const store = configureStore({
     resume: resumeSlice.reducer,
     jobDetail: jobDetailSlice.reducer,
     signIn: signInSlice.reducer,
-    signUp: signUpSlice.reducer
+    signUp: signUpSlice.reducer,
+    header: headerSlice.reducer
   }
 })
 

@@ -83,7 +83,7 @@ const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
               <SkillCard
                 type={2}
                 style={{ marginTop: '16px' }}
-                skills={user.candidates_skills}
+                skills={user.users_skills}
                 allSkills={allSkills}
               />
             </Grid>

@@ -29,6 +29,10 @@ const resumiroApi = {
     const url = `/company/${id}`
     return request.get(url)
   },
+  getUserById: (id: string) => {
+    const url = `/user/${id}`
+    return request.get(url)
+  },
   getCandidateById: (id: string) => {
     const url = `/candidate/${id}`
     return request.get(url)
@@ -277,6 +281,29 @@ const resumiroApi = {
   generateNonce: (data: { address_wallet: string }) => {
     const url = `/auth/crypto/generateNonce`
     return request.post(url, data)
+  },
+  insertNotification: (data: {
+    title: string
+    content: string
+    author_id: number
+    notification_type_id: number
+    object_url: string
+    recipients: string
+  }) => {
+    const url = `/notification`
+    return request.post(url, data)
+  },
+  deleteNotification: (id: number) => {
+    const url = `/notification/${id}`
+    return request.delete(url)
+  },
+  countUnreadNotification: (id: number) => {
+    const url = `/user/${id}/countUnread`
+    return request.get(url)
+  },
+  getUserNotification: (id: number) => {
+    const url = `/user/${id}/notification`
+    return request.get(url)
   }
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`

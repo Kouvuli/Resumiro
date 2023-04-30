@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient, roles } from '@prisma/client'
 import { hashPassword } from '@utils/authUtils'
 import { getToken } from 'next-auth/jwt'
+import { randomToken } from '@utils/cryptoUtil'
 type Data = {
   message: string
   status: string
@@ -29,28 +30,35 @@ export default async function handler(
 
   let newUser
   const hashedPassword = await hashPassword(password)
-  if (role === 'candidate') {
-    const existingUser = await prisma.candidates.findFirst({
-      where: {
-        username: username
-      }
-    })
-    if (existingUser) {
-      res.status(400).json({
-        message: 'User already exists',
-        status: 'error'
-      })
-      prisma.$disconnect()
-      return
+
+  const existingUser = await prisma.users.findFirst({
+    where: {
+      username: username
     }
-    newUser = await prisma.candidates
+  })
+  if (existingUser) {
+    res.status(400).json({
+      message: 'User already exists',
+      status: 'error'
+    })
+    prisma.$disconnect()
+    return
+  }
+
+  if (role === 'admin_recruiter') {
+    newUser = await prisma.users
       .create({
         data: {
           username: username,
           password: hashedPassword,
           address_wallet: address_wallet,
-
-          role: roles.candidate
+          role: roles.recruiter,
+          is_admin: true,
+          room: {
+            create: {
+              token: randomToken()
+            }
+          }
         }
       })
       .catch(() => {
@@ -62,60 +70,30 @@ export default async function handler(
         return
       })
   } else {
-    const existingUser = await prisma.recruiters.findFirst({
-      where: {
-        username: username
-      }
-    })
-    if (existingUser) {
-      res.status(400).json({
-        message: 'User already exists',
-        status: 'error'
+    newUser = await prisma.users
+      .create({
+        data: {
+          username: username,
+          password: hashedPassword,
+          address_wallet: address_wallet,
+          role: role,
+          room: {
+            create: {
+              token: randomToken()
+            }
+          }
+        }
       })
-      prisma.$disconnect()
-      return
-    }
-
-    if (role === 'admin_recruiter') {
-      newUser = await prisma.recruiters
-        .create({
-          data: {
-            username: username,
-            password: hashedPassword,
-            address_wallet: address_wallet,
-            role: roles.recruiter,
-            is_admin: true
-          }
+      .catch(() => {
+        res.status(500).json({
+          message: 'Internal server error',
+          status: 'error'
         })
-        .catch(() => {
-          res.status(500).json({
-            message: 'Internal server error',
-            status: 'error'
-          })
-          prisma.$disconnect()
-          return
-        })
-    } else {
-      newUser = await prisma.recruiters
-        .create({
-          data: {
-            username: username,
-            password: hashedPassword,
-            address_wallet: address_wallet,
-            role: roles.recruiter,
-            is_admin: false
-          }
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: 'Internal server error',
-            status: 'error'
-          })
-          prisma.$disconnect()
-          return
-        })
-    }
+        prisma.$disconnect()
+        return
+      })
   }
+
   prisma.$disconnect()
   res
     .status(201)

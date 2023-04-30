@@ -17,8 +17,21 @@ import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { signOut, useSession } from 'next-auth/react'
 import Button from '@mui/material/Button'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
+import { headerSelector, profileSelector } from '@redux/selectors'
 import profileSlice from '@redux/reducers/profileSlice'
+import socket from '@libs/socket'
+import headerSlice, {
+  countUnreadNotification,
+  fetchUserById,
+  fetchUserNotification
+} from '@redux/reducers/headerSlice'
+import _ from 'lodash'
+import Badge from '@mui/material/Badge'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import NotificationCard from '@components/cards/notificationCard'
+import signInSlice from '@redux/reducers/signInSlice'
+import Typography from '@mui/material/Typography'
+import { Notification } from '@shared/interfaces'
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -207,12 +220,27 @@ const variants: Variants = {
 }
 
 const Header = () => {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const dispatch = useAppDispatch()
-  const { showMessage, user } = useAppSelector(profileSelector)
+  const { user, notificationList, newNotification, unreadNotification } =
+    useAppSelector(headerSelector)
   const router = useRouter()
   const navTogglerRef = useRef<HTMLButtonElement>(null)
   const navRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      dispatch(countUnreadNotification(Number(session!.user!.name!)))
+      dispatch(fetchUserNotification(Number(session!.user!.name!)))
+      dispatch(fetchUserById(session!.user!.name!))
+    }
+  }, [newNotification, session])
+
+  useEffect(() => {
+    socket.on('receive_message', data => {
+      dispatch(headerSlice.actions.addNewNotification(data.message))
+    })
+  }, [socket])
   const onToggleHander = () => {
     const navNode = navRef.current
     navNode?.classList.toggle('open')
@@ -227,11 +255,46 @@ const Header = () => {
   const signOutHandler = async () => {
     // event.preventDefault()
     dispatch(profileSlice.actions.reset())
+    dispatch(headerSlice.actions.reset())
+    dispatch(signInSlice.actions.reset())
     const result = await signOut({ redirect: false })
     if (result) {
       router.replace('/dang-nhap')
     }
   }
+
+  const convertNotificationList = (notificationList: Notification[]) => {
+    if (notificationList.length === 0)
+      return (
+        <Typography variant="body1" sx={{ textAlign: 'center', p: 5 }}>
+          Không có thông báo nào
+        </Typography>
+      )
+    return (
+      <List
+        sx={{
+          maxWidth: 360,
+
+          overflow: 'auto',
+          maxHeight: 300
+        }}
+      >
+        {notificationList.map(item => (
+          <ListItem disablePadding key={item.notification.id}>
+            <NotificationCard
+              isRead={item.is_read}
+              type={item.notification.notification_type_id}
+              object_id={item.notification.object_url!}
+              author={item.notification.author}
+              createAt={item.notification.create_at}
+              content={item.notification.content!}
+            />
+          </ListItem>
+        ))}
+      </List>
+    )
+  }
+
   const userContent = (
     <List>
       <ListItem disablePadding>
@@ -289,14 +352,24 @@ const Header = () => {
                 <div style={{ flexGrow: 1 }} />
                 {session && (
                   <>
-                    <IconButton
-                      sx={{
-                        mr: 2,
-                        color: 'primary.contrastText'
-                      }}
+                    <MyPopover
+                      placement="bottomRight"
+                      content={convertNotificationList(notificationList)}
+                      trigger="click"
                     >
-                      <FavoriteBorderOutlinedIcon />
-                    </IconButton>
+                      <Badge
+                        sx={{
+                          mr: 4
+                        }}
+                        badgeContent={unreadNotification}
+                        color="secondary"
+                      >
+                        <NotificationsIcon
+                          sx={{ color: 'primary.contrastText' }}
+                        />
+                      </Badge>
+                    </MyPopover>
+
                     <MyPopover
                       placement="bottomRight"
                       content={userContent}
@@ -402,9 +475,21 @@ const Header = () => {
             <div style={{ flexGrow: 1 }} />
             {session && (
               <>
-                <IconButton sx={{ mr: 2 }}>
-                  <FavoriteBorderOutlinedIcon />
-                </IconButton>
+                <MyPopover
+                  placement="bottomRight"
+                  content={convertNotificationList(notificationList)}
+                  trigger="click"
+                >
+                  <Badge
+                    sx={{
+                      mr: 4
+                    }}
+                    badgeContent={unreadNotification}
+                    color="secondary"
+                  >
+                    <NotificationsIcon />
+                  </Badge>
+                </MyPopover>
                 <MyPopover
                   placement="bottomRight"
                   content={userContent}

@@ -35,6 +35,11 @@ export default async function handler(
       .findFirst({
         where: { id: id },
         include: {
+          owner: {
+            include: {
+              room: true
+            }
+          },
           company: {
             include: {
               jobs: {

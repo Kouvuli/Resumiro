@@ -14,7 +14,7 @@ export default async function handler(
   prisma.$connect()
   if (req.method === 'POST') {
     const { name, verified_at, candidate_id } = req.body
-    const existingCandidate = await prisma.candidates.findFirst({
+    const existingCandidate = await prisma.users.findFirst({
       where: {
         id: Number(candidate_id)
       }
@@ -32,7 +32,7 @@ export default async function handler(
       data: {
         name: name,
         verified_at: new Date(verified_at),
-        candidate_id: Number(candidate_id)
+        user_id: Number(candidate_id)
       }
     })
     if (!data) {

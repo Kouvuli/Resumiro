@@ -15,13 +15,12 @@ const initialState = {
 export const signInNormal = createAsyncThunk(
   'sign-in-normal',
   async (input: any) => {
-    const { username, password, role } = input
+    const { username, password } = input
 
     await signIn('credentials', {
       redirect: false,
       username: username,
-      password: password,
-      role: role
+      password: password
     })
   }
 )

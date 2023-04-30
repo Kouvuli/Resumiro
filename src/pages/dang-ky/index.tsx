@@ -16,7 +16,6 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import resumiroApi from '@apis/resumiroApi'
 import { useRouter } from 'next/router'
 import { getServerSession } from 'next-auth'
 import { ethers } from 'ethers'
@@ -51,7 +50,10 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (!_.isEmpty(user)) {
-      router.push('/dang-nhap')
+      setTimeout(() => {
+        router.push('/dang-nhap')
+        dispatch(signUpSlice.actions.reset())
+      }, 1000)
     }
   }, [user])
 
@@ -90,9 +92,6 @@ export default function SignUpPage() {
         walletAddress: walletAddress
       })
     )
-    if (!_.isEmpty(user)) {
-      router.push('/dang-nhap')
-    }
   }
 
   const handleClickShowPassword = () => setShowPassword(show => !show)
