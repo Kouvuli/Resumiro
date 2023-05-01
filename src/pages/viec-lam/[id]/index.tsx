@@ -156,7 +156,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
           author_id: Number(session!.user!.name!),
           title: 'Thông báo',
           content: 'mới ứng tuyển vào công việc của bạn',
-          object_url: id,
+          object_url: id.toString(),
           recipients: owner_id.toString(),
           notification_type_id: 3
         })
