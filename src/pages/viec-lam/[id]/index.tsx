@@ -20,7 +20,8 @@ import { useSession } from 'next-auth/react'
 import jobDetailSlice, {
   applyJob,
   cancelJob,
-  checkIsApplied
+  checkIsApplied,
+  createNotification
 } from '@redux/reducers/jobDetailSlice'
 import MySnackBar from '@components/ui/bar/snackbar'
 
@@ -109,8 +110,9 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
   const {
     id,
     title,
+    owner,
     company,
-
+    owner_id,
     location,
     salary,
     experience,
@@ -126,6 +128,9 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
   const { isApplied, showMessage, message, messageType, loading } =
     useAppSelector(jobDetailSelector)
 
+  useEffect(() => {
+    dispatch(jobDetailSlice.actions.changeRoom({ room: owner.room.token }))
+  }, [])
   useEffect(() => {
     if (session) {
       dispatch(
@@ -146,6 +151,17 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
           }
         })
       )
+      dispatch(
+        createNotification({
+          author_id: Number(session!.user!.name!),
+          title: 'Thông báo',
+          content: 'mới ứng tuyển vào công việc của bạn',
+          object_url: id,
+          recipients: owner_id.toString(),
+          notification_type_id: 3
+        })
+      )
+
       dispatch(jobDetailSlice.actions.changeApplyStatus({ isApplied: true }))
     } else {
       dispatch(
@@ -290,6 +306,7 @@ export async function getServerSideProps(context: { query: { id: string } }) {
         location: job.location,
         salary: job.salary,
         experience: job.experience,
+
         createAt: job.create_at
       }
     }

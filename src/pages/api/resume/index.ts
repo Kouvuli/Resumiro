@@ -53,7 +53,7 @@ export default async function handler(
         AND: [
           {
             owner: {
-              candidates_skills: {
+              users_skills: {
                 every: {
                   skill: {
                     OR: skillArr
@@ -72,7 +72,7 @@ export default async function handler(
       include: {
         owner: {
           include: {
-            candidates_skills: true
+            users_skills: true
           }
         }
       }
@@ -113,7 +113,7 @@ export default async function handler(
         AND: [
           {
             owner: {
-              candidates_skills: {
+              users_skills: {
                 some: {
                   skill: {
                     OR: skillArr
@@ -145,7 +145,7 @@ export default async function handler(
   } else if (req.method === 'POST') {
     const { title, resume, owner_id } = req.body
 
-    const existingOwner = await prisma.candidates.findFirst({
+    const existingOwner = await prisma.users.findFirst({
       where: {
         id: owner_id
       }

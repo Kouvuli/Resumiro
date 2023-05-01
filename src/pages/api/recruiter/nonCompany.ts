@@ -22,7 +22,7 @@ export default async function handler(
       qList = q?.toString().split(' ')
     }
 
-    const data = await prisma.recruiters.findMany({
+    const data = await prisma.users.findMany({
       skip: (p - 1) * l,
       take: l,
       where: {
@@ -42,7 +42,7 @@ export default async function handler(
       }
     })
 
-    const totalRecruiters = await prisma.recruiters.count({
+    const totalRecruiters = await prisma.users.count({
       where: {
         AND: [
           {

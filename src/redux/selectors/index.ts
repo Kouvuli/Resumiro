@@ -1,20 +1,8 @@
-import { Recruiter } from '@shared/interfaces'
+export const headerSelector = (state: { header: any }) => state.header
 
-// type ProfileState = {
-//   loading: boolean
-//   created: boolean
-//   showMessage: boolean
-//   recruitersSameCompany: Array<Recruiter>
-//   searchRecruiterNonCompanyText: string
-//   recruitersNonCompany: Array<Recruiter>
-//   message: string
-//   messageType: 'success' | 'error' | 'info' | 'warning'
-//   user: any
-//   allCompanies: Array<any>
-//   allSkills: Array<any>
-//   allFields: Array<any>
-//   allLocations: Array<any>
-// }
+export const signUpSelector = (state: { signUp: any }) => state.signUp
+
+export const signInSelector = (state: { signIn: any }) => state.signIn
 
 export const profileSelector = (state: { profile: any }) => state.profile
 

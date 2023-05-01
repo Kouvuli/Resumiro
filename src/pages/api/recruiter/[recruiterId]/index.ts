@@ -15,11 +15,12 @@ export default async function handler(
   prisma.$connect()
   if (req.method === 'GET') {
     let id = Number(recruiterId)
-    const recruiter = await prisma.recruiters
+    const recruiter = await prisma.users
       .findFirst({
         where: { id: id },
         include: {
           company: true,
+
           jobs: {
             include: {
               location: true,
@@ -59,7 +60,7 @@ export default async function handler(
     return
   } else if (req.method === 'PATCH') {
     const { avatar, background, full_name, email, phone } = req.body
-    const data = await prisma.recruiters
+    const data = await prisma.users
       .update({
         where: {
           id: Number(recruiterId)
@@ -96,7 +97,7 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
-    const data = await prisma.recruiters
+    const data = await prisma.users
       .delete({
         where: {
           id: Number(recruiterId)

@@ -16,7 +16,7 @@ export default async function handler(
   if (req.method === 'GET') {
     let id = Number(candidateId)
 
-    const candidate = await prisma.candidates
+    const candidate = await prisma.users
       .findFirst({
         where: { id: id },
         include: {
@@ -25,7 +25,7 @@ export default async function handler(
               create_at: 'desc'
             }
           },
-          candidates_skills: {
+          users_skills: {
             select: {
               skill: true
             }
@@ -63,7 +63,7 @@ export default async function handler(
     return
   } else if (req.method === 'PATCH') {
     const { avatar, background, full_name, email, phone } = req.body
-    const data = await prisma.candidates
+    const data = await prisma.users
       .update({
         where: {
           id: Number(candidateId)

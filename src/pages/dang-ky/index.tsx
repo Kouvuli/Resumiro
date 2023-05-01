@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState, useEffect } from 'react'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -16,10 +16,15 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import resumiroApi from '@apis/resumiroApi'
 import { useRouter } from 'next/router'
 import { getServerSession } from 'next-auth'
+import { ethers } from 'ethers'
 import { authOptions } from '../api/auth/[...nextauth]'
+import signUpSlice, { signUp } from '@redux/reducers/signUpSlice'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { signUpSelector } from '@redux/selectors'
+import MySnackBar from '@components/ui/bar/snackbar'
+import _ from 'lodash'
 const roles = [
   {
     value: 'candidate',
@@ -36,45 +41,58 @@ const roles = [
 ]
 
 export default function SignUpPage() {
+  const { message, messageType, showMessage, user } =
+    useAppSelector(signUpSelector)
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const [showPassword, setShowPassword] = useState(false)
+  const [walletAddress, setWalletAddress] = useState('')
+
+  useEffect(() => {
+    if (!_.isEmpty(user)) {
+      setTimeout(() => {
+        router.push('/dang-nhap')
+        dispatch(signUpSlice.actions.reset())
+      }, 1000)
+    }
+  }, [user])
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
 
     const username = data.get('username')
     const password = data.get('password')
-    const address_wallet = data.get('wallet_address')
-    const role = data.get('role')
 
+    const role = data.get('role')
     if (
-      username!.toString().length < 1 ||
+      username!.toString().length < 4 ||
       password!.toString().length < 6 ||
-      address_wallet!.toString().length < 1 ||
       role!.toString().length < 1 ||
       !username ||
       !password ||
-      !address_wallet ||
+      walletAddress === '' ||
       !role
     ) {
+      dispatch(
+        signUpSlice.actions.changeSnackBarMessage({
+          message:
+            'Vui lòng nhập đầy đủ thông tin Mật khẩu phải có ít nhất 6 ký tự Username phải có ít nhất 4 ký tự(a-z,A-Z)',
+          messageType: 'error'
+        })
+      )
+      dispatch(signUpSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
-
-    const result = await resumiroApi
-      .registerUser({
-        username: username.toString(),
-        password: password.toString(),
-        address_wallet: address_wallet.toString(),
-        role: role.toString()
+    dispatch(
+      signUp({
+        username: username,
+        password: password,
+        role: role,
+        walletAddress: walletAddress
       })
-      .catch(err => {
-        console.log(err)
-      })
-    if (result) {
-      router.push('/dang-nhap')
-    }
+    )
   }
-
-  const [showPassword, setShowPassword] = React.useState(false)
 
   const handleClickShowPassword = () => setShowPassword(show => !show)
 
@@ -83,8 +101,37 @@ export default function SignUpPage() {
   ) => {
     event.preventDefault()
   }
+
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      window.alert('Please install MetaMask first.')
+      return
+    }
+
+    // Get the wallet provider, the signer and address
+    //  see: https://docs.ethers.org/v6/getting-started/#starting-signing
+    const provider = new ethers.BrowserProvider(window.ethereum)
+
+    const signer = await provider.getSigner()
+    const publicAddress = await signer.getAddress()
+
+    setWalletAddress(publicAddress)
+  }
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(signUpSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
   return (
     <ArticleLayout title="Tạo tài khoản">
+      <MySnackBar
+        handleClose={handleClose}
+        message={message}
+        messageType={messageType}
+        showMessage={showMessage}
+      />
       <Typography
         component="h1"
         variant="h5"
@@ -98,7 +145,7 @@ export default function SignUpPage() {
       >
         Tạo tài khoản
       </Typography>
-      <Container component="main" maxWidth="sm" sx={{ marginBottom: 8 }}>
+      <Container component="main" maxWidth="md" sx={{ marginBottom: 8 }}>
         <div
           style={{
             display: 'flex',
@@ -151,17 +198,28 @@ export default function SignUpPage() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="wallet_address"
-                  label="Wallet Address"
-                  name="wallet_address"
-                  color="primary"
-                  sx={{
-                    borderRadius: '5px'
-                  }}
-                />
+                <FormControl fullWidth variant="outlined" disabled>
+                  <InputLabel required shrink={walletAddress ? true : false}>
+                    Địa chỉ ví
+                  </InputLabel>
+                  <OutlinedInput
+                    id="wallet_address"
+                    label="Địa chỉ ví"
+                    name="wallet_address"
+                    value={walletAddress}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <Button
+                          variant="contained"
+                          disableElevation
+                          onClick={connectWallet}
+                        >
+                          Kết nối ví
+                        </Button>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField

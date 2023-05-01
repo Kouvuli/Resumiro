@@ -16,7 +16,7 @@ export default async function handler(
   if (req.method === 'PATCH') {
     const { company_id } = req.body
 
-    const data = await prisma.recruiters.update({
+    const data = await prisma.users.update({
       where: {
         id: Number(recruiterId)
       },

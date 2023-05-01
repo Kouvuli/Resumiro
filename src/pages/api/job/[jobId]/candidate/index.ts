@@ -30,7 +30,7 @@ export default async function handler(
 
   if (req.method === 'POST') {
     const { candidate_id } = req.body
-    const existingCandidate = await prisma.candidates.findFirst({
+    const existingCandidate = await prisma.users.findFirst({
       where: {
         id: Number(candidate_id)
       }

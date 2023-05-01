@@ -11,23 +11,28 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const prisma = new PrismaClient()
-  const { candidateId } = req.query
+  const { notificationId } = req.query
   prisma.$connect()
-  if (req.method === 'PATCH') {
-    const { about } = req.body
+  let id = Number(notificationId)
 
-    const data = await prisma.users.update({
-      where: {
-        id: Number(candidateId)
-      },
-      data: {
-        about: about
-      }
-    })
-
+  if (req.method === 'DELETE') {
+    const data = await prisma.notifications
+      .delete({
+        where: {
+          id: id
+        }
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: 'Something went wrong',
+          status: 'error'
+        })
+        prisma.$disconnect()
+        return
+      })
     if (!data) {
-      res.status(400).json({
-        message: 'Cannot update about for candidate',
+      res.status(404).json({
+        message: 'Cannot delete notification',
         status: 'error'
       })
       prisma.$disconnect()
@@ -35,7 +40,7 @@ export default async function handler(
     }
 
     res.status(200).json({
-      message: 'Successfully update about for candidate',
+      message: 'Successfully deleted notification',
       status: 'ok',
       data: data
     })

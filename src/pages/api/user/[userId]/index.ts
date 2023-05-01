@@ -11,13 +11,16 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const prisma = new PrismaClient()
-  const { companyId } = req.query
+  const { userId } = req.query
   prisma.$connect()
   if (req.method === 'GET') {
-    let id = Number(companyId)
-    const recruiters = await prisma.users
-      .findMany({
-        where: { AND: [{ is_admin: false }, { company_id: id }] }
+    let id = Number(userId)
+    const user = await prisma.users
+      .findFirst({
+        where: { id: id },
+        include: {
+          room: true
+        }
       })
       .catch(() => {
         res.status(500).json({
@@ -27,18 +30,18 @@ export default async function handler(
         prisma.$disconnect()
         return
       })
-    if (!recruiters) {
+    if (!user) {
       res.status(404).json({
-        message: 'Recruiters not found',
+        message: 'User not found',
         status: 'error'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
-      message: 'Successfully get recruiters from company id',
+      message: 'Successfully get user',
       status: 'ok',
-      data: recruiters
+      data: user
     })
     prisma.$disconnect()
     return

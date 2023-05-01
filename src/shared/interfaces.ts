@@ -1,5 +1,5 @@
 import {
-  candidates,
+  users,
   resumes,
   jobs,
   companies,
@@ -7,21 +7,28 @@ import {
   certificates,
   experiences,
   locations,
-  recruiters,
   jobs_skills,
-  jobs_applicants
+  jobs_applicants,
+  notifications,
+  notifications_users,
+  rooms
 } from '@prisma/client'
 
+export type Notification = notifications_users & {
+  notification: notifications & { author: users }
+}
+
 export type Job = jobs & {
+  owner: users & { room: rooms }
   company: companies
   jobs_skills: { job_id: number; skill_id: number; skill: skills }[]
   location: locations
-  jobs_applicants: { applicant: candidates }[]
+  jobs_applicants: { applicant: users }[]
 }
 
 export type Resume = resumes & {
-  owner: candidates & {
-    candidates_skills: { candidate_id: number; skill_id: number }[]
+  owner: users & {
+    users_skills: { candidate_id: number; skill_id: number }[]
   }
 }
 
@@ -30,14 +37,14 @@ export type Company = companies & {
   location: locations
 }
 
-export type Candidate = candidates & {
+export type Candidate = users & {
   resumes: Resume[]
-  candidates_skills: { skill: skills }[]
+  users_skills: { skill: skills }[]
   certificates: certificates[]
   experiences: Experience[]
 }
 
-export type Recruiter = recruiters & {
+export type Recruiter = users & {
   company: Company[]
 }
 

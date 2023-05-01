@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useEffect } from 'react'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
@@ -10,53 +10,73 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import ArticleLayout from '@components/layouts/article'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-
-const roles = [
-  {
-    value: 'candidate',
-    label: 'Candidate'
-  },
-  {
-    value: 'recruiter',
-    label: 'Recruiter'
-  },
-  {
-    value: 'admin_recruiter',
-    label: 'Admin Recruiter'
-  }
-]
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { signInSelector } from '@redux/selectors'
+import signInSlice, {
+  signInNormal,
+  signInWallet
+} from '@redux/reducers/signInSlice'
+import MySnackBar from '@components/ui/bar/snackbar'
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import { useSession } from 'next-auth/react'
 
 export default function SignInPage() {
+  const { message, messageType, showMessage, success } =
+    useAppSelector(signInSelector)
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { status } = useSession()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    const role = data.get('role')
+
     const username = data.get('username')
     const password = data.get('password')
-    // console.log({
-    //   username: username,
-    //   password: password,
-    //   role: role
-    // })
-    const result = await signIn('credentials', {
-      redirect: false,
-      username: username,
-      password: password,
-      role: role
-    })
-    if (!result!.error) {
-      router.replace('/')
+
+    if (!username || !password) {
+      dispatch(
+        signInSlice.actions.changeSnackBarMessage({
+          message: 'Dữ liệu không hợp lệ',
+          messageType: 'error'
+        })
+      )
+      dispatch(signInSlice.actions.toggleSnackBar({ showMessage: true }))
+      return
     }
+    dispatch(
+      signInNormal({
+        username: username,
+        password: password
+      })
+    )
   }
 
+  const handleSignInWallet = async () => {
+    dispatch(signInWallet())
+  }
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(signInSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
+
+  if (status === 'authenticated') {
+    router.push('/')
+  }
   return (
     <ArticleLayout title="Đăng nhập">
+      <MySnackBar
+        handleClose={handleClose}
+        message={message}
+        messageType={messageType}
+        showMessage={showMessage}
+      />
       <Typography
         component="h1"
         variant="h5"
@@ -77,7 +97,7 @@ export default function SignInPage() {
         Cùng xây dựng một hồ sơ nổi bật và nhận được các cơ hội sự nghiệp lý
         tưởng
       </Typography>
-      <Container component="main" maxWidth="sm" sx={{ marginBottom: 8 }}>
+      <Container component="main" maxWidth="md" sx={{ marginBottom: 8 }}>
         <div
           style={{
             display: 'flex',
@@ -85,6 +105,24 @@ export default function SignInPage() {
             alignItems: 'center'
           }}
         >
+          <Button
+            variant="outlined"
+            sx={{
+              mt: 3,
+              p: 2,
+              display: 'flex',
+              borderRadius: '1rem',
+              flexDirection: 'column',
+              fontSize: '1rem',
+              textTransform: 'none',
+              lineHeight: '1.5rem',
+              maxWidth: '15%'
+            }}
+            onClick={handleSignInWallet}
+          >
+            <AccountBalanceWalletIcon sx={{ mb: 0.7, fontSize: '1.5rem' }} />
+            Wallet
+          </Button>
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -119,25 +157,7 @@ export default function SignInPage() {
                 borderRadius: '5px'
               }}
             />
-            <TextField
-              required
-              fullWidth
-              select
-              name="role"
-              id="role"
-              label="Role"
-              defaultValue="candidate"
-              sx={{ mt: 2 }}
-              SelectProps={{
-                native: true
-              }}
-            >
-              {roles.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
+
             <Grid container>
               <Grid item xs={6}>
                 <FormControlLabel

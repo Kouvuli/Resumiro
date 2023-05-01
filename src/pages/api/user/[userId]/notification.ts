@@ -11,13 +11,25 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const prisma = new PrismaClient()
-  const { companyId } = req.query
+  const { userId } = req.query
   prisma.$connect()
   if (req.method === 'GET') {
-    let id = Number(companyId)
-    const recruiters = await prisma.users
+    let id = Number(userId)
+    const user = await prisma.notifications_users
       .findMany({
-        where: { AND: [{ is_admin: false }, { company_id: id }] }
+        where: { user_id: id },
+        orderBy: {
+          notification: {
+            create_at: 'desc'
+          }
+        },
+        include: {
+          notification: {
+            include: {
+              author: true
+            }
+          }
+        }
       })
       .catch(() => {
         res.status(500).json({
@@ -27,18 +39,18 @@ export default async function handler(
         prisma.$disconnect()
         return
       })
-    if (!recruiters) {
+    if (!user) {
       res.status(404).json({
-        message: 'Recruiters not found',
+        message: 'Cannot get user notification',
         status: 'error'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
-      message: 'Successfully get recruiters from company id',
+      message: 'Successfully get user notification',
       status: 'ok',
-      data: recruiters
+      data: user
     })
     prisma.$disconnect()
     return

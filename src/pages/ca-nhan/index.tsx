@@ -139,7 +139,7 @@ const ProfilePage = () => {
               {user.role === 'candidate' && (
                 <SkillCard
                   style={{ marginTop: '16px' }}
-                  skills={user.candidates_skills}
+                  skills={user.users_skills}
                   allSkills={allSkills}
                 />
               )}
