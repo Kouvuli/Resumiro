@@ -3,8 +3,7 @@ import React from 'react'
 import { styled } from '@mui/material/styles'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import Canvas3D from '@components/3D'
-import Box3D from '@components/3D/box'
+
 interface AboutUsCardProps {
   children?: React.ReactNode
 }
@@ -28,9 +27,7 @@ const AboutUsCard: React.FC<AboutUsCardProps> = ({}) => {
       alignItems="center"
       columnSpacing={2}
     >
-      <GridItem item xs={12} md={7} sx={{ height: '500px' }}>
-        <Canvas3D>{/* <Box3D /> */}</Canvas3D>
-      </GridItem>
+      <GridItem item xs={12} md={7} sx={{ height: '500px' }}></GridItem>
       <GridItem item xs={12} md={5}>
         <Card
           title="Nhóm chúng tôi"
@@ -47,11 +44,10 @@ const AboutUsCard: React.FC<AboutUsCardProps> = ({}) => {
               }}
               variant="h5"
             >
-              High-Quality Jobs Just For You
+              Tìm việc làm chất lượng 2023
             </Typography>
             <Typography sx={{ mb: 10 }} variant="subtitle1">
-              subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing
-              elit. Quos blanditiis tenetur
+              Cơ hội tham gia vào những công ty,doanh nghiệp hàng đầu Việt Nam,
             </Typography>
           </CardContent>
         </Card>

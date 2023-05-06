@@ -2,8 +2,6 @@ import { Grid, Typography } from '@mui/material'
 import React from 'react'
 import { styled } from '@mui/material/styles'
 import { common } from '@mui/material/colors'
-import Planet3D from '@components/3D/planet'
-import Canvas3D from '@components/3D'
 import RoundButton from '@components/ui/button/roundButton'
 import { motion } from 'framer-motion'
 interface AdvertiseCardProps {
@@ -53,11 +51,12 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
               fontSize: 56,
               fontWeight: 600,
               color: common.white,
+
               mb: 1
             }}
-            variant="h3"
+            variant="h4"
           >
-            High-Quality Jobs Just For You
+            Việc làm chất 2023
           </Typography>
           <Typography
             sx={{ fontSize: 20, color: common.white, mb: 10 }}
@@ -69,9 +68,7 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
           <RoundButton>Get started</RoundButton>
         </motion.div>
       </GridItem>
-      <GridItem item xs={7} sx={{ height: '500px' }}>
-        <Canvas3D>{/* <Planet3D /> */}</Canvas3D>
-      </GridItem>
+      <GridItem item xs={7} sx={{ height: '500px' }}></GridItem>
     </Grid>
   )
 }

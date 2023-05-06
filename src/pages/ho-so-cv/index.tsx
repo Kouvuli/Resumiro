@@ -17,7 +17,6 @@ import Filter from '@components/lists/filter'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import resumeSlice from '@redux/reducers/resumeSlice'
 import { jobSelector, resumeSelector } from '@redux/selectors'
-import { candidates } from '@prisma/client'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
 type ResumeListPerPage = {
@@ -26,81 +25,6 @@ type ResumeListPerPage = {
   totalPage: number
   data: ResumeCardProps[]
 }
-
-// const resumeList: ResumeListPerPage = {
-//   perPage: 7,
-//   page: 1,
-//   totalPage: 10,
-//   data: [
-//     {
-//       id: 1,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     },
-//     {
-//       id: 2,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     },
-//     {
-//       id: 3,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     },
-//     {
-//       id: 4,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     }
-//   ]
-// }
-
-// const suitableList: JobCardProps[] = [
-//   {
-//     id: 1,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2023-03-16')
-//   },
-//   {
-//     id: 2,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2022-03-25')
-//   },
-//   {
-//     id: 3,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2023-03-16')
-//   },
-//   {
-//     id: 4,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2023-03-16')
-//   }
-// ]
 
 interface ResumeRecruiterPageProps {
   data: ResumeListPerPage

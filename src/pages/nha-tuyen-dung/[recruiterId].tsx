@@ -1,30 +1,13 @@
-import SkillCard from '@components/cards/profileCard/skillsCard/skillsCard'
 import { Container, Grid } from '@mui/material'
-import React, { useEffect } from 'react'
-import ExperienceCard from '@components/cards/profileCard/experienceCard/experienceCard'
-import AboutMeCard from '@components/cards/profileCard/aboutMeCard'
-import EducationCard from '@components/cards/profileCard/educationCard/educationCard'
+import React from 'react'
 import BasicInfoCard from '@components/cards/profileCard/basicInfoCard'
 import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import ImagesCard from '@components/cards/profileCard/imagesCard'
 import ArticleLayout from '@components/layouts/article'
-import { useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-import {
-  fetchAllCompanies,
-  fetchAllSkills,
-  fetchCandidateById,
-  fetchRecruiterById
-} from '@redux/reducers/profileSlice'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
-import MySnackBar from '@components/ui/bar/snackbar'
-import CompanyCard from '@components/cards/companyCard'
 import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
 import resumiroApi from '@apis/resumiroApi'
-import { candidates, companies, recruiters, skills } from '@prisma/client'
-import { Candidate, Company, Skill } from '@shared/interfaces'
 interface RecruiterProfilePageProps {
   user: any
 }

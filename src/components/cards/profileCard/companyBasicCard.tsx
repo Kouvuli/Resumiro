@@ -158,7 +158,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
                     src={
                       company.logo !== null
                         ? company.logo
-                        : '/images/Images_1.png'
+                        : '/images/default-company.png'
                     }
                   />
                 }
@@ -236,7 +236,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
                   src={
                     company.logo !== null
                       ? company.logo
-                      : '/images/Images_1.png'
+                      : '/images/default-company.png'
                   }
                 />
               }
