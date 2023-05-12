@@ -4,6 +4,8 @@ import { styled } from '@mui/material/styles'
 import { common } from '@mui/material/colors'
 import RoundButton from '@components/ui/button/roundButton'
 import { motion } from 'framer-motion'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 interface AdvertiseCardProps {
   children?: React.ReactNode
 }
@@ -32,6 +34,7 @@ const GridItem = styled(Grid)(({ theme }) => ({
 }))
 
 const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
+  const { data: session, status } = useSession()
   return (
     <Grid
       container
@@ -52,7 +55,7 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
               fontWeight: 600,
               color: common.white,
 
-              mb: 1
+              mb: 5
             }}
             variant="h4"
           >
@@ -62,10 +65,11 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
             sx={{ fontSize: 20, color: common.white, mb: 10 }}
             variant="subtitle1"
           >
-            subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Quos blanditiis tenetur
+            Cơ hội tham gia vào những công ty, doanh nghiệp hàng đầu Việt Nam,
           </Typography>
-          <RoundButton>Get started</RoundButton>
+          <Link href={status === 'authenticated' ? '/viec-lam' : '/dang-ky'}>
+            <RoundButton>Get started</RoundButton>
+          </Link>
         </motion.div>
       </GridItem>
       <GridItem item xs={7} sx={{ height: '500px' }}></GridItem>

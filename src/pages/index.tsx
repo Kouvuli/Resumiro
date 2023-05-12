@@ -49,7 +49,9 @@ const SectionBackgroundLight = styled(MuiBox)(({ theme }) => ({
 }))
 
 const SectionBackgroundDark = styled(MuiBox)(({ theme }) => ({
-  background: theme.palette.primary.main
+  // background: theme.palette.primary.main,
+  background: "url('/images/banner.jpg') no-repeat ",
+  backgroundSize: 'cover'
   // height: '90vh',
 }))
 
@@ -75,51 +77,6 @@ const featureLists: FeatureType[] = [
     icon: <CustomerSupportIcon />
   }
 ]
-
-// const latestJobLists: JobCardProps[] = [
-//   {
-//     id: 1,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     createAt: new Date('2023-03-16').getTime()
-//   },
-//   {
-//     id: 2,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     createAt: new Date('2022-03-25').getTime()
-//   }
-// ]
-
-// const fieldLists: Field[] = [
-//   {
-//     id: 1,
-//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
-//     description:
-//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-//     vacantNumber: 1022
-//   },
-//   {
-//     id: 2,
-//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
-//     description:
-//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-//     vacantNumber: 1022
-//   },
-//   {
-//     id: 3,
-//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
-//     description:
-//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-//     vacantNumber: 1022
-//   }
-// ]
 
 const achievementLists: Achievement[] = [
   {
@@ -174,13 +131,22 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
   return (
     <>
       <section>
-        <SectionBackgroundDark>
-          <ArticleLayout>
-            <Container sx={{ padding: '4% 0 4%' }}>
-              <AdvertiseCard />
-            </Container>
-          </ArticleLayout>
-        </SectionBackgroundDark>
+        <ArticleLayout>
+          <SectionBackgroundDark>
+            <div
+              style={{
+                height: '100vh',
+                background: 'rgb(27,55,100,0.7)',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <Container>
+                <AdvertiseCard />
+              </Container>
+            </div>
+          </SectionBackgroundDark>
+        </ArticleLayout>
         {/* <Carousel /> */}
       </section>
       <ArticleLayout>

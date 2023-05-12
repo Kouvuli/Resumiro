@@ -1,10 +1,10 @@
 import React from 'react'
 import { Card, CardHeader, Typography } from '@mui/material'
 import Image from 'next/image'
-import { candidates } from '@prisma/client'
+import { users } from '@prisma/client'
 import { styled } from '@mui/material/styles'
 interface JobApplicantItemProps {
-  data: candidates
+  data: users
 }
 const CustomJobApplicantItem = styled(Card)(({}) => ({
   boxShadow: 'unset',

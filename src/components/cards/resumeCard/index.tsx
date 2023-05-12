@@ -12,7 +12,7 @@ import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
-import { candidates } from '@prisma/client'
+import { users } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
@@ -25,7 +25,7 @@ export interface ResumeCardProps {
   id: number
   resumeTitle: string
   data: string
-  owner: candidates
+  owner: users
   createAt: Date
 }
 
