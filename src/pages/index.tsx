@@ -154,13 +154,14 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
           <section style={{ margin: '3rem 0' }}>
             <Grid
               container
-              justifyContent="center"
+              justifyContent="space-evenly"
+              alignItems="center"
               // alignItems="center"
               columnSpacing={4}
               rowSpacing={5}
             >
               {featureLists.map((feature, index) => (
-                <Grid item xs={12} md={3} key={index}>
+                <Grid item xs={12} sm={6} md={3} key={index}>
                   <FeatureCard
                     icon={feature.icon}
                     title={feature.title}
@@ -254,14 +255,13 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
                 justifyContent="space-evenly"
                 alignItems="center"
                 columnSpacing={4}
-                rowSpacing={2}
+                rowSpacing={6}
               >
                 <Grid item xs={12}>
                   <motion.div
                     style={{
                       display: 'flex',
-                      justifyContent: 'center',
-                      padding: '0 0 8%'
+                      justifyContent: 'center'
                     }}
                     variants={titleVariants}
                     initial="initial"
@@ -272,7 +272,7 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
                   </motion.div>
                 </Grid>
                 {achievementLists.map((achievement, index) => (
-                  <Grid item xs={12} md={3} key={index}>
+                  <Grid item xs={12} sm={6} md={3} key={index}>
                     <AchievementCard {...achievement} />
                   </Grid>
                 ))}

@@ -21,13 +21,13 @@ const GridItem = styled(Grid)(({ theme }) => ({
 
 const AboutUsCard: React.FC<AboutUsCardProps> = ({}) => {
   return (
-    <Grid container justifyContent="center" alignItems="center" spacing={2}>
-      <GridItem item xs={12} md={7}>
+    <Grid container justifyContent="center" alignItems="center" spacing={4}>
+      <GridItem item xs={12} md={6.5}>
         <video style={{ borderRadius: '5px' }} width="100%" controls>
           <source src="/videos/introduction.mp4" type="video/mp4" />
         </video>
       </GridItem>
-      <GridItem item xs={12} md={5}>
+      <GridItem item xs={12} md={5.5}>
         <Card>
           <CardContent>
             <Typography variant="subtitle1">
@@ -50,7 +50,7 @@ const AboutUsCard: React.FC<AboutUsCardProps> = ({}) => {
               nối họ đến những nhà tuyển dụng với những công việc phù hợp nhu
               cầu và khả năng. Với những kiến thức về căn bản an toàn thông tin
               và lập trình blockchain đã được học tại trường, nhóm ứng dụng công
-              nghệ blockchain để tiếp cận giải pháp trên{' '}
+              nghệ blockchain để tiếp cận giải pháp trên
             </Typography>
           </CardContent>
         </Card>
