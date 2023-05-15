@@ -35,7 +35,6 @@ interface BasicInfoCardProps {
   phone: string | null
   background: string | null
   role: string
-  is_admin?: boolean
 }
 
 const variants: Variants = {
@@ -57,7 +56,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
   role,
   phone,
   background,
-  is_admin,
+
   email
 }) => {
   const dispatch = useAppDispatch()
@@ -136,7 +135,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                     width: '170px'
                   }}
                   alt={fullName!}
-                  src={avatar || 'images/default-user.jpg'}
+                  src={avatar || '/images/default-user.jpg'}
                 />
               </div>
             }
@@ -179,30 +178,19 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                   }}
                   color="text.primary"
                 >
-                  {is_admin ? 'Admin Recruiter' : role}
+                  {role}
                 </Typography>
               </>
             }
             sx={{ alignItems: 'end' }}
           />
-          {role === 'recruiter' && (
-            <CardContent sx={{ py: 'unset' }}>
-              <OvalButton style={{ marginRight: '8px' }} primary>
-                Theo dõi
-              </OvalButton>
-              {/* <OvalButton primary outlined>
-                Việc làm đã tạo
-              </OvalButton> */}
-            </CardContent>
-          )}
-          {role === 'candidate' && (
-            <CardContent sx={{ py: 'unset' }}>
-              <OvalButton style={{ marginRight: '8px' }} primary>
-                Theo dõi
-              </OvalButton>
-              {/* <OvalButton>Hồ sơ chính</OvalButton> */}
-            </CardContent>
-          )}
+
+          <CardContent sx={{ py: 'unset' }}>
+            <OvalButton style={{ marginRight: '8px' }} primary>
+              Theo dõi
+            </OvalButton>
+            {role === 'candidate' && <OvalButton>Hồ sơ chính</OvalButton>}
+          </CardContent>
         </Card>
       </motion.div>
     )
@@ -235,7 +223,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                   width: '170px'
                 }}
                 alt={fullName!}
-                src={avatar || 'images/default-user.jpg'}
+                src={avatar || '/images/default-user.jpg'}
               />
             </div>
           }
@@ -283,19 +271,13 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                 }}
                 color="text.primary"
               >
-                {is_admin ? 'Admin Recruiter' : role}
+                {role}
               </Typography>
             </>
           }
           sx={{ alignItems: 'end' }}
         />
-        {role === 'recruiter' && (
-          <CardContent sx={{ py: 'unset' }}>
-            <OvalButton primary outlined>
-              Việc làm đã tạo
-            </OvalButton>
-          </CardContent>
-        )}
+
         {role === 'candidate' && (
           <CardContent sx={{ py: 'unset' }}>
             <OvalButton>Hồ sơ chính</OvalButton>

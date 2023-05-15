@@ -493,7 +493,7 @@ export async function getServerSideProps(context: {
     }
   })
   let recruiter: any = { data: {} }
-  if (session && session!.user!.email === 'recruiter') {
+  if (session && session!.user!.email !== 'candidate') {
     recruiter = await resumiroApi
       .getRecruiterById(session!.user!.name!)
       .then(res => res.data)

@@ -35,8 +35,8 @@ const roles = [
     label: 'Recruiter'
   },
   {
-    value: 'admin_recruiter',
-    label: 'Admin Recruiter'
+    value: 'admin',
+    label: 'Admin'
   }
 ]
 

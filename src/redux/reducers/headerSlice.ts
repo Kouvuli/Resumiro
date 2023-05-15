@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
 import socket from '@libs/socket'
-import { notifications } from '@prisma/client'
 
 const initialState = {
   isApplied: false,
@@ -11,7 +10,7 @@ const initialState = {
   loading: false,
   unreadNotification: 0,
   user: {},
-  newNotification: null,
+  refreshNotification: false,
   notificationList: []
 }
 
@@ -57,8 +56,8 @@ const headerSlice = createSlice({
     changeApplyStatus: (state, action) => {
       state.isApplied = action.payload.isApplied
     },
-    addNewNotification: (state, action) => {
-      state.newNotification = action.payload
+    refreshNotification: (state, action) => {
+      state.refreshNotification = action.payload
     },
     reset: () => initialState
   },

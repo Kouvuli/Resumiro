@@ -65,10 +65,10 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
             sx={{ fontSize: 20, color: common.white, mb: 10 }}
             variant="subtitle1"
           >
-            Cơ hội tham gia vào những công ty, doanh nghiệp hàng đầu Việt Nam,
+            Cơ hội tham gia vào những công ty, doanh nghiệp hàng đầu Việt Nam.
           </Typography>
           <Link href={status === 'authenticated' ? '/viec-lam' : '/dang-ky'}>
-            <RoundButton>Get started</RoundButton>
+            <RoundButton>Bắt đầu</RoundButton>
           </Link>
         </motion.div>
       </GridItem>

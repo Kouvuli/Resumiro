@@ -35,7 +35,7 @@ type CompanyListPerPage = {
 }
 interface CompanyPageProps {
   data: CompanyListPerPage
-  recruiter?: Recruiter
+  user: Recruiter
   allLocations: locations[]
 }
 
@@ -48,11 +48,11 @@ const orderOptions = [
 
 const CompanyPage: React.FC<CompanyPageProps> = ({
   data,
-  recruiter,
+  user,
   allLocations
 }) => {
   const dispatch = useAppDispatch()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [open, setOpen] = useState(false)
   const [hasAddCompany, setHasAddCompany] = useState(false)
   const router = useRouter()
@@ -74,20 +74,21 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     order_by
   } = useAppSelector(companySelector)
   useEffect(() => {
-    if (!_.isEmpty(recruiter) && recruiter.is_admin) {
-      if (recruiter.company_id == null) {
-        setHasAddCompany(true)
-        if (createdCompany) {
-          dispatch(
-            updateRecruiterCompany({
-              id: Number(session!.user!.name),
-              data: {
-                company_id: Number(createdCompany.id)
-              }
-            })
-          )
-        }
-      }
+    if (!_.isEmpty(user) && user.role === 'admin') {
+      setHasAddCompany(true)
+    }
+  }, [])
+  useEffect(() => {
+    if (createdCompany) {
+      setHasAddCompany(false)
+      dispatch(
+        updateRecruiterCompany({
+          id: Number(session!.user!.name),
+          data: {
+            company_id: Number(createdCompany.id)
+          }
+        })
+      )
     }
   }, [createdCompany])
   const handleOpenAddCompanyModal = () => {
@@ -412,19 +413,20 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
             />
           )}
 
-          {data.totalPage > 0 && (
-            <Grid
-              item
-              xs={12}
-              sx={{
-                justifyContent: 'center',
-                display: 'flex',
-                mt: 4
-              }}
-            >
-              <RoundPagination page={data.page} totalPage={data.totalPage} />
-            </Grid>
-          )}
+          <Grid
+            item
+            xs={12}
+            sx={{
+              justifyContent: 'center',
+              display: 'flex',
+              mt: 4
+            }}
+          >
+            <RoundPagination
+              page={Number(data.page)}
+              totalPage={Number(data.totalPage)}
+            />
+          </Grid>
         </Grid>
       </Container>
     </ArticleLayout>
@@ -438,10 +440,10 @@ export async function getServerSideProps(context: {
 }) {
   const session = await getServerSession(context.req, context.res, authOptions)
 
-  let recruiter: any = { data: {} }
-  if (session && session!.user!.email === 'recruiter') {
-    recruiter = await resumiroApi
-      .getRecruiterById(session!.user!.name!)
+  let user: any = { data: {} }
+  if (session) {
+    user = await resumiroApi
+      .getUserById(session!.user!.name!)
       .then(res => res.data)
   }
   const allLocations = await resumiroApi.getLocations().then(res => res.data)
@@ -466,7 +468,7 @@ export async function getServerSideProps(context: {
         totalPage: companies.pagination.total,
         data: companyList
       },
-      recruiter: recruiter.data,
+      user: user.data,
       allLocations: allLocations.data
     }
   }

@@ -16,6 +16,11 @@ export default async function handler(
   let id = Number(notificationId)
 
   if (req.method === 'DELETE') {
+    await prisma.notifications_users.deleteMany({
+      where: {
+        notification_id: id
+      }
+    })
     const data = await prisma.notifications
       .delete({
         where: {

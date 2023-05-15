@@ -103,10 +103,7 @@ export async function getServerSideProps(context: {
 
   if (session?.user?.email === 'candidate') {
     return {
-      redirect: {
-        destination: '/ca-nhan',
-        permanent: false
-      }
+      notFound: true
     }
   }
   const candidateDetail = await resumiroApi

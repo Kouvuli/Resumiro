@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem'
 import EducationItem from './educationItem'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
-import { certificates } from '@prisma/client'
+import { certificates, companies } from '@prisma/client'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
@@ -19,13 +19,17 @@ import TextField from '@mui/material/TextField'
 import Grid from '@mui/material/Grid'
 import { profileSelector } from '@redux/selectors'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { createCertificate } from '@redux/reducers/profileSlice'
+import profileSlice, {
+  createCertificate,
+  uploadCertificate
+} from '@redux/reducers/profileSlice'
 import { CircularProgress } from '@mui/material'
 import { useSession } from 'next-auth/react'
 interface EducationCardProps {
   type?: number
   style?: React.CSSProperties
   educations?: certificates[]
+  allCompanies?: companies[]
 }
 
 const variants: Variants = {
@@ -47,13 +51,15 @@ const CustomListItem = styled(ListItem)(({}) => ({
 const EducationCard: React.FC<EducationCardProps> = ({
   type,
   style,
-  educations
+  educations,
+  allCompanies
 }) => {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
   const [isModify, setIsModify] = useState(false)
   const [open, setOpen] = useState(false)
-  const { loading } = useAppSelector(profileSelector)
+  const { loading, uploadedCertificate, uploadCertificateLoading } =
+    useAppSelector(profileSelector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -61,18 +67,52 @@ const EducationCard: React.FC<EducationCardProps> = ({
     const data = new FormData(event.currentTarget)
     const name = data.get('name')!.toString()
     const verified_at = data.get('verified_at')!.toString()
+    const company = data.get('company')!.toString()
+
+    if (
+      company === '' ||
+      name === '' ||
+      verified_at === '' ||
+      uploadedCertificate === ''
+    ) {
+      dispatch(
+        profileSlice.actions.changeSnackBarMessage({
+          message: 'Dữ liệu không hợp lệ',
+          messageType: 'error'
+        })
+      )
+      dispatch(profileSlice.actions.toggleSnackBar({ showMessage: true }))
+      return
+    }
+
     dispatch(
       createCertificate({
-        name: name,
-        verified_at: new Date(verified_at),
-
-        candidate_id: Number(session!.user!.name)
+        certificate: {
+          name: name,
+          verified_at: new Date(verified_at),
+          source: uploadedCertificate,
+          candidate_id: Number(session!.user!.name)
+        },
+        company_id: Number(company),
+        content: 'Xác thực chứng chỉ',
+        owner_id: Number(session!.user!.name)
       })
     )
     setOpen(false)
   }
   const modifyToggleHandler = () => {
     setIsModify(prev => !prev)
+  }
+
+  const handleUploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const data = e.target.files![0]
+
+    if (data) {
+      const body = new FormData()
+
+      body.append('file', data)
+      dispatch(uploadCertificate(body))
+    }
   }
 
   if (type === 2) {
@@ -200,7 +240,49 @@ const EducationCard: React.FC<EducationCardProps> = ({
                 defaultValue={new Date().toISOString().slice(0, 10)}
               />
             </Grid>
-
+            <Grid item xs={6}>
+              <TextField
+                required
+                fullWidth
+                select
+                name="company"
+                id="company"
+                label="Company"
+                SelectProps={{
+                  native: true
+                }}
+              >
+                {allCompanies &&
+                  allCompanies.map((company: companies, i) => (
+                    <option value={company.id} key={i}>
+                      {company.name}
+                    </option>
+                  ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                component="label"
+                disableElevation
+                disableFocusRipple
+                endIcon={
+                  uploadCertificateLoading && (
+                    <CircularProgress color="secondary" size={18} />
+                  )
+                }
+              >
+                {uploadedCertificate !== ''
+                  ? uploadedCertificate.substring(21, 45) + '...'
+                  : 'Tải file'}
+                <input
+                  hidden
+                  onChange={handleUploadFile}
+                  accept="application/pdf"
+                  type="file"
+                />
+              </Button>
+            </Grid>
             <Grid item xs={12}>
               <div
                 style={{

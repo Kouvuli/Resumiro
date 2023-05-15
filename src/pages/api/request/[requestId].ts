@@ -11,13 +11,29 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const prisma = new PrismaClient()
-  const { companyId } = req.query
   prisma.$connect()
-  if (req.method === 'GET') {
-    let id = Number(companyId)
-    const recruiters = await prisma.users
-      .findMany({
-        where: { AND: [{ role: 'recruiter' }, { company_id: id }] }
+  const { requestId } = req.query
+  const existingRequest = await prisma.request.findFirst({
+    where: {
+      id: Number(requestId)
+    }
+  })
+
+  if (!existingRequest) {
+    res.status(404).json({
+      message: 'Request not found',
+      status: 'error'
+    })
+    prisma.$disconnect()
+    return
+  }
+
+  if (req.method === 'DELETE') {
+    const data = await prisma.request
+      .delete({
+        where: {
+          id: Number(requestId!)
+        }
       })
       .catch(() => {
         res.status(500).json({
@@ -27,18 +43,19 @@ export default async function handler(
         prisma.$disconnect()
         return
       })
-    if (!recruiters) {
+    if (!data) {
       res.status(404).json({
-        message: 'Recruiters not found',
+        message: 'Cannot delete request',
         status: 'error'
       })
       prisma.$disconnect()
       return
     }
+
     res.status(200).json({
-      message: 'Successfully get recruiters from company id',
+      message: 'Successfully deleted request',
       status: 'ok',
-      data: recruiters
+      data: data
     })
     prisma.$disconnect()
     return

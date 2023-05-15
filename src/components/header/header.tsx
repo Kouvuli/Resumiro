@@ -222,8 +222,13 @@ const variants: Variants = {
 const Header = () => {
   const { data: session, status } = useSession()
   const dispatch = useAppDispatch()
-  const { user, notificationList, newNotification, unreadNotification } =
-    useAppSelector(headerSelector)
+  const {
+    user,
+    notificationList,
+    refreshNotification,
+    newNotification,
+    unreadNotification
+  } = useAppSelector(headerSelector)
   const router = useRouter()
   const navTogglerRef = useRef<HTMLButtonElement>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -238,7 +243,7 @@ const Header = () => {
 
   useEffect(() => {
     socket.on('receive_message', data => {
-      dispatch(headerSlice.actions.addNewNotification(data.message))
+      dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
     })
   }, [socket])
   const onToggleHander = () => {
@@ -282,6 +287,7 @@ const Header = () => {
         {notificationList.map(item => (
           <ListItem disablePadding key={item.notification.id}>
             <NotificationCard
+              id={item.notification.id}
               isRead={item.is_read}
               type={item.notification.notification_type_id}
               object_id={item.notification.object_url!}
@@ -347,6 +353,13 @@ const Header = () => {
                     <li>
                       <Link href="/cong-ty">Công ty</Link>
                     </li>
+                    {session && (
+                      <li>
+                        {session!.user!.email! === 'admin' && (
+                          <Link href="/yeu-cau-xac-thuc">Yêu cầu xác thực</Link>
+                        )}
+                      </li>
+                    )}
                   </ul>
                 </nav>
                 <div style={{ flexGrow: 1 }} />
@@ -470,6 +483,13 @@ const Header = () => {
                 <li>
                   <Link href="/cong-ty">Công ty</Link>
                 </li>
+                {session && (
+                  <li>
+                    {session!.user!.email! === 'admin' && (
+                      <Link href="/yeu-cau-xac-thuc">Yêu cầu xác thực</Link>
+                    )}
+                  </li>
+                )}
               </ul>
             </nav>
             <div style={{ flexGrow: 1 }} />

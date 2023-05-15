@@ -35,9 +35,10 @@ export default async function handler(
         return
       })
     if (!user) {
-      res.status(404).json({
-        message: 'Cannot count user notification',
-        status: 'error'
+      res.status(200).json({
+        message: 'Successfully count user notification',
+        status: 'ok',
+        data: 0
       })
       prisma.$disconnect()
       return

@@ -12,16 +12,16 @@ export default async function handler(
 ) {
   const prisma = new PrismaClient()
   prisma.$connect()
-  const { experienceId } = req.query
-  const existingExperience = await prisma.experiences.findFirst({
+  const { certificateId } = req.query
+  const existingCertificate = await prisma.certificates.findFirst({
     where: {
-      id: Number(experienceId)
+      id: Number(certificateId)
     }
   })
 
-  if (!existingExperience) {
+  if (!existingCertificate) {
     res.status(404).json({
-      message: 'Experience not found',
+      message: 'Certificate not found',
       status: 'error'
     })
     prisma.$disconnect()
@@ -29,9 +29,10 @@ export default async function handler(
   }
 
   if (req.method === 'PATCH') {
-    const { position, start, finish, company_id } = req.body
+    const { name, verified_at, source } = req.body
 
-    if (!position || !start || !finish || !company_id) {
+    let data
+    if (!name || !verified_at) {
       res.status(400).json({
         message: 'Missing input',
         status: 'error'
@@ -39,36 +40,20 @@ export default async function handler(
       return
     }
 
-    const existingCompany = await prisma.companies.findFirst({
+    data = await prisma.certificates.update({
       where: {
-        id: Number(company_id)
-      }
-    })
-
-    if (!existingCompany) {
-      res.status(404).json({
-        message: 'Company not found',
-        status: 'error'
-      })
-      prisma.$disconnect()
-      return
-    }
-
-    const data = await prisma.experiences.update({
-      where: {
-        id: Number(experienceId!)
+        id: Number(certificateId!)
       },
       data: {
-        position: position,
-        start: start,
-        finish: finish,
-        company_id: company_id
+        name: name,
+        source: source,
+        verified_at: new Date(verified_at)
       }
     })
 
     if (!data) {
       res.status(400).json({
-        message: 'Cannot update experience',
+        message: 'Cannot update certificate',
         status: 'error'
       })
       prisma.$disconnect()
@@ -76,17 +61,17 @@ export default async function handler(
     }
 
     res.status(200).json({
-      message: 'Successfully updated experience',
+      message: 'Successfully updated certificate',
       status: 'ok',
       data: data
     })
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
-    const data = await prisma.experiences
+    const data = await prisma.certificates
       .delete({
         where: {
-          id: Number(experienceId!)
+          id: Number(certificateId!)
         }
       })
       .catch(() => {
@@ -99,7 +84,7 @@ export default async function handler(
       })
     if (!data) {
       res.status(404).json({
-        message: 'Cannot delete experience',
+        message: 'Cannot delete certificate',
         status: 'error'
       })
       prisma.$disconnect()
@@ -107,7 +92,7 @@ export default async function handler(
     }
 
     res.status(200).json({
-      message: 'Successfully deleted experience',
+      message: 'Successfully deleted certificate',
       status: 'ok',
       data: data
     })

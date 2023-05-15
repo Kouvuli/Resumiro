@@ -96,8 +96,10 @@ const signInSlice = createSlice({
       })
       .addCase(signInNormal.fulfilled, (state, action) => {
         state.showMessage = true
+
         state.message = 'Đăng nhập thành công'
         state.messageType = 'success'
+
         state.success = true
         state.loading = false
       })

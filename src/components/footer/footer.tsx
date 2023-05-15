@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
           <Grid item xs={12} sm={6} md={4}>
             <Typography
               variant="h5"
-              sx={{ color: 'primary.contrastText', mb: 1 }}
+              sx={{ color: 'primary.contrastText', mb: 2 }}
             >
               Resumiro.
             </Typography>
@@ -103,9 +103,7 @@ const Footer: React.FC = () => {
                 color: 'primary.contrastText'
               }}
             >
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Distinctio repellat esse temporibus? Fugiat dignissimos
-              consectetur assumenda harum asperiores debitis, voluptatem quae
+              Cơ hội tham gia vào những công ty, doanh nghiệp hàng đầu Việt Nam.
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>

@@ -1,64 +1,71 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
-export type Data = {
+type Data = {
   message: string
   status: string
   pagination?: object
   data?: any
 }
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
   const prisma = new PrismaClient()
+  const { receiverId } = req.query
   prisma.$connect()
   if (req.method === 'GET') {
-    const { q, page = 1, limit = 8 } = req.query
+    const { page = 1, limit = 9, q } = req.query
     let p = Number(page)
     let l = Number(limit)
-    let qList: any = []
+    let qArr: any
     if (q !== '' || q !== null) {
-      qList = q?.toString().split(' ')
+      qArr = q?.toString().split(' ')
     }
-
-    const data = await prisma.users.findMany({
+    const data = await prisma.request.findMany({
       skip: (p - 1) * l,
       take: l,
       where: {
         AND: [
           {
-            company_id: null
+            receiver_id: Number(receiverId)
           },
-
           {
-            username: {
-              search: q ? qList.join('|') : undefined
+            owner: {
+              username: {
+                search: q ? qArr.join('|') : undefined
+              }
             }
           }
         ]
+      },
+
+      include: {
+        owner: true,
+        certificate: true,
+        experience: true
       }
     })
-
-    const totalRecruiters = await prisma.users.count({
+    const total = await prisma.request.count({
       where: {
         AND: [
           {
-            company_id: null
+            receiver_id: Number(receiverId)
           },
           {
-            username: {
-              search: q ? qList.join('|') : undefined
+            owner: {
+              username: {
+                search: q ? qArr.join('|') : undefined
+              }
             }
           }
         ]
       }
     })
     res.status(200).json({
-      message: 'Successfully get companies',
+      message: 'Successfully get requests',
       status: 'ok',
       pagination: {
-        total: Math.round(totalRecruiters / l),
+        total: Math.round(total / l),
         page: page,
         limit: limit
       },

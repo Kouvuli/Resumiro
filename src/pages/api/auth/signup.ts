@@ -45,54 +45,28 @@ export default async function handler(
     return
   }
 
-  if (role === 'admin_recruiter') {
-    newUser = await prisma.users
-      .create({
-        data: {
-          username: username,
-          password: hashedPassword,
-          address_wallet: address_wallet,
-          role: roles.recruiter,
-          is_admin: true,
-          room: {
-            create: {
-              token: randomToken()
-            }
+  newUser = await prisma.users
+    .create({
+      data: {
+        username: username,
+        password: hashedPassword,
+        address_wallet: address_wallet,
+        role: role,
+        room: {
+          create: {
+            token: randomToken()
           }
         }
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: 'Internal server error',
+        status: 'error'
       })
-      .catch(() => {
-        res.status(500).json({
-          message: 'Internal server error',
-          status: 'error'
-        })
-        prisma.$disconnect()
-        return
-      })
-  } else {
-    newUser = await prisma.users
-      .create({
-        data: {
-          username: username,
-          password: hashedPassword,
-          address_wallet: address_wallet,
-          role: role,
-          room: {
-            create: {
-              token: randomToken()
-            }
-          }
-        }
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: 'Internal server error',
-          status: 'error'
-        })
-        prisma.$disconnect()
-        return
-      })
-  }
+      prisma.$disconnect()
+      return
+    })
 
   prisma.$disconnect()
   res

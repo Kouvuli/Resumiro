@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
 import { Recruiter } from '@shared/interfaces'
+import socket from '@libs/socket'
+import headerSlice from './headerSlice'
 
 const initialState = {
   loading: false,
@@ -9,11 +11,10 @@ const initialState = {
   recruitersSameCompany: [],
   searchRecruiterNonCompanyText: '',
   recruitersNonCompany: [],
-  uploadBackgroundLoading: false,
-  uploadLogoLoading: false,
-  uploadedLogo: '',
-  uploadedBackground: '',
-
+  uploadExperienceLoading: false,
+  uploadedExperience: '',
+  uploadCertificateLoading: false,
+  uploadedCertificate: '',
   message: '',
   messageType: 'success',
   user: {},
@@ -22,6 +23,22 @@ const initialState = {
   allFields: [],
   allLocations: []
 }
+
+export const uploadExperience = createAsyncThunk(
+  'upload-experience',
+  async (body: any) => {
+    const data = await resumiroApi.uploadFile(body).then(res => res.data)
+    return data
+  }
+)
+
+export const uploadCertificate = createAsyncThunk(
+  'upload-certificate',
+  async (body: any) => {
+    const data = await resumiroApi.uploadFile(body).then(res => res.data)
+    return data
+  }
+)
 
 export const fetchCandidateById = createAsyncThunk(
   'get-candidate',
@@ -90,19 +107,86 @@ export const fetchNonCompanyRecruiters = createAsyncThunk(
 
 export const createExperience = createAsyncThunk(
   'create-experience',
-  async (input: any) => {
-    const data = await resumiroApi.insertExperience(input).then(res => res.data)
-    return data
+  async (input: {
+    experience: any
+    company_id: number
+    content: string
+    owner_id: number
+  }) => {
+    const experience = await resumiroApi
+      .insertExperience(input.experience)
+      .then(res => res.data)
+
+    const admin = await resumiroApi
+      .getCompanyAdmin(input.company_id)
+      .then(res => res.data)
+
+    await resumiroApi
+      .insertRequest({
+        receiver_id: admin.data.id,
+        content: input.content,
+        owner_id: input.owner_id,
+        experience_id: experience.data.id,
+        certificate_id: null
+      })
+      .then(res => res.data)
+    const room = await resumiroApi
+      .getRoomByUserId(Number(admin.data.id))
+      .then(res => res.data)
+    await resumiroApi
+      .insertNotification({
+        author_id: input.owner_id,
+        title: 'Yêu cầu xác thực',
+        content: input.content.toLowerCase(),
+        recipients: admin.data.id.toString(),
+        notification_type_id: 4,
+        object_url: input.experience.source
+      })
+      .then(res => res.data)
+    return { experience, room }
   }
 )
 
 export const createCertificate = createAsyncThunk(
   'create-certificate',
-  async (input: any) => {
-    const data = await resumiroApi
-      .insertCertificate(input)
+  async (input: {
+    certificate: any
+    company_id: number
+    content: string
+    owner_id: number
+  }) => {
+    const certificate = await resumiroApi
+      .insertCertificate(input.certificate)
       .then(res => res.data)
-    return data
+
+    const admin = await resumiroApi
+      .getCompanyAdmin(input.company_id)
+      .then(res => res.data)
+
+    await resumiroApi
+      .insertRequest({
+        receiver_id: admin.data.id,
+        content: input.content,
+        owner_id: input.owner_id,
+        experience_id: null,
+        certificate_id: certificate.data.id
+      })
+      .then(res => res.data)
+
+    const room = await resumiroApi
+      .getRoomByUserId(Number(admin.data.id))
+      .then(res => res.data)
+    await resumiroApi
+      .insertNotification({
+        author_id: input.owner_id,
+        title: 'Yêu cầu xác thực',
+        content: input.content.toLowerCase(),
+        recipients: admin.data.id.toString(),
+        notification_type_id: 4,
+        object_url: input.certificate.source
+      })
+      .then(res => res.data)
+    return { certificate, room }
   }
 )
 
@@ -247,6 +331,43 @@ export const updateCompany = createAsyncThunk(
   }
 )
 
+export const applyCompany = createAsyncThunk(
+  'apply-company',
+  async (input: {
+    company_id: number
+    owner_id: number
+    title: string
+    content: string
+  }) => {
+    const admin = await resumiroApi
+      .getCompanyAdmin(input.company_id)
+      .then(res => res.data)
+
+    const room = await resumiroApi
+      .getRoomByUserId(Number(admin.data.id))
+      .then(res => res.data)
+
+    const notification = await resumiroApi
+      .insertNotification({
+        author_id: input.owner_id,
+        title: input.title,
+        content: input.content.toLowerCase(),
+        recipients: admin.data.id.toString(),
+        notification_type_id: 2,
+        object_url: input.company_id.toString()
+      })
+      .then(res => res.data)
+    return { room, notification }
+  }
+)
+export const deleteNotificationById = createAsyncThunk(
+  'delete-notification-by-id',
+  async (id: number) => {
+    await resumiroApi.deleteNotification(id).then(res => res.data)
+    return
+  }
+)
+
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
@@ -268,6 +389,40 @@ const profileSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      .addCase(uploadExperience.pending, (state, action) => {
+        state.uploadExperienceLoading = true
+      })
+      .addCase(uploadExperience.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.uploadedExperience = action.payload.data
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.uploadExperienceLoading = false
+      })
+      .addCase(uploadExperience.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.uploadExperienceLoading = false
+      })
+
+      .addCase(uploadCertificate.pending, (state, action) => {
+        state.uploadCertificateLoading = true
+      })
+      .addCase(uploadCertificate.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.uploadedCertificate = action.payload.data
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.uploadCertificateLoading = false
+      })
+      .addCase(uploadCertificate.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.uploadCertificateLoading = false
+      })
+
       .addCase(fetchCandidateById.pending, (state, action) => {
         state.loading = true
       })
@@ -305,7 +460,11 @@ const profileSlice = createSlice({
       })
       .addCase(createExperience.fulfilled, (state, action) => {
         state.showMessage = true
-        state.message = action.payload.message
+        state.message = action.payload.experience.message
+        socket.emit('send_message', {
+          room: action.payload.room.data,
+          message: action.payload.experience
+        })
         state.messageType = 'success'
         state.loading = false
       })
@@ -321,7 +480,12 @@ const profileSlice = createSlice({
       })
       .addCase(createCertificate.fulfilled, (state, action) => {
         state.showMessage = true
-        state.message = action.payload.message
+        state.message = action.payload.certificate.message
+
+        socket.emit('send_message', {
+          room: action.payload.room.data,
+          message: action.payload.certificate
+        })
         state.messageType = 'success'
         state.loading = false
       })
@@ -608,6 +772,37 @@ const profileSlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(applyCompany.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(applyCompany.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = 'Đã gửi yêu cầu thành công'
+        state.messageType = 'success'
+        socket.emit('send_message', {
+          room: action.payload.room.data,
+          message: action.payload.notification
+        })
+
+        state.loading = false
+      })
+      .addCase(applyCompany.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(deleteNotificationById.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(deleteNotificationById.fulfilled, (state, action) => {
+        state.loading = false
+      })
+      .addCase(deleteNotificationById.rejected, (state, action) => {
         state.loading = false
       })
   }

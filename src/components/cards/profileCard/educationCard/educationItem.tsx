@@ -16,10 +16,15 @@ import { Box } from '@mui/material'
 import { TextField } from '@mui/material'
 import { Grid } from '@mui/material'
 import { CircularProgress } from '@mui/material'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import HourglassFullIcon from '@mui/icons-material/HourglassFull'
+import CancelIcon from '@mui/icons-material/Cancel'
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
 import {
   deleteCertificate,
   updateCertificate
 } from '@redux/reducers/profileSlice'
+import { companies } from '@prisma/client'
 const CustomEducationItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -27,10 +32,15 @@ const CustomEducationItem = styled(Card)(({}) => ({
 
 interface EducationItemProps {
   data: certificates
+
   isModify: boolean
 }
 
-const EducationItem: React.FC<EducationItemProps> = ({ data, isModify }) => {
+const EducationItem: React.FC<EducationItemProps> = ({
+  data,
+
+  isModify
+}) => {
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
   const handleOpen = () => setOpen(true)
@@ -72,9 +82,35 @@ const EducationItem: React.FC<EducationItemProps> = ({ data, isModify }) => {
               <Typography
                 variant="h6"
                 color="text.primary"
-                sx={{ mb: 1.4, fontSize: '1.2rem' }}
+                sx={{
+                  mb: 1.4,
+                  fontSize: '1.1rem',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
               >
                 {data.name}
+
+                {data.status === 'overdated' && (
+                  <AccessTimeFilledIcon
+                    sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
+                  />
+                )}
+                {data.status === 'pending' && (
+                  <HourglassFullIcon
+                    sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
+                  />
+                )}
+                {data.status === 'rejected' && (
+                  <CancelIcon
+                    sx={{ fontSize: '1.3rem', ml: 1, color: 'warning.main' }}
+                  />
+                )}
+                {data.status === 'verified' && (
+                  <CheckCircleIcon
+                    sx={{ fontSize: '1.3rem', ml: 1, color: 'info.main' }}
+                  />
+                )}
               </Typography>
             </div>
             <div style={{ flexGrow: 1 }} />

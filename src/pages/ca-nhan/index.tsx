@@ -52,7 +52,7 @@ const ProfilePage = () => {
       dispatch(fetchCandidateById(session!.user!.name!))
     } else {
       dispatch(fetchRecruiterById(session!.user!.name!))
-      if (user.is_admin) {
+      if (user.company_id) {
         dispatch(fetchAllRecruiterSameCompany(user.company_id))
       }
     }
@@ -90,21 +90,21 @@ const ProfilePage = () => {
                 fullName={user.full_name}
                 username={user.username}
                 role={user.role}
-                is_admin={user.is_admin}
                 phone={user.phone}
                 background={user.background}
                 email={user.email}
               />
 
-              {user.role === 'recruiter' && (
+              {user.role !== 'candidate' && (
                 <CompanyBasicCard
                   style={{ marginTop: '16px' }}
                   company={user.company}
-                  isAdmin={user.is_admin}
+                  role={user.role}
                   allLocations={allLocations}
+                  allCompanies={allCompanies}
                 />
               )}
-              {user.role === 'recruiter' && (
+              {user.role !== 'candidate' && (
                 <OwnedJobCard
                   style={{ marginTop: '16px' }}
                   jobs={user.jobs}
@@ -113,7 +113,7 @@ const ProfilePage = () => {
                   allLocations={allLocations}
                 />
               )}
-              {user.role === 'recruiter' && user.is_admin && (
+              {user.role === 'admin' && (
                 <OwnedRecruiterCard
                   style={{ marginTop: '16px' }}
                   recruiters={recruitersSameCompany}
@@ -134,6 +134,7 @@ const ProfilePage = () => {
                 <EducationCard
                   style={{ marginTop: '16px' }}
                   educations={user.certificates}
+                  allCompanies={allCompanies}
                 />
               )}
               {user.role === 'candidate' && (

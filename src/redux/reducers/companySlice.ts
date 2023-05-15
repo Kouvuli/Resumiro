@@ -84,7 +84,7 @@ const companySlice = createSlice({
         state.showMessage = true
         state.message = action.payload.message
         state.messageType = 'success'
-        console.log(action.payload.data)
+
         state.createdCompany = action.payload.data
         state.loading = false
       })

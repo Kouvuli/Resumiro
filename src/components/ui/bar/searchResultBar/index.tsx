@@ -11,7 +11,7 @@ import RoundSelect from '@components/ui/select'
 interface SearchResultBarProps {
   numberSearch: number
   handleChange?: (value: string) => void
-  options: { value: string; label: string }[]
+  options?: { value: string; label: string }[]
 }
 
 const SearchResultBar: React.FC<SearchResultBarProps> = ({
@@ -42,17 +42,16 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({
         </span>{' '}
         kết quả
       </Typography>
-      <RoundSelect options={options} handleChange={handleChange} />
-      {
-        <ToggleButtonGroup
-          value={formats}
-          onChange={handleFormat}
-          sx={{ marginLeft: '10px' }}
-        >
-          <Toggle icon={<ViewHeadlineOutlinedIcon />}></Toggle>
-          <Toggle icon={<GridViewOutlinedIcon />}></Toggle>
-        </ToggleButtonGroup>
-      }
+      {options && <RoundSelect options={options} handleChange={handleChange} />}
+
+      <ToggleButtonGroup
+        value={formats}
+        onChange={handleFormat}
+        sx={{ marginLeft: '10px' }}
+      >
+        <Toggle icon={<ViewHeadlineOutlinedIcon />}></Toggle>
+        <Toggle icon={<GridViewOutlinedIcon />}></Toggle>
+      </ToggleButtonGroup>
     </Grid>
   )
 }

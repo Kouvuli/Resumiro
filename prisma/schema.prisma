@@ -24,7 +24,6 @@ model users {
   nonce          crypto_nonce? @relation(fields: [nonce_id], references: [id])
   room_id        Int?          @unique
   room           rooms?        @relation(fields: [room_id], references: [id])
-  is_admin       Boolean?      @default(false)
   company_id     Int?
   company        companies?    @relation(fields: [company_id], references: [id])
   position       String?       @db.VarChar(100)
@@ -37,6 +36,7 @@ model users {
   jobs                jobs[]
   notifications       notifications_users[]
   owned_notifications notifications[]
+  request             request[]
 }
 
 model users_skills {
@@ -124,11 +124,14 @@ model skills {
 }
 
 model certificates {
-  id          Int      @id(map: "pk_certificates") @default(autoincrement())
-  name        String   @db.VarChar(100)
-  verified_at DateTime @db.Timestamp(6)
+  id          Int       @id(map: "pk_certificates") @default(autoincrement())
+  name        String    @db.VarChar(100)
+  verified_at DateTime  @db.Timestamp(6)
   user_id     Int
-  user        users    @relation(fields: [user_id], references: [id])
+  source      String?   @db.VarChar
+  status      statuses  @default(pending)
+  user        users     @relation(fields: [user_id], references: [id])
+  request     request[]
 }
 
 model experiences {
@@ -138,8 +141,11 @@ model experiences {
   finish     String    @db.VarChar(50)
   company_id Int
   user_id    Int
+  source     String?   @db.VarChar
+  status     statuses  @default(pending)
   company    companies @relation(fields: [company_id], references: [id])
   user       users     @relation(fields: [user_id], references: [id])
+  request    request[]
 }
 
 model locations {
@@ -201,7 +207,28 @@ model notification_types {
   notifications notifications[]
 }
 
+model request {
+  id             Int           @id(map: "pk_request") @default(autoincrement())
+  owner_id       Int
+  owner          users         @relation(fields: [owner_id], references: [id])
+  receiver_id    Int
+  content        String?       @db.VarChar
+  create_at      DateTime      @db.Timestamp(6)
+  experience_id  Int?
+  certificate_id Int?
+  experience     experiences?  @relation(fields: [experience_id], references: [id])
+  certificate    certificates? @relation(fields: [certificate_id], references: [id])
+}
+
 enum roles {
   candidate
   recruiter
+  admin
+}
+
+enum statuses {
+  pending
+  rejected
+  verified
+  overdated
 }

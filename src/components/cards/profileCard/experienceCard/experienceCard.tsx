@@ -24,7 +24,10 @@ import { CircularProgress } from '@mui/material'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector } from '@redux/selectors'
-import profileSlice, { createExperience } from '@redux/reducers/profileSlice'
+import profileSlice, {
+  createExperience,
+  uploadExperience
+} from '@redux/reducers/profileSlice'
 
 interface ExperienceCardProps {
   type?: number
@@ -69,7 +72,8 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   const [isModify, setIsModify] = useState(false)
   const { data: session } = useSession()
   const [open, setOpen] = useState(false)
-  const { loading } = useAppSelector(profileSelector)
+  const { loading, uploadExperienceLoading, uploadedExperience } =
+    useAppSelector(profileSelector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
@@ -83,18 +87,50 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
     const company = data.get('company')!.toString()
     const start = data.get('start')!.toString()
     const finish = data.get('finish')!.toString()
-
+    if (
+      position === '' ||
+      company === '' ||
+      uploadedExperience === '' ||
+      start === '' ||
+      finish === ''
+    ) {
+      dispatch(
+        profileSlice.actions.changeSnackBarMessage({
+          message: 'Dữ liệu không hợp lệ',
+          messageType: 'error'
+        })
+      )
+      dispatch(profileSlice.actions.toggleSnackBar({ showMessage: true }))
+      return
+    }
     dispatch(
       createExperience({
-        position: position,
+        experience: {
+          position: position,
+          company_id: Number(company),
+          start: start,
+          finish: finish,
+          user_id: Number(session!.user!.name),
+          source: uploadedExperience
+        },
         company_id: Number(company),
-        start: start,
-        finish: finish,
-        user_id: Number(session!.user!.name)
+        content: 'Xác thực công ty',
+        owner_id: Number(session!.user!.name)
       })
     )
 
     setOpen(false)
+  }
+
+  const handleUploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const data = e.target.files![0]
+
+    if (data) {
+      const body = new FormData()
+
+      body.append('file', data)
+      dispatch(uploadExperience(body))
+    }
   }
   if (type === 2) {
     return (
@@ -258,6 +294,29 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
                       </option>
                     ))}
                   </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    disableElevation
+                    disableFocusRipple
+                    endIcon={
+                      uploadExperienceLoading && (
+                        <CircularProgress color="secondary" size={18} />
+                      )
+                    }
+                  >
+                    {uploadedExperience !== ''
+                      ? uploadedExperience.substring(21, 45) + '...'
+                      : 'Tải file'}
+                    <input
+                      hidden
+                      onChange={handleUploadFile}
+                      accept="application/pdf"
+                      type="file"
+                    />
+                  </Button>
                 </Grid>
                 <Grid item xs={12}>
                   <div
