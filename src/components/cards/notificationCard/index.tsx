@@ -5,11 +5,10 @@ import { getCurrentTimeDiff } from '@utils/timeUtil'
 import CardContent from '@mui/material/CardContent'
 import { users } from '@prisma/client'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import {
-  deleteNotificationById,
-  updateRecruiterCompany
-} from '@redux/reducers/profileSlice'
-import headerSlice from '@redux/reducers/headerSlice'
+import { updateRecruiterCompany } from '@redux/reducers/profileSlice'
+import headerSlice, {
+  deleteNotificationById
+} from '@redux/reducers/headerSlice'
 import { headerSelector } from '@redux/selectors'
 interface NotificationCardProps {
   id: number
@@ -51,11 +50,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     )
 
     dispatch(deleteNotificationById(id))
-    dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
+    // dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
   }
   const rejectRecruiterToCompanyHandler = () => {
     dispatch(deleteNotificationById(id))
-    dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
+    // dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
   }
   if (type === 3) {
     return (

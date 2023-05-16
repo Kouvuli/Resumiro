@@ -29,7 +29,6 @@ import { fetchUserById } from '@redux/reducers/headerSlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
-import { headerSelector } from '@redux/selectors'
 const titleVariants: Variants = {
   initial: {
     opacity: 0,

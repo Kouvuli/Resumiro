@@ -14,31 +14,26 @@ const initialState = {
   notificationList: []
 }
 
-export const fetchUserById = createAsyncThunk(
-  'get-user',
-  async (id: string) => {
-    const { data } = await resumiroApi.getUserById(id).then(res => res.data)
-    return data
-  }
-)
-
 export const fetchUserNotification = createAsyncThunk(
   'get-user-notification',
   async (id: number) => {
-    const { data } = await resumiroApi
+    const { data: notifications } = await resumiroApi
       .getUserNotification(id)
       .then(res => res.data)
-    return data
+
+    const { data: counts } = await resumiroApi
+      .countUnreadNotification(id)
+      .then(res => res.data)
+    return { notifications, counts }
   }
 )
 
-export const countUnreadNotification = createAsyncThunk(
-  'count-unread-notification',
-  async (id: number) => {
-    const { data } = await resumiroApi
-      .countUnreadNotification(id)
-      .then(res => res.data)
-    return data
+export const deleteNotificationById = createAsyncThunk(
+  'delete-notification-by-id',
+  async (id: number, { dispatch }) => {
+    await resumiroApi.deleteNotification(id).then(res => res.data)
+    dispatch(headerSlice.actions.refreshNotification(null))
+    return
   }
 )
 
@@ -63,37 +58,25 @@ const headerSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchUserById.pending, (state, action) => {
-        state.loading = true
-      })
-      .addCase(fetchUserById.fulfilled, (state, action) => {
-        state.loading = false
-        state.user = action.payload
-        socket.emit('join_room', action.payload.room.token)
-      })
-      .addCase(fetchUserById.rejected, (state, action) => {
-        state.loading = false
-      })
-
       .addCase(fetchUserNotification.pending, (state, action) => {
         state.loading = true
       })
       .addCase(fetchUserNotification.fulfilled, (state, action) => {
         state.loading = false
-        state.notificationList = action.payload
+        state.notificationList = action.payload.notifications
+        state.unreadNotification = action.payload.counts
       })
       .addCase(fetchUserNotification.rejected, (state, action) => {
         state.loading = false
       })
 
-      .addCase(countUnreadNotification.pending, (state, action) => {
+      .addCase(deleteNotificationById.pending, (state, action) => {
         state.loading = true
       })
-      .addCase(countUnreadNotification.fulfilled, (state, action) => {
+      .addCase(deleteNotificationById.fulfilled, (state, action) => {
         state.loading = false
-        state.unreadNotification = action.payload
       })
-      .addCase(countUnreadNotification.rejected, (state, action) => {
+      .addCase(deleteNotificationById.rejected, (state, action) => {
         state.loading = false
       })
   }

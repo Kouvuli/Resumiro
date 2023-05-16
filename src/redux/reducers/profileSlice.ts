@@ -360,13 +360,6 @@ export const applyCompany = createAsyncThunk(
     return { room, notification }
   }
 )
-export const deleteNotificationById = createAsyncThunk(
-  'delete-notification-by-id',
-  async (id: number) => {
-    await resumiroApi.deleteNotification(id).then(res => res.data)
-    return
-  }
-)
 
 const profileSlice = createSlice({
   name: 'profile',
@@ -793,16 +786,6 @@ const profileSlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
-        state.loading = false
-      })
-
-      .addCase(deleteNotificationById.pending, (state, action) => {
-        state.loading = true
-      })
-      .addCase(deleteNotificationById.fulfilled, (state, action) => {
-        state.loading = false
-      })
-      .addCase(deleteNotificationById.rejected, (state, action) => {
         state.loading = false
       })
   }

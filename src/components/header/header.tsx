@@ -20,11 +20,7 @@ import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { headerSelector, profileSelector } from '@redux/selectors'
 import profileSlice from '@redux/reducers/profileSlice'
 import socket from '@libs/socket'
-import headerSlice, {
-  countUnreadNotification,
-  fetchUserById,
-  fetchUserNotification
-} from '@redux/reducers/headerSlice'
+import headerSlice, { fetchUserNotification } from '@redux/reducers/headerSlice'
 import _ from 'lodash'
 import Badge from '@mui/material/Badge'
 import NotificationsIcon from '@mui/icons-material/Notifications'
@@ -223,10 +219,9 @@ const Header = () => {
   const { data: session, status } = useSession()
   const dispatch = useAppDispatch()
   const {
-    user,
     notificationList,
     refreshNotification,
-    newNotification,
+
     unreadNotification
   } = useAppSelector(headerSelector)
   const router = useRouter()
@@ -235,11 +230,9 @@ const Header = () => {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      dispatch(countUnreadNotification(Number(session!.user!.name!)))
       dispatch(fetchUserNotification(Number(session!.user!.name!)))
-      dispatch(fetchUserById(session!.user!.name!))
     }
-  }, [newNotification, session])
+  }, [refreshNotification, session])
 
   useEffect(() => {
     socket.on('receive_message', data => {
