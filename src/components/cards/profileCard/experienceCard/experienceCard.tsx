@@ -23,7 +23,7 @@ import { useSession } from 'next-auth/react'
 import { CircularProgress } from '@mui/material'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import profileSlice, { createExperience } from '@redux/reducers/profileSlice'
 
 interface ExperienceCardProps {
@@ -70,6 +70,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   const { data: session } = useSession()
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
@@ -83,6 +84,15 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
     const company = data.get('company')!.toString()
     const start = data.get('start')!.toString()
     const finish = data.get('finish')!.toString()
+
+    await resumiro.addExperience({
+      id: null,
+      position,
+      start,
+      finish,
+      companyId: Number(company),
+      userAddress: wallet.address
+    })
 
     dispatch(
       createExperience({

@@ -32,6 +32,7 @@ import NotificationCard from '@components/cards/notificationCard'
 import signInSlice from '@redux/reducers/signInSlice'
 import Typography from '@mui/material/Typography'
 import { Notification } from '@shared/interfaces'
+import web3Slice, { reconnectWeb3 } from '@redux/reducers/web3Slice'
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -237,6 +238,12 @@ const Header = () => {
   }, [newNotification, session])
 
   useEffect(() => {
+    if (status === 'authenticated') {
+      dispatch(reconnectWeb3())
+    }
+  }, [status])
+
+  useEffect(() => {
     socket.on('receive_message', data => {
       dispatch(headerSlice.actions.addNewNotification(data.message))
     })
@@ -257,6 +264,7 @@ const Header = () => {
     dispatch(profileSlice.actions.reset())
     dispatch(headerSlice.actions.reset())
     dispatch(signInSlice.actions.reset())
+    dispatch(web3Slice.actions.reset())
     const result = await signOut({ redirect: false })
     if (result) {
       router.replace('/dang-nhap')

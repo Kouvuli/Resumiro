@@ -18,7 +18,7 @@ import { styled } from '@mui/material/styles'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button'
 import profileSlice, {
@@ -61,6 +61,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
     uploadedLogo,
     uploadedBackground
   } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -94,6 +95,15 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
       dispatch(profileSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+
+    await resumiro.updateCompany({
+      id: company.id,
+      name,
+      website,
+      location: allLocations && allLocations[Number(locationId) - 1].name,
+      address
+    })
+
     dispatch(
       updateCompany({
         id: company.id,

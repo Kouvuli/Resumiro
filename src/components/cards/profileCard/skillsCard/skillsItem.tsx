@@ -6,9 +6,10 @@ import Image from 'next/image'
 import { styled } from '@mui/material/styles'
 import { IconButton } from '@mui/material'
 import { deleteCandidateSkill } from '@redux/reducers/profileSlice'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useSession } from 'next-auth/react'
 import ClearIcon from '@mui/icons-material/Clear'
+import { web3Selector } from '@redux/selectors'
 const CustomExperienceItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -24,7 +25,9 @@ interface SkillItemProps {
 const SkillItem: React.FC<SkillItemProps> = ({ id, name, isModify }) => {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
-  const deleteHandler = () => {
+  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const deleteHandler = async () => {
+    await resumiro.disconnectCandidateSkill(wallet.address, [id])
     dispatch(
       deleteCandidateSkill({
         id: session!.user!.name!,

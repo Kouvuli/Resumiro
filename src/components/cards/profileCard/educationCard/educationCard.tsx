@@ -17,7 +17,7 @@ import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Grid from '@mui/material/Grid'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { createCertificate } from '@redux/reducers/profileSlice'
 import { CircularProgress } from '@mui/material'
@@ -54,6 +54,7 @@ const EducationCard: React.FC<EducationCardProps> = ({
   const [isModify, setIsModify] = useState(false)
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -61,6 +62,11 @@ const EducationCard: React.FC<EducationCardProps> = ({
     const data = new FormData(event.currentTarget)
     const name = data.get('name')!.toString()
     const verified_at = data.get('verified_at')!.toString()
+    await resumiro.addCertificate({
+      name,
+      verifiedAt: Math.floor(new Date(verified_at).getTime() / 1000),
+      candidateAddress: wallet.address
+    })
     dispatch(
       createCertificate({
         name: name,

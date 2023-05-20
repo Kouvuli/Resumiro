@@ -16,7 +16,7 @@ import companySlice, {
 } from '@redux/reducers/companySlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useRouter } from 'next/router'
-import { companySelector } from '@redux/selectors'
+import { companySelector, web3Selector } from '@redux/selectors'
 import Image from 'next/image'
 import _ from 'lodash'
 import { Box, Button, CircularProgress, Modal, TextField } from '@mui/material'
@@ -73,6 +73,7 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     location,
     order_by
   } = useAppSelector(companySelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   useEffect(() => {
     if (!_.isEmpty(recruiter) && recruiter.is_admin) {
       if (recruiter.company_id == null) {
@@ -135,9 +136,19 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault()
+    // await resumiro.addCompany({
+    //   name: 'google',
+    //   location: 'TP.Hồ Chí Minh',
+    //   adminAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'
+    // })
+    // return
+
     const data = new FormData(event.currentTarget)
     const name = data.get('name')!.toString()
     const locationId = data.get('location')
+
+    // console.log(allLocations[Number(locationId) - 1].name)
+    // return
 
     const scale = data.get('scale')!.toString()
     const about = data.get('about')!.toString()
@@ -159,6 +170,13 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
       dispatch(companySlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+
+    await resumiro.addCompany({
+      name,
+      location: allLocations[Number(locationId) - 1].name,
+      adminAddress: wallet.address
+    })
+
     dispatch(
       createCompany({
         name,

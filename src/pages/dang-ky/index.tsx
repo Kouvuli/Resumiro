@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -18,13 +18,14 @@ import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import { useRouter } from 'next/router'
 import { getServerSession } from 'next-auth'
-import { ethers } from 'ethers'
+import { Wallet, ethers } from 'ethers'
 import { authOptions } from '../api/auth/[...nextauth]'
 import signUpSlice, { signUp } from '@redux/reducers/signUpSlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { signUpSelector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
 import _ from 'lodash'
+import Resumiro from '../../interfaces/Resumiro'
 const roles = [
   {
     value: 'candidate',
@@ -47,6 +48,7 @@ export default function SignUpPage() {
   const dispatch = useAppDispatch()
   const [showPassword, setShowPassword] = useState(false)
   const [walletAddress, setWalletAddress] = useState('')
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider>()
 
   useEffect(() => {
     if (!_.isEmpty(user)) {
@@ -84,6 +86,30 @@ export default function SignUpPage() {
       dispatch(signUpSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+    try {
+      const resumiro = provider ? new Resumiro(provider) : null
+      if (!resumiro) throw new Error('Wallet went wrong!')
+      let type!: number
+      switch (role.toString()) {
+        case 'candidate':
+          type = 0
+          break
+        case 'recruiter':
+          type = 1
+          break
+        case 'admin_recruiter':
+          type = 2
+          break
+      }
+      let result: any = await resumiro.addUser({
+        userAddress: walletAddress,
+        type
+      })
+      console.log(result)
+    } catch (error: any) {
+      console.log(error)
+      throw new Error(error)
+    }
     dispatch(
       signUp({
         username: username,
@@ -108,14 +134,32 @@ export default function SignUpPage() {
       return
     }
 
+    // {
+    //   /* TESTING */
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum)
+    //   await provider.send('wallet_requestPermissions', [
+    //     {
+    //       eth_accounts: {}
+    //     }
+    //   ])
+    //   return
+    // }
+
     // Get the wallet provider, the signer and address
     //  see: https://docs.ethers.org/v6/getting-started/#starting-signing
-    const provider = new ethers.BrowserProvider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // await provider.send('eth_requestAccounts', [])
+    await provider.send('wallet_requestPermissions', [
+      {
+        eth_accounts: {}
+      }
+    ])
 
-    const signer = await provider.getSigner()
+    const signer = provider.getSigner()
     const publicAddress = await signer.getAddress()
 
     setWalletAddress(publicAddress)
+    setProvider(provider)
   }
 
   const handleClose = (

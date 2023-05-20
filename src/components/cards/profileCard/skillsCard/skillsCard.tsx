@@ -21,7 +21,7 @@ import TextField from '@mui/material/TextField'
 import { useSession } from 'next-auth/react'
 import { CircularProgress } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import { createCandidateSkill } from '@redux/reducers/profileSlice'
 interface SkillCardProps {
   type?: number
@@ -56,6 +56,7 @@ const SkillCard: React.FC<SkillCardProps> = ({
   const { data: session } = useSession()
   const [isModify, setIsModify] = useState(false)
   const { loading } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -63,6 +64,10 @@ const SkillCard: React.FC<SkillCardProps> = ({
     event.preventDefault()
     const data = new FormData(event.currentTarget)
     const skill = data.get('skill')!.toString()
+    console.log(
+      JSON.stringify({ address: wallet.address, skills: [Number(skill)] })
+    )
+    await resumiro.connectCandidateSkill(wallet.address, [Number(skill)])
     dispatch(
       createCandidateSkill({
         id: session!.user!.name!,

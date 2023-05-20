@@ -18,7 +18,7 @@ import { Box } from '@mui/material'
 import { Grid } from '@mui/material'
 import { TextField } from '@mui/material'
 import { useState } from 'react'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import { companies } from '@prisma/client'
 import { CircularProgress } from '@mui/material'
 import { useSession } from 'next-auth/react'
@@ -39,6 +39,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const dispatch = useAppDispatch()
@@ -49,6 +50,15 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
     const company = formData.get('company')!.toString()
     const start = formData.get('start')!.toString()
     const finish = formData.get('finish')!.toString()
+
+    await resumiro.updateExperience({
+      id: data.id,
+      position,
+      start,
+      finish,
+      companyId: Number(company),
+      userAddress: wallet.address
+    })
 
     dispatch(
       updateExperience({
@@ -64,7 +74,8 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
 
     setOpen(false)
   }
-  const deleteHandler = () => {
+  const deleteHandler = async () => {
+    await resumiro.deleteExperience(data.id)
     dispatch(deleteExperience(data.id))
   }
   return (

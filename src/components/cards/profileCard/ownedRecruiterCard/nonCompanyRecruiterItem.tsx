@@ -9,10 +9,11 @@ import { IconButton } from '@mui/material'
 
 import AddIcon from '@mui/icons-material/Add'
 
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import profileSlice, {
   updateRecruiterCompany
 } from '@redux/reducers/profileSlice'
+import { web3Selector } from '@redux/selectors'
 const CustomNonCompanyItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -29,8 +30,13 @@ const NonCompanyRecruiterItem: React.FC<NonCompanyItemProps> = ({
   companyId
 }) => {
   const dispatch = useAppDispatch()
+  const { resumiro, wallet } = useAppSelector(web3Selector)
 
-  const addRecruiterToCompanyHandler = () => {
+  const addRecruiterToCompanyHandler = async () => {
+    await resumiro.connectCompanyRecruiter({
+      recruiterAddress: data.address_wallet,
+      companyId: companyId
+    })
     dispatch(
       updateRecruiterCompany({
         id: data.id,

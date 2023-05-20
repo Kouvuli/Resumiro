@@ -7,6 +7,7 @@ import profileSlice from './reducers/profileSlice'
 import resumeSlice from './reducers/resumeSlice'
 import signInSlice from './reducers/signInSlice'
 import signUpSlice from './reducers/signUpSlice'
+import web3Slice from './reducers/web3Slice'
 
 const store = configureStore({
   reducer: {
@@ -17,8 +18,14 @@ const store = configureStore({
     jobDetail: jobDetailSlice.reducer,
     signIn: signInSlice.reducer,
     signUp: signUpSlice.reducer,
-    header: headerSlice.reducer
-  }
+    header: headerSlice.reducer,
+    web3: web3Slice.reducer,
+  },
+  // web3Slice is current using non-serializable values (provider, Resumiro class). This setting is for ignoring the warnings. 
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 })
 
 export type AppDispatch = typeof store.dispatch

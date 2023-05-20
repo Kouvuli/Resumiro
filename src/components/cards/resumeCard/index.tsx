@@ -16,9 +16,10 @@ import { candidates } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { deleteResume } from '@redux/reducers/resumeSlice'
 import { useRouter } from 'next/router'
+import { web3Selector } from '@redux/selectors'
 export interface ResumeCardProps {
   index?: number
   type?: number
@@ -61,6 +62,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   const [page, setPage] = useState(1)
   const canvasRef = useRef(null)
   const dispatch = useAppDispatch()
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const router = useRouter()
   const { pdfDocument, pdfPage } = usePdf({
     file: data,
@@ -70,7 +72,8 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
     // scale: 0.65
   })
 
-  const deleteHandler = () => {
+  const deleteHandler = async () => {
+    await resumiro.deleteResume(id)
     dispatch(deleteResume(id))
     router.push({
       pathname: router.pathname

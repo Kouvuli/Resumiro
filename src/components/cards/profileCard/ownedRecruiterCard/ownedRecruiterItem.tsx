@@ -8,8 +8,9 @@ import { Recruiter } from '@shared/interfaces'
 import { IconButton } from '@mui/material'
 import CreateIcon from '@mui/icons-material/Create'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { deleteCompanyFromRecruiter } from '@redux/reducers/profileSlice'
+import { web3Selector } from '@redux/selectors'
 
 const CustomOwnedRecruiterItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
@@ -27,8 +28,13 @@ const OwnedRecruiterItem: React.FC<OwnedRecruiterItemProps> = ({
   isModify
 }) => {
   const dispatch = useAppDispatch()
+  const { resumiro, wallet } = useAppSelector(web3Selector)
 
-  const deleteRecruiterHandler = () => {
+  const deleteRecruiterHandler = async () => {
+    await resumiro.disconnectCompanyRecruiter({
+      recruiterAddress: data.address_wallet,
+      companyId: data.company_id
+    })
     dispatch(
       deleteCompanyFromRecruiter({
         id: data.id,
