@@ -20,6 +20,7 @@ import { resumeSelector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { encryptText, randomToken } from '@utils/cryptoUtil'
 type ResumeListPerPage = {
   perPage: number
   page: number
@@ -67,10 +68,12 @@ const ResumePage: React.FC<ResumePageProps> = ({
       dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+    const key = randomToken()
     dispatch(
       createResume({
         title,
-        resume: uploadedResume,
+        resume_key: key,
+        resume: encryptText(uploadedResume, key),
         owner_id: Number(session!.user!.name!)
       })
     )
@@ -82,7 +85,7 @@ const ResumePage: React.FC<ResumePageProps> = ({
 
   const resumeUploadHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const data = e.target.files![0]
-    console.log(data)
+
     if (data) {
       const body = new FormData()
 
@@ -148,7 +151,9 @@ const ResumePage: React.FC<ResumePageProps> = ({
                   )
                 }
               >
-                Tải CV
+                {uploadedResume
+                  ? uploadedResume.substring(21, 45) + '...'
+                  : 'Tải CV'}
                 <input
                   hidden
                   onChange={resumeUploadHandler}
@@ -247,10 +252,12 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       id: item.id,
       resumeTitle: item.title,
       data: item.data,
-      createAt: item.create_at
+      createAt: item.create_at,
+      owner: item.owner,
+      resumeKey: item.resume_key,
+      isPublic: item.is_public
     }
   })
-
   const data2 = await resumiroApi
     .getJobs({ page: 1, limit: 7 })
     .then(res => res.data)

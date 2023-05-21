@@ -23,6 +23,9 @@ export default async function handler(
           resumes: {
             orderBy: {
               create_at: 'desc'
+            },
+            include: {
+              owner: true
             }
           },
           users_skills: {

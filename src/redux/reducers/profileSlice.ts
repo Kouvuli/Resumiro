@@ -236,6 +236,7 @@ export const updateRecruiterCompany = createAsyncThunk(
     const data = await resumiroApi
       .updateRecruiterCompany(input.id, input.data)
       .then(res => res.data)
+
     return data
   }
 )

@@ -19,6 +19,7 @@ import resumeSlice from '@redux/reducers/resumeSlice'
 import { jobSelector, resumeSelector } from '@redux/selectors'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
+import MySnackBar from '@components/ui/bar/snackbar'
 type ResumeListPerPage = {
   perPage: number
   page: number
@@ -48,8 +49,8 @@ const orderOptions = [
 const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
-
-  const { page, limit, skill, q, order_by } = useAppSelector(resumeSelector)
+  const { page, limit, skill, q, order_by, showMessage, message, messageType } =
+    useAppSelector(resumeSelector)
   const searchHandler = () => {
     let query: any = {}
     if (page !== '') {
@@ -83,8 +84,20 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
     dispatch(resumeSlice.actions.changeSearchText(e.target.value))
   }
 
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
   return (
     <ArticleLayout title="Hồ sơ - CV">
+      <MySnackBar
+        handleClose={handleClose}
+        message={message}
+        messageType={messageType}
+        showMessage={showMessage}
+      />
       <Container>
         <Grid container marginTop="1rem " marginBottom="5rem" rowSpacing={2}>
           <SearchBar
@@ -142,9 +155,7 @@ export async function getServerSideProps(context: {
       }
     }
   }
-  const resumes = await resumiroApi
-    .getResumes(context.query)
-    .then(res => res.data)
+  const resumes = await resumiroApi.getResumes().then(res => res.data)
 
   const convertData = resumes.data.map((item: Resume) => {
     return {
@@ -152,9 +163,12 @@ export async function getServerSideProps(context: {
       resumeTitle: item.title,
       data: item.data,
       createAt: item.create_at,
-      owner: item.owner
+      owner: item.owner,
+      isPublic: item.is_public,
+      resumeKey: item.resume_key
     }
   })
+
   return {
     props: {
       data: {

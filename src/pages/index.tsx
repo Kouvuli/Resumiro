@@ -7,7 +7,6 @@ import CustomerSupportIcon from '@components/ui/icons/customerSupportIcon'
 import GuaranteeIcon from '@components/ui/icons/guaranteeIcon'
 import ShieldIcon from '@components/ui/icons/shieldIcon'
 import TrophyIcon from '@components/ui/icons/trophyIcon'
-import RoundSelect from '@components/ui/select'
 import Container from '@mui/material/Container'
 import MuiBox from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -25,10 +24,6 @@ import ArticleLayout from '@components/layouts/article'
 import { Achievement, Blog, FeatureType, Field, Job } from '@shared/interfaces'
 import resumiroApi from '@apis/resumiroApi'
 import { fields, jobs } from '@prisma/client'
-import { fetchUserById } from '@redux/reducers/headerSlice'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
 const titleVariants: Variants = {
   initial: {
     opacity: 0,

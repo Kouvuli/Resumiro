@@ -24,7 +24,7 @@ import {
   deleteCertificate,
   updateCertificate
 } from '@redux/reducers/profileSlice'
-import { companies } from '@prisma/client'
+import { compareDates } from '@utils/timeUtil'
 const CustomEducationItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -91,26 +91,33 @@ const EducationItem: React.FC<EducationItemProps> = ({
               >
                 {data.name}
 
-                {data.status === 'overdated' && (
+                {compareDates(data.verified_at, new Date()) > 0 && (
                   <AccessTimeFilledIcon
                     sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
                   />
                 )}
-                {data.status === 'pending' && (
-                  <HourglassFullIcon
-                    sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
-                  />
-                )}
-                {data.status === 'rejected' && (
-                  <CancelIcon
-                    sx={{ fontSize: '1.3rem', ml: 1, color: 'warning.main' }}
-                  />
-                )}
-                {data.status === 'verified' && (
-                  <CheckCircleIcon
-                    sx={{ fontSize: '1.3rem', ml: 1, color: 'info.main' }}
-                  />
-                )}
+                {data.status === 'pending' &&
+                  compareDates(data.verified_at, new Date()) <= 0 && (
+                    <HourglassFullIcon
+                      sx={{
+                        fontSize: '1.3rem',
+                        ml: 1,
+                        color: 'rgba(0,0,0,0.5)'
+                      }}
+                    />
+                  )}
+                {data.status === 'rejected' &&
+                  compareDates(data.verified_at, new Date()) <= 0 && (
+                    <CancelIcon
+                      sx={{ fontSize: '1.3rem', ml: 1, color: 'warning.main' }}
+                    />
+                  )}
+                {data.status === 'verified' &&
+                  compareDates(data.verified_at, new Date()) <= 0 && (
+                    <CheckCircleIcon
+                      sx={{ fontSize: '1.3rem', ml: 1, color: 'info.main' }}
+                    />
+                  )}
               </Typography>
             </div>
             <div style={{ flexGrow: 1 }} />

@@ -16,9 +16,11 @@ import { users } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
-import { useAppDispatch } from '@hooks/index'
-import { deleteResume } from '@redux/reducers/resumeSlice'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { checkIfAllowedToView, deleteResume } from '@redux/reducers/resumeSlice'
 import { useRouter } from 'next/router'
+import { decryptText } from '@utils/cryptoUtil'
+import { useSession } from 'next-auth/react'
 export interface ResumeCardProps {
   index?: number
   type?: number
@@ -27,6 +29,8 @@ export interface ResumeCardProps {
   data: string
   owner: users
   createAt: Date
+  resumeKey: string
+  isPublic: boolean
 }
 
 const CustomResumeCard = styled(Card)(({}) => ({
@@ -56,20 +60,32 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   id,
   owner,
   createAt,
-  type
+  type,
+  resumeKey,
+  isPublic
 }) => {
   const [page, setPage] = useState(1)
   const canvasRef = useRef(null)
+  const { data: session, status } = useSession()
   const dispatch = useAppDispatch()
   const router = useRouter()
   const { pdfDocument, pdfPage } = usePdf({
-    file: data,
+    file: decryptText(data, resumeKey),
     canvasRef,
     page
-
-    // scale: 0.65
   })
-
+  const viewResumeHandler = () => {
+    dispatch(
+      checkIfAllowedToView({
+        resumeId: id,
+        userId: Number(session!.user!.name!),
+        source: decryptText(data, resumeKey),
+        title: 'Yêu cầu xem CV',
+        recipient: owner.id,
+        content: 'yêu cầu xem ' + resumeTitle + ' của bạn'
+      })
+    )
+  }
   const deleteHandler = () => {
     dispatch(deleteResume(id))
     router.push({
@@ -98,8 +114,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                 color="secondary"
                 disableElevation
                 disableFocusRipple
-                target="_blank"
-                href={data}
+                onClick={viewResumeHandler}
                 sx={{
                   boxShadow: 'unset',
                   textTransform: 'capitalize'
@@ -118,7 +133,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                   mb: 1
                 }}
               >
-                <Link href={`/ca-nhan/${owner.id}`}>Cá nhân</Link>
+                <Link href={`/ung-vien/${owner.id}`}>Cá nhân</Link>
               </Button>
               <Button
                 variant="text"
@@ -141,17 +156,29 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
           }}
           className={styles['content']}
         >
-          <CardMedia
-            component="canvas"
-            ref={canvasRef}
-            sx={{
-              width: '100%!important',
-              height: '100%!important',
-              objectFit: 'cover'
-            }}
-            // src={data}
-            // alt="green iguana"
-          />
+          {!isPublic ? (
+            <CardMedia
+              component="img"
+              src="/images/encrypted-file.jpg"
+              sx={{
+                objectFit: 'contain'
+              }}
+              // src={data}
+              // alt="green iguana"
+            />
+          ) : (
+            <CardMedia
+              component="canvas"
+              ref={canvasRef}
+              sx={{
+                width: '100%!important',
+                height: '100%!important',
+                objectFit: 'cover'
+              }}
+              // src={data}
+              // alt="green iguana"
+            />
+          )}
           {!pdfDocument && (
             <CircularProgress sx={{ display: 'flex', margin: 'auto' }} />
           )}
@@ -194,7 +221,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             <Button
               variant="contained"
               size="large"
-              href={data}
+              href={decryptText(data, resumeKey)}
               color="secondary"
               target="_blank"
               disableElevation

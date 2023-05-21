@@ -37,14 +37,14 @@ export default async function handler(
     if (!data) {
       res.status(200).json({
         message: 'Candidate not applied',
-        status: 'success'
+        status: 'ok'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
       message: 'Candidate already apply job',
-      status: 'success',
+      status: 'ok',
       data: data
     })
   } else if (req.method === 'DELETE') {
@@ -59,14 +59,14 @@ export default async function handler(
     if (!data) {
       res.status(200).json({
         message: 'Cannot cancel applied job',
-        status: 'success'
+        status: 'ok'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
       message: 'Successfully cancel applied job',
-      status: 'success',
+      status: 'ok',
       data: data
     })
   }

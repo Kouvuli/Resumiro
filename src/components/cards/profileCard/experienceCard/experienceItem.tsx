@@ -25,6 +25,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
+import { compareDates } from '@utils/timeUtil'
 const CustomExperienceItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -90,11 +91,6 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
           >
             {data.position}
 
-            {data.status === 'overdated' && (
-              <AccessTimeFilledIcon
-                sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
-              />
-            )}
             {data.status === 'pending' && (
               <HourglassFullIcon
                 sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}

@@ -5,11 +5,13 @@ import { getCurrentTimeDiff } from '@utils/timeUtil'
 import CardContent from '@mui/material/CardContent'
 import { users } from '@prisma/client'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { updateRecruiterCompany } from '@redux/reducers/profileSlice'
-import headerSlice, {
+import {
+  updateRecruiterCompany,
+  allowRecruiterToView,
   deleteNotificationById
 } from '@redux/reducers/headerSlice'
 import { headerSelector } from '@redux/selectors'
+import { useSession } from 'next-auth/react'
 interface NotificationCardProps {
   id: number
   type: number
@@ -38,14 +40,17 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   isRead
 }) => {
   const dispatch = useAppDispatch()
-  const { refreshNotification } = useAppSelector(headerSelector)
+  const { data: session } = useSession()
   const acceptRecruiterToCompanyHandler = () => {
     dispatch(
       updateRecruiterCompany({
-        id: author.id,
         data: {
           company_id: Number(object_id)
-        }
+        },
+        userId: author.id,
+        authorId: Number(session!.user!.name!),
+        title: 'Chấp nhận',
+        content: 'chấp nhận bạn vào công ty'
       })
     )
 
@@ -55,6 +60,24 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   const rejectRecruiterToCompanyHandler = () => {
     dispatch(deleteNotificationById(id))
     // dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
+  }
+
+  const acceptRecruiterToViewResumeHandler = () => {
+    dispatch(
+      allowRecruiterToView({
+        resumeId: Number(object_id),
+        userId: author.id,
+        authorId: Number(session!.user!.name!),
+        title: 'Chấp nhận',
+        content: 'chấp nhận bạn xem CV của họ'
+      })
+    )
+
+    dispatch(deleteNotificationById(id))
+  }
+
+  const rejectRecruiterToViewResumeHandler = () => {
+    dispatch(deleteNotificationById(id))
   }
   if (type === 3) {
     return (
@@ -214,7 +237,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         >
           <Button
             variant="contained"
-            sx={{ mr: 1 }}
+            sx={{ mr: 1, textTransform: 'none' }}
             disableElevation
             onClick={acceptRecruiterToCompanyHandler}
             disableRipple
@@ -222,6 +245,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             Chấp nhận
           </Button>
           <Button
+            sx={{ textTransform: 'none' }}
             onClick={rejectRecruiterToCompanyHandler}
             variant="outlined"
             disableElevation
@@ -230,6 +254,120 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             Huỷ
           </Button>
         </CardContent>
+      </CustomNotificationCard>
+    )
+  }
+
+  if (type === 5) {
+    return (
+      <CustomNotificationCard
+        sx={isRead ? { bgColor: 'unset' } : { bgcolor: 'primary.light' }}
+      >
+        <CardHeader
+          sx={{
+            alignItems: 'start'
+          }}
+          avatar={
+            <img
+              style={{ borderRadius: '5px' }}
+              src={author.avatar ? author.avatar : '/images/default-user.jpg'}
+              width={60}
+              height={60}
+              alt="avatar"
+            />
+          }
+          title={
+            <>
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 500, textTransform: 'none' }}
+              >
+                <Link
+                  sx={{ fontWeight: 700 }}
+                  href={`/ung-vien/${author.id}`}
+                  underline="hover"
+                >
+                  {author.full_name}
+                </Link>{' '}
+                {content}
+              </Typography>
+            </>
+          }
+          subheader={
+            <Typography variant="body2" sx={{ flexGrow: 1 }}>
+              {getCurrentTimeDiff(new Date(createAt))}
+            </Typography>
+          }
+        />
+        <CardContent
+          sx={{
+            padding: '0 12px 12px 12px'
+          }}
+        >
+          <Button
+            variant="contained"
+            sx={{ mr: 1, textTransform: 'none' }}
+            disableElevation
+            onClick={acceptRecruiterToViewResumeHandler}
+            disableRipple
+          >
+            Chấp nhận
+          </Button>
+          <Button
+            sx={{ textTransform: 'none' }}
+            onClick={rejectRecruiterToViewResumeHandler}
+            variant="outlined"
+            disableElevation
+            disableRipple
+          >
+            Huỷ
+          </Button>
+        </CardContent>
+      </CustomNotificationCard>
+    )
+  }
+
+  if (type === 6) {
+    return (
+      <CustomNotificationCard
+        sx={isRead ? { bgColor: 'unset' } : { bgcolor: 'primary.light' }}
+      >
+        <CardHeader
+          sx={{
+            alignItems: 'start'
+          }}
+          avatar={
+            <img
+              style={{ borderRadius: '5px' }}
+              src={author.avatar ? author.avatar : '/images/default-user.jpg'}
+              width={40}
+              height={40}
+              alt="avatar"
+            />
+          }
+          title={
+            <>
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 500, textTransform: 'none' }}
+              >
+                <Link
+                  sx={{ fontWeight: 700 }}
+                  href={`/ung-vien/${author.id}`}
+                  underline="hover"
+                >
+                  {author.full_name ? author.full_name : author.username}
+                </Link>{' '}
+                {content}
+              </Typography>
+            </>
+          }
+          subheader={
+            <Typography variant="body2" sx={{ flexGrow: 1, mt: 1 }}>
+              {getCurrentTimeDiff(new Date(createAt))}
+            </Typography>
+          }
+        />
       </CustomNotificationCard>
     )
   }

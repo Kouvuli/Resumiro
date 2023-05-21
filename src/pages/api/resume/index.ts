@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { includes } from 'lodash'
+import { randomToken } from '@utils/cryptoUtil'
 type Data = {
   message: string
   status: string
@@ -143,7 +144,7 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'POST') {
-    const { title, resume, owner_id } = req.body
+    const { title, resume, resume_key, owner_id } = req.body
 
     const existingOwner = await prisma.users.findFirst({
       where: {
@@ -165,7 +166,9 @@ export default async function handler(
         title: title,
         create_at: new Date(),
         data: resume,
-        owner_id: owner_id
+        owner_id: owner_id,
+        resume_key: resume_key,
+        is_public: false
       }
     })
 

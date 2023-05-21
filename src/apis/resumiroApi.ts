@@ -9,9 +9,9 @@ const resumiroApi = {
     const url = '/job'
     return request.get(url, { params })
   },
-  getResumes: (params: object) => {
+  getResumes: () => {
     const url = '/resume'
-    return request.get(url, { params })
+    return request.get(url)
   },
   getJobById: (id: string) => {
     const url = `/job/${id}`
@@ -291,7 +291,7 @@ const resumiroApi = {
     content: string
     author_id: number
     notification_type_id: number
-    object_url: string
+    object_url: string | null
     recipients: string
   }) => {
     const url = `/notification`
@@ -342,8 +342,20 @@ const resumiroApi = {
   getRoomByUserId(id: number) {
     const url = `/user/${id}/room`
     return request.get(url)
+  },
+  checkResumeIsAbleToView(recruiterId: number, resumeId: number) {
+    const url = `/resume/${resumeId}/recruiter/${recruiterId}`
+    return request.get(url)
+  },
+  allowRecruiterToView: (
+    id: number,
+    data: {
+      recruiter_id: number
+    }
+  ) => {
+    const url = `/resume/${id}/recruiter`
+    return request.post(url, data)
   }
-
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`
   //     return request.put(url, data, { headers: authHeader() })

@@ -37,6 +37,7 @@ model users {
   notifications       notifications_users[]
   owned_notifications notifications[]
   request             request[]
+  resume_allowed_user resume_allowed_user[]
 }
 
 model users_skills {
@@ -107,12 +108,24 @@ model jobs_skills {
 }
 
 model resumes {
-  id        Int      @id(map: "pk_resumes") @default(autoincrement())
-  data      String   @db.VarChar(1000)
-  owner_id  Int
-  title     String?  @db.VarChar(100)
-  create_at DateTime @db.Timestamp(6)
-  owner     users    @relation(fields: [owner_id], references: [id])
+  id                  Int                   @id(map: "pk_resumes") @default(autoincrement())
+  data                String                @db.VarChar(1000)
+  owner_id            Int
+  title               String?               @db.VarChar(100)
+  create_at           DateTime              @db.Timestamp(6)
+  is_public           Boolean               @default(false)
+  resume_key          String                @db.VarChar
+  owner               users                 @relation(fields: [owner_id], references: [id])
+  resume_allowed_user resume_allowed_user[]
+}
+
+model resume_allowed_user {
+  resume_id Int
+  user_id   Int
+  resume    resumes @relation(fields: [resume_id], references: [id])
+  user      users   @relation(fields: [user_id], references: [id])
+
+  @@id([resume_id, user_id], map: "resume_allowed_user")
 }
 
 model skills {
@@ -230,5 +243,4 @@ enum statuses {
   pending
   rejected
   verified
-  overdated
 }

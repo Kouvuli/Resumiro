@@ -20,7 +20,10 @@ import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { headerSelector, profileSelector } from '@redux/selectors'
 import profileSlice from '@redux/reducers/profileSlice'
 import socket from '@libs/socket'
-import headerSlice, { fetchUserNotification } from '@redux/reducers/headerSlice'
+import headerSlice, {
+  fetchUserById,
+  fetchUserNotification
+} from '@redux/reducers/headerSlice'
 import _ from 'lodash'
 import Badge from '@mui/material/Badge'
 import NotificationsIcon from '@mui/icons-material/Notifications'
@@ -28,6 +31,7 @@ import NotificationCard from '@components/cards/notificationCard'
 import signInSlice from '@redux/reducers/signInSlice'
 import Typography from '@mui/material/Typography'
 import { Notification } from '@shared/interfaces'
+import MySnackBar from '@components/ui/bar/snackbar'
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -221,7 +225,9 @@ const Header = () => {
   const {
     notificationList,
     refreshNotification,
-
+    showMessage,
+    message,
+    messageType,
     unreadNotification
   } = useAppSelector(headerSelector)
   const router = useRouter()
@@ -231,6 +237,7 @@ const Header = () => {
   useEffect(() => {
     if (status === 'authenticated') {
       dispatch(fetchUserNotification(Number(session!.user!.name!)))
+      dispatch(fetchUserById(session!.user!.name!))
     }
   }, [refreshNotification, session])
 
@@ -310,6 +317,12 @@ const Header = () => {
       </ListItem>
     </List>
   )
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(headerSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
   if (router.pathname === '/') {
     return (
       <AnimatePresence mode="wait">
@@ -319,6 +332,12 @@ const Header = () => {
           animate="visible"
           exit="exit"
         >
+          <MySnackBar
+            handleClose={handleClose}
+            message={message}
+            messageType={messageType}
+            showMessage={showMessage}
+          />
           <BackgroundHeaderHome>
             <Container>
               <CustomHeaderHome style={{ color: 'primary.contrastText' }}>
@@ -454,6 +473,12 @@ const Header = () => {
       exit="exit"
     >
       <BackgroundHeader>
+        <MySnackBar
+          handleClose={handleClose}
+          message={message}
+          messageType={messageType}
+          showMessage={showMessage}
+        />
         <Container>
           <CustomHeader>
             <div className="logo">

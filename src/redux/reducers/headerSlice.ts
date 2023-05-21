@@ -14,6 +14,77 @@ const initialState = {
   notificationList: []
 }
 
+export const fetchUserById = createAsyncThunk(
+  'get-user-by-id',
+  async (id: string) => {
+    const { data } = await resumiroApi.getUserById(id).then(res => res.data)
+    return data
+  }
+)
+
+export const updateRecruiterCompany = createAsyncThunk(
+  'update-recruiter-company-by-id',
+  async (input: {
+    data: { company_id: number }
+    title: string
+    userId: number
+    authorId: number
+    content: string
+  }) => {
+    const data = await resumiroApi
+      .updateRecruiterCompany(input.userId, input.data)
+      .then(res => res.data)
+    const room = await resumiroApi
+      .getRoomByUserId(input.userId)
+      .then(res => res.data)
+
+    const notification = await resumiroApi
+      .insertNotification({
+        author_id: input.authorId,
+        title: input.title,
+        content: input.content,
+        recipients: input.userId.toString(),
+        notification_type_id: 6,
+        object_url: null
+      })
+      .then(res => res.data)
+    return { data, notification, room }
+  }
+)
+
+export const allowRecruiterToView = createAsyncThunk(
+  'check-is-able-to-view-resume',
+  async (input: {
+    resumeId: number
+    userId: number
+    title: string
+    content: string
+    authorId: number
+  }) => {
+    const data = await resumiroApi
+      .allowRecruiterToView(input.resumeId, {
+        recruiter_id: input.userId
+      })
+      .then(res => res.data)
+
+    const room = await resumiroApi
+      .getRoomByUserId(input.userId)
+      .then(res => res.data)
+
+    const notification = await resumiroApi
+      .insertNotification({
+        author_id: input.authorId,
+        title: input.title,
+        content: input.content,
+        recipients: input.userId.toString(),
+        notification_type_id: 6,
+        object_url: null
+      })
+      .then(res => res.data)
+    return { data, room, notification }
+  }
+)
+
 export const fetchUserNotification = createAsyncThunk(
   'get-user-notification',
   async (id: number) => {
@@ -58,6 +129,18 @@ const headerSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      .addCase(fetchUserById.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchUserById.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+        socket.emit('join_room', action.payload.room.token)
+      })
+      .addCase(fetchUserById.rejected, (state, action) => {
+        state.loading = false
+      })
+
       .addCase(fetchUserNotification.pending, (state, action) => {
         state.loading = true
       })
@@ -77,6 +160,48 @@ const headerSlice = createSlice({
         state.loading = false
       })
       .addCase(deleteNotificationById.rejected, (state, action) => {
+        state.loading = false
+      })
+
+      .addCase(allowRecruiterToView.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(allowRecruiterToView.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.loading = false
+        state.message = action.payload.data.message
+
+        socket.emit('send_message', {
+          room: action.payload.room.data,
+          message: action.payload.notification
+        })
+        state.messageType = 'success'
+      })
+      .addCase(allowRecruiterToView.rejected, (state, action) => {
+        state.showMessage = true
+        state.loading = false
+        state.message = action.error.message!
+        state.messageType = 'error'
+      })
+
+      .addCase(updateRecruiterCompany.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(updateRecruiterCompany.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.data.message
+        state.messageType = 'success'
+
+        socket.emit('send_message', {
+          room: action.payload.room.data,
+          message: action.payload.notification
+        })
+        state.loading = false
+      })
+      .addCase(updateRecruiterCompany.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
         state.loading = false
       })
   }
