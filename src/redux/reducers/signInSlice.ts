@@ -8,8 +8,7 @@ const initialState = {
   showMessage: false,
   message: '',
   messageType: 'success',
-  loading: false,
-  success: false
+  loading: false
 }
 
 export const signInNormal = createAsyncThunk(
@@ -17,11 +16,13 @@ export const signInNormal = createAsyncThunk(
   async (input: any) => {
     const { username, password } = input
 
-    await signIn('credentials', {
+    const data = await signIn('credentials', {
       redirect: false,
       username: username,
       password: password
     })
+
+    return data
   }
 )
 
@@ -51,12 +52,12 @@ export const signInWallet = createAsyncThunk('sign-in-wallet', async () => {
     .then(res => res.data)
 
   const signedNonce = await signer.signMessage(response.nonce)
-  await signIn('credentials', {
+  const result = await signIn('credentials', {
     redirect: false,
     address_wallet: walletAddress,
     signedNonce
   })
-  // return result;
+  return result
 })
 
 const signInSlice = createSlice({
@@ -81,7 +82,6 @@ const signInSlice = createSlice({
         state.showMessage = true
         state.message = 'Đăng nhập ví thành công'
         state.messageType = 'success'
-        state.success = true
         state.loading = false
       })
       .addCase(signInWallet.rejected, (state, action) => {
@@ -96,11 +96,14 @@ const signInSlice = createSlice({
       })
       .addCase(signInNormal.fulfilled, (state, action) => {
         state.showMessage = true
+        if (!action.payload?.error) {
+          state.message = 'Đăng nhập thành công'
+          state.messageType = 'success'
+        } else {
+          state.message = 'Đăng nhập thất bại'
+          state.messageType = 'error'
+        }
 
-        state.message = 'Đăng nhập thành công'
-        state.messageType = 'success'
-
-        state.success = true
         state.loading = false
       })
       .addCase(signInNormal.rejected, (state, action) => {

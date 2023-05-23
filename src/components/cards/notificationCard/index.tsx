@@ -211,7 +211,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
                   href={`/ung-vien/${author.id}`}
                   underline="hover"
                 >
-                  {author.full_name}
+                  {author.full_name ? author.full_name : author.username}
                 </Link>{' '}
                 {content}{' '}
                 <Link
@@ -353,7 +353,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               >
                 <Link
                   sx={{ fontWeight: 700 }}
-                  href={`/ung-vien/${author.id}`}
+                  href={`/nha-tuyen-dung/${author.id}`}
                   underline="hover"
                 >
                   {author.full_name ? author.full_name : author.username}

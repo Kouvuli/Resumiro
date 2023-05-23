@@ -91,13 +91,17 @@ const EducationItem: React.FC<EducationItemProps> = ({
               >
                 {data.name}
 
-                {compareDates(data.verified_at, new Date()) > 0 && (
+                {compareDates(data.verified_at, new Date()) < 0 && (
                   <AccessTimeFilledIcon
-                    sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
+                    sx={{
+                      fontSize: '1.3rem',
+                      ml: 1,
+                      color: 'warning.main'
+                    }}
                   />
                 )}
                 {data.status === 'pending' &&
-                  compareDates(data.verified_at, new Date()) <= 0 && (
+                  compareDates(data.verified_at, new Date()) >= 0 && (
                     <HourglassFullIcon
                       sx={{
                         fontSize: '1.3rem',
@@ -107,13 +111,13 @@ const EducationItem: React.FC<EducationItemProps> = ({
                     />
                   )}
                 {data.status === 'rejected' &&
-                  compareDates(data.verified_at, new Date()) <= 0 && (
+                  compareDates(data.verified_at, new Date()) >= 0 && (
                     <CancelIcon
                       sx={{ fontSize: '1.3rem', ml: 1, color: 'warning.main' }}
                     />
                   )}
                 {data.status === 'verified' &&
-                  compareDates(data.verified_at, new Date()) <= 0 && (
+                  compareDates(data.verified_at, new Date()) >= 0 && (
                     <CheckCircleIcon
                       sx={{ fontSize: '1.3rem', ml: 1, color: 'info.main' }}
                     />

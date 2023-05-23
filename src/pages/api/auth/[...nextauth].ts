@@ -63,13 +63,15 @@ export const authOptions: NextAuthOptions = {
 
           if (!user) {
             prisma.$disconnect()
-            throw new Error('No user found')
+            return
+            // throw new Error('No user found')
           }
 
           const isValid = await verifyPassword(password, user.password)
           if (!isValid) {
             prisma.$disconnect()
-            throw new Error('Could not log you in')
+            return
+            // throw new Error('Could not log you in')
           }
         }
 

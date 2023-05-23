@@ -355,6 +355,15 @@ const resumiroApi = {
   ) => {
     const url = `/resume/${id}/recruiter`
     return request.post(url, data)
+  },
+  updateResumePrivacy: (
+    id: string,
+    data: {
+      is_public: boolean
+    }
+  ) => {
+    const url = `/resume/${id}/privacy`
+    return request.patch(url, data)
   }
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`

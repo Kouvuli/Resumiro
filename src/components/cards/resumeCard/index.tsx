@@ -17,7 +17,11 @@ import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { checkIfAllowedToView, deleteResume } from '@redux/reducers/resumeSlice'
+import {
+  checkIfAllowedToView,
+  deleteResume,
+  updateResumePrivacy
+} from '@redux/reducers/resumeSlice'
 import { useRouter } from 'next/router'
 import { decryptText } from '@utils/cryptoUtil'
 import { useSession } from 'next-auth/react'
@@ -82,7 +86,17 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
         source: decryptText(data, resumeKey),
         title: 'Yêu cầu xem CV',
         recipient: owner.id,
-        content: 'yêu cầu xem ' + resumeTitle + ' của bạn'
+        content: 'yêu cầu xem ' + resumeTitle + ' của bạn',
+        isPublic: isPublic
+      })
+    )
+  }
+
+  const updateResumePrivacyHandler = () => {
+    dispatch(
+      updateResumePrivacy({
+        resumeId: id.toString(),
+        isPublic: !isPublic
       })
     )
   }
@@ -235,18 +249,37 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             </Button>
           </div>
           <div className={styles['action']}>
-            <Button
-              variant="text"
-              size="small"
-              startIcon={<ShareIcon />}
-              sx={{
-                textTransform: 'none',
-                mr: 2,
-                mb: 1
-              }}
-            >
-              Chia sẻ
-            </Button>
+            {isPublic ? (
+              <Button
+                variant="contained"
+                size="small"
+                disableElevation
+                disableFocusRipple
+                startIcon={<ShareIcon />}
+                onClick={updateResumePrivacyHandler}
+                sx={{
+                  textTransform: 'none',
+                  mr: 2,
+                  mb: 1
+                }}
+              >
+                Công khai
+              </Button>
+            ) : (
+              <Button
+                variant="text"
+                size="small"
+                startIcon={<ShareIcon />}
+                onClick={updateResumePrivacyHandler}
+                sx={{
+                  textTransform: 'none',
+                  mr: 2,
+                  mb: 1
+                }}
+              >
+                Công khai
+              </Button>
+            )}
             <Button
               variant="text"
               size="small"

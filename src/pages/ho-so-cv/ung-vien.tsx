@@ -1,5 +1,5 @@
 import Container from '@mui/material/Container'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
 import SuitableJob from '@components/lists/suitableJob'
@@ -13,6 +13,7 @@ import { getServerSession } from 'next-auth/next'
 import { Modal, Box, Button, CircularProgress, TextField } from '@mui/material'
 import resumeSlice, {
   createResume,
+  fetchAllUserResumes,
   uploadResume
 } from '@redux/reducers/resumeSlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
@@ -21,22 +22,12 @@ import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { encryptText, randomToken } from '@utils/cryptoUtil'
-type ResumeListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: ResumeCardProps[]
-}
 
 interface ResumePageProps {
-  resumeList: ResumeListPerPage
   suitableList: JobCardProps[]
 }
 
-const ResumePage: React.FC<ResumePageProps> = ({
-  resumeList,
-  suitableList
-}) => {
+const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
@@ -46,13 +37,19 @@ const ResumePage: React.FC<ResumePageProps> = ({
     message,
     messageType,
     loading,
-    uploadedResume
+    uploadedResume,
+    allResumes
   } = useAppSelector(resumeSelector)
   const [openModal, setOpenModal] = useState(false)
   const handleOpenModal = () => {
-    dispatch(resumeSlice.actions.reset())
+    dispatch(resumeSlice.actions.resetForm())
     setOpenModal(true)
   }
+  useEffect(() => {
+    if (session) {
+      dispatch(fetchAllUserResumes(session!.user!.name!))
+    }
+  }, [showMessage, session])
   const handleCloseModal = () => setOpenModal(false)
   const addResumeHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -209,7 +206,7 @@ const ResumePage: React.FC<ResumePageProps> = ({
       <Container>
         <Grid container marginTop="1rem " marginBottom="5rem">
           <Grid item xs={12} md={7.5}>
-            <ResumeGrid {...resumeList} title="CV đã tải lên" />
+            <ResumeGrid {...allResumes} title="CV đã tải lên" />
           </Grid>
           <Grid item xs={12} md={4.5}>
             <SuitableJob
@@ -243,21 +240,7 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       }
     }
   }
-  const data1 = await resumiroApi
-    .getCandidateById(session!.user!.name!)
-    .then(res => res.data)
 
-  const convertData = data1.data.resumes.map((item: Resume) => {
-    return {
-      id: item.id,
-      resumeTitle: item.title,
-      data: item.data,
-      createAt: item.create_at,
-      owner: item.owner,
-      resumeKey: item.resume_key,
-      isPublic: item.is_public
-    }
-  })
   const data2 = await resumiroApi
     .getJobs({ page: 1, limit: 7 })
     .then(res => res.data)
@@ -275,12 +258,6 @@ export async function getServerSideProps(context: { req: any; res: any }) {
   })
   return {
     props: {
-      resumeList: {
-        page: null,
-        totalPages: null,
-        perPage: null,
-        data: convertData
-      },
       suitableList: suitableList
     }
   }

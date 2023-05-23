@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
 import socket from '@libs/socket'
+import { Resume } from '@shared/interfaces'
 
 const initialState = {
   uploadLoading: false,
@@ -17,9 +18,45 @@ const initialState = {
   order_by: '',
   skill: '',
   uploadedResume: '',
-  allSkills: []
+  allSkills: [],
+  allResumes: {
+    perPage: null,
+    page: null,
+    totalPage: null,
+    data: []
+  }
 }
+export const fetchAllUserResumes = createAsyncThunk(
+  'get-all-user-resumes',
+  async (userId: string) => {
+    const data1 = await resumiroApi
+      .getCandidateById(userId)
+      .then(res => res.data)
 
+    const convertData = data1.data.resumes.map((item: Resume) => {
+      return {
+        id: item.id,
+        resumeTitle: item.title,
+        data: item.data,
+        createAt: item.create_at,
+        owner: item.owner,
+        resumeKey: item.resume_key,
+        isPublic: item.is_public
+      }
+    })
+    return convertData
+  }
+)
+
+export const updateResumePrivacy = createAsyncThunk(
+  'update-resume-privacy',
+  async (input: { resumeId: string; isPublic: boolean }) => {
+    const data = await resumiroApi
+      .updateResumePrivacy(input.resumeId, { is_public: input.isPublic })
+      .then(res => res.data)
+    return data
+  }
+)
 export const checkIfAllowedToView = createAsyncThunk(
   'check-if-allowed-to-view',
   async (input: {
@@ -29,11 +66,12 @@ export const checkIfAllowedToView = createAsyncThunk(
     title: string
     recipient: number
     content: string
+    isPublic: boolean
   }) => {
     const data = await resumiroApi
       .checkResumeIsAbleToView(input.userId, input.resumeId)
       .then(res => res.data)
-    if (data.status === 'ok') {
+    if (data.status === 'ok' || input.isPublic) {
       window.open(input.source, '_blank')
       return
     } else {
@@ -104,6 +142,9 @@ const resumeSlice = createSlice({
     changeSnackBarMessage: (state, action) => {
       state.message = action.payload.message
       state.messageType = action.payload.messageType
+    },
+    resetForm: state => {
+      state.uploadedResume = ''
     },
     reset: () => initialState
   },
@@ -188,6 +229,33 @@ const resumeSlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(updateResumePrivacy.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(updateResumePrivacy.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.loading = false
+      })
+      .addCase(updateResumePrivacy.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(fetchAllUserResumes.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchAllUserResumes.fulfilled, (state, action) => {
+        state.allResumes.data = action.payload
+        state.loading = false
+      })
+      .addCase(fetchAllUserResumes.rejected, (state, action) => {
         state.loading = false
       })
   }
