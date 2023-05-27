@@ -116,7 +116,7 @@ const Footer: React.FC = () => {
                 <Link href="#">Chính sách và điều khoản</Link>
               </li>
               <li>
-                <Link href="#">Về chúng tôi</Link>
+                <Link href="/ve-chung-toi">Về chúng tôi</Link>
               </li>
               <li>
                 <Link href="#">Blog</Link>

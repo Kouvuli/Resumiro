@@ -32,6 +32,8 @@ import signInSlice from '@redux/reducers/signInSlice'
 import Typography from '@mui/material/Typography'
 import { Notification } from '@shared/interfaces'
 import MySnackBar from '@components/ui/bar/snackbar'
+// import '../../styles/header/header.css'
+
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
   position: 'relative',
@@ -48,8 +50,13 @@ const BackgroundHeaderHome = styled('header')(({ theme }) => ({
 }))
 
 const CustomHeader = styled('div')(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
+   [theme.breakpoints.down('md')]: {
     '& .nav': {
+      position: 'absolute',
+      // zIndex: 2,
+      // bottom: '0',
+      bottom: '-130px',
+      right: 0,
       width: '100%',
       padding: 0,
       maxHeight: '0px',
@@ -62,39 +69,66 @@ const CustomHeader = styled('div')(({ theme }) => ({
       '& ul': {
         display: 'flex',
         flexDirection: 'column',
+        // justifyContent: 'end',
+        alignItem: 'center',
         padding: '12px 15px 0',
         marginTop: '12px',
-        borderTop: '1px solid rgba(255,255,255,0.2)',
+        fontSize: '14px',
+        '@media screen and (max-width: 687px)': {
+          padding: '0 15px',
+          fontSize: '12px',
+          '& a': {
+            padding: '5px 0'
+          }
+        },
+        borderTop: '1px solid rgba(0,0,0,0.2)',
         '& li': {
           display: 'block',
-          margin: 0
+          margin: 0,
+          padding: 0
         }
       }
     }
   },
-  height: '95px',
+  height: '120px',
   display: 'flex',
   // flexWrap: 'wrap',
   alignItems: 'center',
   // justifyContent: 'space-between',
+  color: theme.palette.text.primary,
+  position: 'relative',
+  left: 0,
+  bottom: 0,
+  paddingBottom: '20px',
   '& .logo a': {
     fontSize: '25px',
     fontWeight: 600,
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
+    color: theme.palette.text.primary
+  },
+  '& .nav': {
+    '@media screen and (min-width: 900px)' :{
+      marginLeft: '35px',
+    }
+  },
+  '& ul': {
+    '@media screen and (min-width: 900px)' :{
+      marginLeft: '35px',
+    }
   },
   '& .nav ul li': {
     display: 'inline-block',
-    marginLeft: '35px',
+    // marginLeft: '35px',
     '& a': {
       display: 'block',
-      fontSize: '14px',
+      // fontSize: '14px',
 
       textTransform: 'capitalize',
       color: theme.palette.text.primary,
       padding: '10px 0',
       transition: 'all 0.5s ease',
       '&.active,&:hover': {
-        textShadow: `0px 0px 0.6px ${theme.palette.text.primary}`
+        textShadow: `0px 1px 1px ${theme.palette.text.primary}`
       }
     }
   }
@@ -103,6 +137,10 @@ const CustomHeader = styled('div')(({ theme }) => ({
 const CustomHeaderHome = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     '& .nav': {
+      // position: 'absolute',
+      // zIndex: 2,
+      // bottom: '-130px',
+      // left: 0,
       width: '100%',
       padding: 0,
       maxHeight: '0px',
@@ -110,39 +148,66 @@ const CustomHeaderHome = styled('div')(({ theme }) => ({
       visibility: 'hidden',
       transition: 'all 0.5s ease',
       '&.open': {
+        
         visibility: 'visible'
       },
       '& ul': {
         display: 'flex',
         flexDirection: 'column',
-        padding: '12px 15px 0',
+        // justifyContent: 'end',
+        alignItem: 'center',
+        paddingTop: '12px',
         marginTop: '12px',
+        fontSize: '14px',
+        // '@media screen and (max-width: 687px)': {
+        //   // padding: '0 15px',
+        //   fontSize: '12px',
+        //   '& a': {
+        //     padding: '5px 0'
+        //   }
+        // },
         borderTop: '1px solid rgba(255,255,255,0.2)',
         '& li': {
           display: 'block',
-          margin: 0
+          margin: 0,
+          padding: 0
         }
       }
     }
   },
+  // position: 'relative',
   height: '95px',
   display: 'flex',
+  // marginLeft: '35px',
+
   // flexWrap: 'wrap',
   alignItems: 'center',
   // justifyContent: 'space-between',
   color: theme.palette.primary.contrastText,
+  // left: 0,
+  // bottom: 0,
   '& .logo a': {
     fontSize: '25px',
     fontWeight: 600,
     textTransform: 'capitalize',
     color: theme.palette.primary.contrastText
   },
+  // '& .nav': {
+  //   '@media screen and (min-width: 900px)' :{
+  //     marginLeft: '35px',
+  //   }
+  // },
+  // '& ul': {
+  //   '@media screen and (min-width: 900px)' :{
+  //     marginLeft: '35px',
+  //   }
+  // },
   '& .nav ul li': {
     display: 'inline-block',
     marginLeft: '35px',
     '& a': {
       display: 'block',
-      fontSize: '14px',
+      // fontSize: '14px',
 
       textTransform: 'capitalize',
       color: theme.palette.primary.contrastText,
@@ -346,7 +411,7 @@ const Header = () => {
                 </div>
                 <nav ref={navRef} className="nav">
                   <ul>
-                    <li>
+                    <li style={{ marginRight: '15px' }}>
                       <Link href="/viec-lam">
                         {/* <a href="#" className="active"> */}
                         Việc làm
@@ -354,21 +419,29 @@ const Header = () => {
                       </Link>
                     </li>
                     {session && (
-                      <li>
+                      <li style={{ marginRight: '15px' }}>
                         {session!.user!.email! === 'candidate' ? (
-                          <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
+                          <Link href="/ho-so-cv/ung-vien">
+                            Hồ sơ & CV
+                          </Link>
                         ) : (
-                          <Link href="/ho-so-cv">Hồ sơ & CV</Link>
+                          <Link href="/ho-so-cv">
+                            Hồ sơ & CV
+                          </Link>
                         )}
                       </li>
                     )}
-                    <li>
-                      <Link href="/cong-ty">Công ty</Link>
+                    <li style={{ marginRight: '15px' }}>
+                      <Link href="/cong-ty">
+                        Công ty
+                      </Link>
                     </li>
                     {session && (
-                      <li>
+                      <li style={{ marginRight: '15px' }}>
                         {session!.user!.email! === 'admin' && (
-                          <Link href="/yeu-cau-xac-thuc">Yêu cầu xác thực</Link>
+                          <Link href="/yeu-cau-xac-thuc">
+                            Yêu cầu xác thực
+                          </Link>
                         )}
                       </li>
                     )}
@@ -384,7 +457,7 @@ const Header = () => {
                     >
                       <Badge
                         sx={{
-                          mr: 4
+                          mr: 1
                         }}
                         badgeContent={unreadNotification}
                         color="secondary"
@@ -486,11 +559,11 @@ const Header = () => {
             </div>
             <nav ref={navRef} className="nav">
               <ul>
-                <li>
+                <li style={{ marginRight: '15px' }}>
                   <Link href="/viec-lam">Việc làm</Link>
                 </li>
                 {session && (
-                  <li>
+                  <li style={{ marginRight: '15px' }}>
                     {session!.user!.email! === 'candidate' ? (
                       <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
                     ) : (
@@ -498,11 +571,11 @@ const Header = () => {
                     )}
                   </li>
                 )}
-                <li>
+                <li style={{ marginRight: '15px' }}>
                   <Link href="/cong-ty">Công ty</Link>
                 </li>
                 {session && (
-                  <li>
+                  <li style={{ marginRight: '15px' }}>
                     {session!.user!.email! === 'admin' && (
                       <Link href="/yeu-cau-xac-thuc">Yêu cầu xác thực</Link>
                     )}
@@ -520,7 +593,7 @@ const Header = () => {
                 >
                   <Badge
                     sx={{
-                      mr: 4
+                      mr: 1
                     }}
                     badgeContent={unreadNotification}
                     color="secondary"
