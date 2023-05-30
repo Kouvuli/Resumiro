@@ -37,11 +37,8 @@ const Main = styled('main')(({ theme }) => ({
 
 const PrivacyPolicyPage = () => {
   return (
-    
-    <div style={{ background: '#F0F0F0', padding: '2% 0' }}>
-      <ArticleLayout
-        title="Điều khoản và chính sách"
-      >
+    <ArticleLayout title="Điều khoản và chính sách">
+      <div style={{ background: '#F0F0F0', padding: '2% 0' }}>
         <Container style={{ margin: 'auto', background: '#FFFFFF' }}>
           <Main>
             <Typography
@@ -307,8 +304,8 @@ const PrivacyPolicyPage = () => {
             </Typography>
           </Main>
         </Container>
-      </ArticleLayout>
-    </div>
+      </div>
+    </ArticleLayout>
   )
 }
 
