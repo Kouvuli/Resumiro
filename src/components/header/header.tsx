@@ -32,97 +32,46 @@ import signInSlice from '@redux/reducers/signInSlice'
 import Typography from '@mui/material/Typography'
 import { Notification } from '@shared/interfaces'
 import MySnackBar from '@components/ui/bar/snackbar'
+import resumeSlice from '@redux/reducers/resumeSlice'
+import jobSlice from '@redux/reducers/jobSlice'
+import companySlice from '@redux/reducers/companySlice'
+import authRequestSlice from '@redux/reducers/authRequestSlice'
 // import '../../styles/header/header.css'
 
 const BackgroundHeader = styled('header')(({}) => ({
   backgroundColor: 'transparent',
-  position: 'relative',
+  padding: '32px 0',
   boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.15)',
-  // padding: ' 12px 0',
   lineHeight: '1.5'
 }))
 const BackgroundHeaderHome = styled('header')(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
-  position: 'relative',
-  // boxShadow: '0px 3px 4px 0px rgba(0,0,0,0.15)',
-  // padding: ' 12px 0',
+  padding: '32px 0',
   lineHeight: '1.5'
 }))
 
 const CustomHeader = styled('div')(({ theme }) => ({
-   [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('md')]: {
     '& .nav': {
-      position: 'absolute',
-      // zIndex: 2,
-      // bottom: '0',
-      bottom: '-130px',
-      right: 0,
-      width: '100%',
-      padding: 0,
       maxHeight: '0px',
       overflow: 'hidden',
-      visibility: 'hidden',
-      transition: 'all 0.5s ease',
-      '&.open': {
-        visibility: 'visible'
-      },
-      '& ul': {
-        display: 'flex',
-        flexDirection: 'column',
-        // justifyContent: 'end',
-        alignItem: 'center',
-        padding: '12px 15px 0',
-        marginTop: '12px',
-        fontSize: '14px',
-        '@media screen and (max-width: 687px)': {
-          padding: '0 15px',
-          fontSize: '12px',
-          '& a': {
-            padding: '5px 0'
-          }
-        },
-        borderTop: '1px solid rgba(0,0,0,0.2)',
-        '& li': {
-          display: 'block',
-          margin: 0,
-          padding: 0
-        }
-      }
+      visibility: 'hidden'
     }
   },
-  height: '120px',
+
   display: 'flex',
-  // flexWrap: 'wrap',
   alignItems: 'center',
-  // justifyContent: 'space-between',
-  color: theme.palette.text.primary,
-  position: 'relative',
-  left: 0,
-  bottom: 0,
-  paddingBottom: '20px',
   '& .logo a': {
     fontSize: '25px',
     fontWeight: 600,
-    textTransform: 'capitalize',
-    color: theme.palette.text.primary
+    textTransform: 'capitalize'
   },
-  '& .nav': {
-    '@media screen and (min-width: 900px)' :{
-      marginLeft: '35px',
-    }
-  },
-  '& ul': {
-    '@media screen and (min-width: 900px)' :{
-      marginLeft: '35px',
-    }
-  },
+
   '& .nav ul li': {
     display: 'inline-block',
-    // marginLeft: '35px',
+    marginLeft: '35px',
     '& a': {
       display: 'block',
-      // fontSize: '14px',
-
       textTransform: 'capitalize',
       color: theme.palette.text.primary,
       padding: '10px 0',
@@ -134,80 +83,102 @@ const CustomHeader = styled('div')(({ theme }) => ({
   }
 }))
 
-const CustomHeaderHome = styled('div')(({ theme }) => ({
+const MobileNavBarHome = styled('div')(({ theme }) => ({
+  '& .nav': {
+    maxHeight: '0px',
+    overflow: 'hidden',
+    visibility: 'hidden'
+  },
   [theme.breakpoints.down('md')]: {
     '& .nav': {
-      // position: 'absolute',
-      // zIndex: 2,
-      // bottom: '-130px',
-      // left: 0,
-      width: '100%',
       padding: 0,
       maxHeight: '0px',
       overflow: 'hidden',
       visibility: 'hidden',
-      transition: 'all 0.5s ease',
+      transition: 'max-height 0.5s ease',
       '&.open': {
-        
         visibility: 'visible'
       },
       '& ul': {
         display: 'flex',
         flexDirection: 'column',
-        // justifyContent: 'end',
-        alignItem: 'center',
-        paddingTop: '12px',
-        marginTop: '12px',
-        fontSize: '14px',
-        // '@media screen and (max-width: 687px)': {
-        //   // padding: '0 15px',
-        //   fontSize: '12px',
-        //   '& a': {
-        //     padding: '5px 0'
-        //   }
-        // },
+        marginTop: '16px',
         borderTop: '1px solid rgba(255,255,255,0.2)',
         '& li': {
           display: 'block',
           margin: 0,
-          padding: 0
+          textTransform: 'capitalize',
+          color: theme.palette.primary.contrastText,
+          padding: '10px 0',
+          transition: 'all 0.5s ease',
+          '&.active,&:hover': {
+            textShadow: `0px 1px 1px ${theme.palette.primary.contrastText}`
+          }
         }
       }
     }
-  },
-  // position: 'relative',
-  height: '95px',
-  display: 'flex',
-  // marginLeft: '35px',
+  }
+}))
 
-  // flexWrap: 'wrap',
+const MobileNavBar = styled('div')(({ theme }) => ({
+  '& .nav': {
+    maxHeight: '0px',
+    overflow: 'hidden',
+    visibility: 'hidden'
+  },
+  [theme.breakpoints.down('md')]: {
+    '& .nav': {
+      padding: 0,
+      maxHeight: '0px',
+      overflow: 'hidden',
+      visibility: 'hidden',
+      transition: 'max-height 0.5s ease',
+      '&.open': {
+        visibility: 'visible'
+      },
+      '& ul': {
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: '16px',
+        borderTop: '1px solid rgba(255,255,255,0.2)',
+        '& li': {
+          display: 'block',
+          margin: 0,
+          textTransform: 'capitalize',
+          color: theme.palette.text.primary,
+          padding: '10px 0',
+          transition: 'all 0.5s ease',
+          '&.active,&:hover': {
+            textShadow: `0px 1px 1px ${theme.palette.primary.contrastText}`
+          }
+        }
+      }
+    }
+  }
+}))
+
+const CustomHeaderHome = styled('div')(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    '& .nav': {
+      maxHeight: '0px',
+      overflow: 'hidden',
+      visibility: 'hidden'
+    }
+  },
+  display: 'flex',
   alignItems: 'center',
-  // justifyContent: 'space-between',
   color: theme.palette.primary.contrastText,
-  // left: 0,
-  // bottom: 0,
   '& .logo a': {
     fontSize: '25px',
     fontWeight: 600,
     textTransform: 'capitalize',
     color: theme.palette.primary.contrastText
   },
-  // '& .nav': {
-  //   '@media screen and (min-width: 900px)' :{
-  //     marginLeft: '35px',
-  //   }
-  // },
-  // '& ul': {
-  //   '@media screen and (min-width: 900px)' :{
-  //     marginLeft: '35px',
-  //   }
-  // },
   '& .nav ul li': {
     display: 'inline-block',
     marginLeft: '35px',
     '& a': {
       display: 'block',
-      // fontSize: '14px',
 
       textTransform: 'capitalize',
       color: theme.palette.primary.contrastText,
@@ -224,6 +195,7 @@ const CustomNavToggler = styled('button')(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     display: 'block'
   },
+  marginLeft: '16px',
   height: '34px',
   width: '44px',
   backgroundColor: '#ffffff',
@@ -231,7 +203,6 @@ const CustomNavToggler = styled('button')(({ theme }) => ({
   cursor: 'pointer',
   border: 'none',
   display: 'none',
-  marginRight: '15px',
   '&:focus': {
     outline: 'none',
     boxShadow: '0 0 15px rgba(255,255,255,0.5)'
@@ -301,8 +272,8 @@ const Header = () => {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      dispatch(fetchUserNotification(Number(session!.user!.name!)))
-      dispatch(fetchUserById(session!.user!.name!))
+      dispatch(fetchUserNotification(Number(session!.user!.id)))
+      dispatch(fetchUserById(session!.user!.id))
     }
   }, [refreshNotification, session])
 
@@ -322,11 +293,44 @@ const Header = () => {
     }
   }
 
+  const NavBar = (
+    <ul>
+      <li>
+        <Link href="/viec-lam">
+          {/* <a href="#" className="active"> */}
+          Việc làm
+          {/* </a> */}
+        </Link>
+      </li>
+      {session && (
+        <li>
+          {session.user!.role === 'candidate' ? (
+            <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
+          ) : (
+            <Link href="/ho-so-cv">Hồ sơ & CV</Link>
+          )}
+        </li>
+      )}
+      <li>
+        <Link href="/cong-ty">Công ty</Link>
+      </li>
+      {session && session.user!.role === 'admin' && (
+        <li>
+          <Link href="/yeu-cau-xac-thuc">Yêu cầu xác thực</Link>
+        </li>
+      )}
+    </ul>
+  )
+
   const signOutHandler = async () => {
     // event.preventDefault()
     dispatch(profileSlice.actions.reset())
+    dispatch(authRequestSlice.actions.reset())
+    dispatch(jobSlice.actions.reset())
+    dispatch(companySlice.actions.reset())
     dispatch(headerSlice.actions.reset())
     dispatch(signInSlice.actions.reset())
+    dispatch(resumeSlice.actions.reset())
     const result = await signOut({ redirect: false })
     if (result) {
       router.replace('/dang-nhap')
@@ -344,7 +348,6 @@ const Header = () => {
       <List
         sx={{
           maxWidth: 360,
-
           overflow: 'auto',
           maxHeight: 300
         }}
@@ -409,44 +412,7 @@ const Header = () => {
                 <div className="logo">
                   <Link href="/">Resumiro.</Link>
                 </div>
-                <nav ref={navRef} className="nav">
-                  <ul>
-                    <li style={{ marginRight: '15px' }}>
-                      <Link href="/viec-lam">
-                        {/* <a href="#" className="active"> */}
-                        Việc làm
-                        {/* </a> */}
-                      </Link>
-                    </li>
-                    {session && (
-                      <li style={{ marginRight: '15px' }}>
-                        {session!.user!.email! === 'candidate' ? (
-                          <Link href="/ho-so-cv/ung-vien">
-                            Hồ sơ & CV
-                          </Link>
-                        ) : (
-                          <Link href="/ho-so-cv">
-                            Hồ sơ & CV
-                          </Link>
-                        )}
-                      </li>
-                    )}
-                    <li style={{ marginRight: '15px' }}>
-                      <Link href="/cong-ty">
-                        Công ty
-                      </Link>
-                    </li>
-                    {session && (
-                      <li style={{ marginRight: '15px' }}>
-                        {session!.user!.email! === 'admin' && (
-                          <Link href="/yeu-cau-xac-thuc">
-                            Yêu cầu xác thực
-                          </Link>
-                        )}
-                      </li>
-                    )}
-                  </ul>
-                </nav>
+                <nav className="nav">{NavBar}</nav>
                 <div style={{ flexGrow: 1 }} />
                 {session && (
                   <>
@@ -457,7 +423,7 @@ const Header = () => {
                     >
                       <Badge
                         sx={{
-                          mr: 1
+                          mr: 3
                         }}
                         badgeContent={unreadNotification}
                         color="secondary"
@@ -531,6 +497,11 @@ const Header = () => {
                   <span></span>
                 </CustomNavToggler>
               </CustomHeaderHome>
+              <MobileNavBarHome>
+                <nav ref={navRef} className="nav">
+                  {NavBar}
+                </nav>
+              </MobileNavBarHome>
             </Container>
           </BackgroundHeaderHome>
         </motion.div>
@@ -557,32 +528,7 @@ const Header = () => {
             <div className="logo">
               <Link href="/">Resumiro.</Link>
             </div>
-            <nav ref={navRef} className="nav">
-              <ul>
-                <li style={{ marginRight: '15px' }}>
-                  <Link href="/viec-lam">Việc làm</Link>
-                </li>
-                {session && (
-                  <li style={{ marginRight: '15px' }}>
-                    {session!.user!.email! === 'candidate' ? (
-                      <Link href="/ho-so-cv/ung-vien">Hồ sơ & CV</Link>
-                    ) : (
-                      <Link href="/ho-so-cv">Hồ sơ & CV</Link>
-                    )}
-                  </li>
-                )}
-                <li style={{ marginRight: '15px' }}>
-                  <Link href="/cong-ty">Công ty</Link>
-                </li>
-                {session && (
-                  <li style={{ marginRight: '15px' }}>
-                    {session!.user!.email! === 'admin' && (
-                      <Link href="/yeu-cau-xac-thuc">Yêu cầu xác thực</Link>
-                    )}
-                  </li>
-                )}
-              </ul>
-            </nav>
+            <nav className="nav">{NavBar}</nav>
             <div style={{ flexGrow: 1 }} />
             {session && (
               <>
@@ -593,7 +539,7 @@ const Header = () => {
                 >
                   <Badge
                     sx={{
-                      mr: 1
+                      mr: 3
                     }}
                     badgeContent={unreadNotification}
                     color="secondary"
@@ -656,6 +602,11 @@ const Header = () => {
               <span></span>
             </CustomNavToggler>
           </CustomHeader>
+          <MobileNavBar>
+            <nav ref={navRef} className="nav">
+              {NavBar}
+            </nav>
+          </MobileNavBar>
         </Container>
       </BackgroundHeader>
     </motion.div>

@@ -80,7 +80,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
     if (!companyId) return
     dispatch(
       applyCompany({
-        owner_id: Number(session!.user!.name!),
+        owner_id: Number(session!.user!.id),
         title: 'Thông báo',
         content: 'yêu cầu gia nhập',
         company_id: Number(companyId)

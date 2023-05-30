@@ -1,6 +1,6 @@
 import SkillCard from '@components/cards/profileCard/skillsCard/skillsCard'
 import { Container, Grid } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ExperienceCard from '@components/cards/profileCard/experienceCard/experienceCard'
 import AboutMeCard from '@components/cards/profileCard/aboutMeCard'
 import EducationCard from '@components/cards/profileCard/educationCard/educationCard'
@@ -12,26 +12,61 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
 import resumiroApi from '@apis/resumiroApi'
 import { Candidate, Company, Skill } from '@shared/interfaces'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { useSession } from 'next-auth/react'
+import candidateProfileSlice, {
+  fetchCandidateById
+} from '@redux/reducers/candidateProfileSlice'
+import { candidateProfileSelector } from '@redux/selectors'
+import { useRouter } from 'next/router'
+import MySnackBar from '@components/ui/bar/snackbar'
 interface CandidateProfilePageProps {
-  user: Candidate
   allCompanies: Company[]
   allSkills: Skill[]
 }
 
 const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
-  user,
   allCompanies,
   allSkills
 }) => {
+  const { data: session } = useSession()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { user, message, messageType, showMessage } = useAppSelector(
+    candidateProfileSelector
+  )
+  useEffect(() => {
+    if (session) {
+      const candidateId = Array.isArray(router.query!.candidateId!)
+        ? router.query!.candidateId![0]
+        : router.query!.candidateId!
+      dispatch(fetchCandidateById(candidateId))
+    }
+  }, [])
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    dispatch(
+      candidateProfileSlice.actions.toggleSnackBar({ showMessage: false })
+    )
+  }
+
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
-      <ArticleLayout title="Cá nhân">
+      <ArticleLayout title={`Trang cá nhân của ${user.username}`}>
         <Container
           sx={{
             paddingTop: '2rem ',
             paddingBottom: '5rem'
           }}
         >
+          <MySnackBar
+            handleClose={handleClose}
+            message={message}
+            messageType={messageType}
+            showMessage={showMessage}
+          />
           <Grid container columnSpacing={{ md: 2, xs: 0 }}>
             <Grid item xs={12}>
               <BackgroundCard src={user.background} alt={user.full_name} />
@@ -39,6 +74,7 @@ const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
             <Grid item xs={12} md={8}>
               <BasicInfoCard
                 type={2}
+                id={user.id}
                 avatar={user.avatar}
                 fullName={user.full_name}
                 username={user.username}
@@ -101,25 +137,18 @@ export async function getServerSideProps(context: {
     }
   }
 
-  if (session?.user?.email === 'candidate') {
+  if (session.user!.role === 'candidate') {
     return {
       notFound: true
     }
   }
-  const candidateDetail = await resumiroApi
-    .getCandidateById(candidateId)
-    .then(res => res.data)
 
   const allCompanies = await resumiroApi.getAllCompanies().then(res => res.data)
   const allSkills = await resumiroApi.getAllSkills().then(res => res.data)
 
-  // const candidate = await resumiroApi
-  //   .getCandidateById(session!.user!.name!)
-  //   .then(res => res.data)
   return {
     props: {
       session: session,
-      user: candidateDetail.data,
       allCompanies: allCompanies.data,
       allSkills: allSkills.data
     }

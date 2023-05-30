@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react'
 import { profileSelector } from '@redux/selectors'
 import { useState, useEffect } from 'react'
 import {
+  fetchAllUserResumes,
   updateCandidateBasicInfo,
   updateRecruiterBasicInfo
 } from '@redux/reducers/profileSlice'
@@ -25,9 +26,11 @@ import { TextField } from '@mui/material'
 import { Button } from '@mui/material'
 import { CircularProgress } from '@mui/material'
 import { motion, Variants, useAnimationControls } from 'framer-motion'
+import ResumeCard, { ResumeCardProps } from '../resumeCard'
 
 interface BasicInfoCardProps {
   type?: number
+  id?: number
   username: string
   fullName: string | null
   avatar: string | null
@@ -52,17 +55,17 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
   type,
   username,
   avatar,
+  id,
   fullName,
   role,
   phone,
   background,
-
   email
 }) => {
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
 
-  const { loading } = useAppSelector(profileSelector)
+  const { loading, allUserResumes } = useAppSelector(profileSelector)
   const controls = useAnimationControls()
   useEffect(() => {
     controls.stop()
@@ -70,16 +73,25 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
       controls.start('visible')
     }
   }, [loading])
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const [isOpenEditInfo, setIsOpenEditInfo] = useState(false)
+  const [isOpenAllResumes, setIsOpenAllResumes] = useState(false)
+  const handleOpenEditInfo = () => setIsOpenEditInfo(true)
+  const handleCloseEditInfo = () => setIsOpenEditInfo(false)
+
+  const handleOpenAllResumes = () => {
+    setIsOpenAllResumes(true)
+    dispatch(fetchAllUserResumes(id!))
+  }
+  const handleCloseAllResumes = () => setIsOpenAllResumes(false)
+  const handleSubmitEditInfo = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    if (session!.user!.email! === 'candidate') {
+    if (session!.user!.role === 'candidate') {
       dispatch(
         updateCandidateBasicInfo({
-          id: session!.user!.name!,
+          id: session!.user!.id,
           data: {
             background: data.get('background')!.toString(),
             avatar: data.get('avatar')!.toString(),
@@ -92,7 +104,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
     } else {
       dispatch(
         updateRecruiterBasicInfo({
-          id: session!.user!.name!,
+          id: session!.user!.id,
           data: {
             background: data.get('background')!.toString(),
             avatar: data.get('avatar')!.toString(),
@@ -104,7 +116,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
       )
     }
 
-    setOpen(false)
+    setIsOpenEditInfo(false)
   }
 
   if (type === 2) {
@@ -189,8 +201,44 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
             <OvalButton style={{ marginRight: '8px' }} primary>
               Theo dõi
             </OvalButton>
-            {role === 'candidate' && <OvalButton>Hồ sơ chính</OvalButton>}
+            {role === 'candidate' && (
+              <OvalButton onClick={handleOpenAllResumes}>Toàn bộ CV</OvalButton>
+            )}
           </CardContent>
+          <Modal open={isOpenAllResumes} onClose={handleCloseAllResumes}>
+            <Grid
+              container
+              sx={{
+                borderRadius: '5px',
+                position: 'absolute' as 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                maxWidth: 800,
+                overflow: 'scroll',
+                height: '80vh',
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4
+              }}
+              columnSpacing={{ xs: 0, md: 3 }}
+              rowSpacing={3}
+              alignItems="center"
+              justifyContent="center"
+            >
+              {allUserResumes &&
+                allUserResumes.map(
+                  (
+                    resume: ResumeCardProps,
+                    index: React.Key | null | undefined
+                  ) => (
+                    <Grid item xs={12} sm={6} key={index}>
+                      <ResumeCard {...resume} type={type} />
+                    </Grid>
+                  )
+                )}
+            </Grid>
+          </Modal>
         </Card>
       </motion.div>
     )
@@ -256,7 +304,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
             </div>
           }
           action={
-            <IconButton onClick={handleOpen}>
+            <IconButton onClick={handleOpenEditInfo}>
               <CreateIcon />
             </IconButton>
           }
@@ -278,16 +326,11 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
           sx={{ alignItems: 'end' }}
         />
 
-        {role === 'candidate' && (
-          <CardContent sx={{ py: 'unset' }}>
-            <OvalButton>Hồ sơ chính</OvalButton>
-          </CardContent>
-        )}
-        <Modal open={open} onClose={handleClose}>
+        <Modal open={isOpenEditInfo} onClose={handleCloseEditInfo}>
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmitEditInfo}
             sx={{
               borderRadius: '5px',
               position: 'absolute' as 'absolute',
@@ -390,7 +433,7 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
                     disableElevation
                     disableRipple
                     color="primary"
-                    onClick={handleClose}
+                    onClick={handleCloseEditInfo}
                     sx={{
                       mr: 1,
                       p: 1.5,

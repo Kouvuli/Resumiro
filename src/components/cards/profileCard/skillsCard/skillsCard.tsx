@@ -65,7 +65,7 @@ const SkillCard: React.FC<SkillCardProps> = ({
     const skill = data.get('skill')!.toString()
     dispatch(
       createCandidateSkill({
-        id: session!.user!.name!,
+        id: session!.user!.id,
         skill_id: Number(skill)
       })
     )
@@ -98,22 +98,23 @@ const SkillCard: React.FC<SkillCardProps> = ({
           />
           <CardContent sx={{ paddingTop: 'unset', paddingBottom: 'unset' }}>
             <List disablePadding>
-              {skills.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <CustomListItem>
-                      <SkillItem
-                        id={item.skill.id}
-                        name={item.skill.name}
-                        isModify={isModify}
-                      />
-                    </CustomListItem>
-                    {index !== skills.length - 1 && (
-                      <Divider sx={{ borderWidth: '0.5px' }} />
-                    )}
-                  </div>
-                )
-              })}
+              {skills &&
+                skills.map((item, index) => {
+                  return (
+                    <div key={index}>
+                      <CustomListItem>
+                        <SkillItem
+                          id={item.skill.id}
+                          name={item.skill.name}
+                          isModify={isModify}
+                        />
+                      </CustomListItem>
+                      {index !== skills.length - 1 && (
+                        <Divider sx={{ borderWidth: '0.5px' }} />
+                      )}
+                    </div>
+                  )
+                })}
             </List>
           </CardContent>
         </Card>
@@ -153,22 +154,23 @@ const SkillCard: React.FC<SkillCardProps> = ({
         />
         <CardContent sx={{ paddingTop: 'unset', paddingBottom: 'unset' }}>
           <List disablePadding>
-            {skills.map((item, index) => {
-              return (
-                <div key={index}>
-                  <CustomListItem>
-                    <SkillItem
-                      id={item.skill.id}
-                      name={item.skill.name}
-                      isModify={isModify}
-                    />
-                  </CustomListItem>
-                  {index !== skills.length - 1 && (
-                    <Divider sx={{ borderWidth: '0.5px' }} />
-                  )}
-                </div>
-              )
-            })}
+            {skills &&
+              skills.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <CustomListItem>
+                      <SkillItem
+                        id={item.skill.id}
+                        name={item.skill.name}
+                        isModify={isModify}
+                      />
+                    </CustomListItem>
+                    {index !== skills.length - 1 && (
+                      <Divider sx={{ borderWidth: '0.5px' }} />
+                    )}
+                  </div>
+                )
+              })}
           </List>
         </CardContent>
       </Card>

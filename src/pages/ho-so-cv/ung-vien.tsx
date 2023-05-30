@@ -47,7 +47,7 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
   }
   useEffect(() => {
     if (session) {
-      dispatch(fetchAllUserResumes(session!.user!.name!))
+      dispatch(fetchAllUserResumes(session!.user!.id))
     }
   }, [showMessage, session])
   const handleCloseModal = () => setOpenModal(false)
@@ -71,7 +71,7 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
         title,
         resume_key: key,
         resume: encryptText(uploadedResume, key),
-        owner_id: Number(session!.user!.name!)
+        owner_id: Number(session!.user!.id)
       })
     )
     router.push({
@@ -232,7 +232,7 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       }
     }
   }
-  if (session?.user?.email === 'recruiter') {
+  if (session.user!.role === 'recruiter' || session.user!.role === 'admin') {
     return {
       redirect: {
         destination: '/ho-so-cv',

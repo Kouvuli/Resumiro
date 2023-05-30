@@ -10,6 +10,7 @@ import resumiroApi from '@apis/resumiroApi'
 import { Company, Recruiter } from '@shared/interfaces'
 import companySlice, {
   createCompany,
+  fetchUserById,
   updateRecruiterCompany,
   uploadBackground,
   uploadLogo
@@ -35,7 +36,6 @@ type CompanyListPerPage = {
 }
 interface CompanyPageProps {
   data: CompanyListPerPage
-  user: Recruiter
   allLocations: locations[]
 }
 
@@ -48,13 +48,12 @@ const orderOptions = [
 
 const CompanyPage: React.FC<CompanyPageProps> = ({
   data,
-  user,
+
   allLocations
 }) => {
   const dispatch = useAppDispatch()
   const { data: session, status } = useSession()
   const [open, setOpen] = useState(false)
-  const [hasAddCompany, setHasAddCompany] = useState(false)
   const router = useRouter()
   const {
     showMessage,
@@ -71,19 +70,20 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     createdCompany,
     q,
     location,
-    order_by
+    order_by,
+    user,
+    hasAddCompany
   } = useAppSelector(companySelector)
   useEffect(() => {
-    if (!_.isEmpty(user) && user.role === 'admin') {
-      setHasAddCompany(true)
+    if (status === 'authenticated') {
+      dispatch(fetchUserById(session!.user!.id))
     }
   }, [])
   useEffect(() => {
     if (createdCompany) {
-      setHasAddCompany(false)
       dispatch(
         updateRecruiterCompany({
-          id: Number(session!.user!.name),
+          id: Number(session!.user!.id),
           data: {
             company_id: Number(createdCompany.id)
           }
@@ -440,12 +440,6 @@ export async function getServerSideProps(context: {
 }) {
   const session = await getServerSession(context.req, context.res, authOptions)
 
-  let user: any = { data: {} }
-  if (session) {
-    user = await resumiroApi
-      .getUserById(session!.user!.name!)
-      .then(res => res.data)
-  }
   const allLocations = await resumiroApi.getLocations().then(res => res.data)
   const companies = await resumiroApi
     .getCompanies(context.query)
@@ -468,7 +462,6 @@ export async function getServerSideProps(context: {
         totalPage: companies.pagination.total,
         data: companyList
       },
-      user: user.data,
       allLocations: allLocations.data
     }
   }

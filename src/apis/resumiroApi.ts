@@ -364,6 +364,10 @@ const resumiroApi = {
   ) => {
     const url = `/resume/${id}/privacy`
     return request.patch(url, data)
+  },
+  getAllUserResumes: (id: number) => {
+    const url = `/user/${id}/resume`
+    return request.get(url)
   }
   // updatePost: (id, data) => {
   //     const url = `/post/${id}`

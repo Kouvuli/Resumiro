@@ -13,7 +13,10 @@ import Image from 'next/image'
 import _ from 'lodash'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { jobSelector } from '@redux/selectors'
-import jobSlice, { createJob } from '@redux/reducers/jobSlice'
+import jobSlice, {
+  createJob,
+  fetchRecruiterById
+} from '@redux/reducers/jobSlice'
 import { useRouter } from 'next/router'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
@@ -45,7 +48,6 @@ interface JobPageProps {
   allSkills: Skill[]
   allFields: fields[]
   allLocations: locations[]
-  recruiter?: Recruiter
 }
 
 const orderOptions = [
@@ -82,19 +84,11 @@ const JobPage: React.FC<JobPageProps> = ({
   data,
   allSkills,
   allFields,
-  allLocations,
-  recruiter
+  allLocations
 }) => {
   const [open, setOpen] = useState(false)
   const [skill, setSkill] = useState<string[]>([])
   const { data: session } = useSession()
-  const [hasAddJob, setHasAddJob] = useState(false)
-  useEffect(() => {
-    if (!_.isEmpty(recruiter)) {
-      setHasAddJob(true)
-    }
-  }, [])
-
   const handleOpenAddJobModal = () => setOpen(true)
   const handleCloseAddJobModal = () => setOpen(false)
   const dispatch = useAppDispatch()
@@ -113,8 +107,17 @@ const JobPage: React.FC<JobPageProps> = ({
     job_type,
     min_salary,
     max_salary,
-    experience
+    experience,
+    recruiter,
+    hasAddJob
   } = useAppSelector(jobSelector)
+
+  useEffect(() => {
+    if (session && session.user!.role !== 'candidate') {
+      dispatch(fetchRecruiterById(session.user!.id))
+    }
+  }, [])
+
   const searchHandler = () => {
     let query: any = {}
     if (page !== '') {
@@ -492,12 +495,6 @@ export async function getServerSideProps(context: {
       createAt: job.create_at
     }
   })
-  let recruiter: any = { data: {} }
-  if (session && session!.user!.email !== 'candidate') {
-    recruiter = await resumiroApi
-      .getRecruiterById(session!.user!.name!)
-      .then(res => res.data)
-  }
 
   const allSkills = await resumiroApi.getAllSkills().then(res => res.data)
 
@@ -514,8 +511,7 @@ export async function getServerSideProps(context: {
       },
       allSkills: allSkills.data,
       allFields: allFields.data,
-      allLocations: allLocations.data,
-      recruiter: recruiter.data
+      allLocations: allLocations.data
     }
   }
 }

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
-import { Recruiter } from '@shared/interfaces'
+import { Recruiter, Resume } from '@shared/interfaces'
 import socket from '@libs/socket'
 import headerSlice from './headerSlice'
 
@@ -21,7 +21,8 @@ const initialState = {
   allCompanies: [],
   allSkills: [],
   allFields: [],
-  allLocations: []
+  allLocations: [],
+  allUserResumes: []
 }
 
 export const uploadExperience = createAsyncThunk(
@@ -94,6 +95,27 @@ export const fetchAllFields = createAsyncThunk('get-all-fields', async () => {
   const { data } = await resumiroApi.getFields().then(res => res.data)
   return data
 })
+
+export const fetchAllUserResumes = createAsyncThunk(
+  'get-all-user-resumes',
+  async (id: number) => {
+    const { data } = await resumiroApi
+      .getAllUserResumes(id)
+      .then(res => res.data)
+    const convertData = data.map((item: Resume) => {
+      return {
+        id: item.id,
+        resumeTitle: item.title,
+        data: item.data,
+        createAt: item.create_at,
+        owner: item.owner,
+        resumeKey: item.resume_key,
+        isPublic: item.is_public
+      }
+    })
+    return convertData
+  }
+)
 
 export const fetchNonCompanyRecruiters = createAsyncThunk(
   'get-non-company-recruiters',
@@ -787,6 +809,18 @@ const profileSlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(fetchAllUserResumes.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchAllUserResumes.fulfilled, (state, action) => {
+        console.log(action.payload)
+        state.allUserResumes = action.payload
+        state.loading = false
+      })
+      .addCase(fetchAllUserResumes.rejected, (state, action) => {
         state.loading = false
       })
   }

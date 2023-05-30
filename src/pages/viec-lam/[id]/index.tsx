@@ -135,7 +135,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     if (session) {
       dispatch(
         checkIsApplied({
-          candidateId: session!.user!.name!,
+          candidateId: session!.user!.id,
           jobId: id
         })
       )
@@ -147,13 +147,13 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
         applyJob({
           id: id,
           data: {
-            candidate_id: session!.user!.name!
+            candidate_id: session!.user!.id
           }
         })
       )
       dispatch(
         createNotification({
-          author_id: Number(session!.user!.name!),
+          author_id: Number(session!.user!.id),
           title: 'Thông báo',
           content: 'mới ứng tuyển vào công việc của bạn',
           object_url: id.toString(),
@@ -166,7 +166,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     } else {
       dispatch(
         cancelJob({
-          candidateId: session!.user!.name!,
+          candidateId: session!.user!.id,
           jobId: id
         })
       )

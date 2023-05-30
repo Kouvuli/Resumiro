@@ -143,7 +143,7 @@ export async function getServerSideProps(context: {
     }
   }
 
-  if (session?.user?.email !== 'admin') {
+  if (session.user!.role !== 'admin') {
     return {
       notFound: true
     }

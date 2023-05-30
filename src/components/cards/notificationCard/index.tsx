@@ -48,7 +48,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           company_id: Number(object_id)
         },
         userId: author.id,
-        authorId: Number(session!.user!.name!),
+        authorId: Number(session!.user!.id),
         title: 'Chấp nhận',
         content: 'chấp nhận bạn vào công ty'
       })
@@ -67,7 +67,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       allowRecruiterToView({
         resumeId: Number(object_id),
         userId: author.id,
-        authorId: Number(session!.user!.name!),
+        authorId: Number(session!.user!.id),
         title: 'Chấp nhận',
         content: 'chấp nhận bạn xem CV của họ'
       })

@@ -16,3 +16,7 @@ export const jobDetailSelector = (state: { jobDetail: any }) => state.jobDetail
 
 export const authRequestSelector = (state: { authRequest: any }) =>
   state.authRequest
+export const candidateProfileSelector = (state: { candidateProfile: any }) =>
+  state.candidateProfile
+export const recruiterProfileSelector = (state: { recruiterProfile: any }) =>
+  state.recruiterProfile

@@ -13,7 +13,25 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt'
   },
   secret: process.env.SECRET,
-
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+        token.walletAddress = user.walletAddress
+      }
+      return token
+    },
+    session({ session, token }) {
+      /* Step 2: update the session.user based on the token object */
+      if (token && session.user) {
+        session.user.id = token.id
+        session.user.role = token.role
+        session.user.walletAddress = token.walletAddress
+      }
+      return session
+    }
+  },
   providers: [
     CredentialsProvider({
       async authorize(credentials: {
@@ -86,10 +104,12 @@ export const authOptions: NextAuthOptions = {
 
         prisma.$disconnect()
         return {
+          id: user.id,
           name: user.id,
           image: user.avatar,
           email: user.role,
-          walletAddress: user.address_wallet
+          walletAddress: user.address_wallet,
+          role: user.role
         }
       }
     })

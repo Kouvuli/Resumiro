@@ -22,41 +22,42 @@ export default async function handler(
     return
   }
   const prisma = new PrismaClient()
-  const { resumeId, recruiterId } = req.query
+  const { userId } = req.query
   prisma.$connect()
-
-  const existingResume = await prisma.resumes.findFirst({
-    where: {
-      id: Number(resumeId)
-    }
-  })
-  if (!existingResume) {
-    res.status(404).json({
-      message: 'Resume not found',
-      status: 'error'
-    })
-    prisma.$disconnect()
-    return
-  }
   if (req.method === 'GET') {
-    const data = await prisma.resume_allowed_user.findFirst({
-      where: {
-        resume_id: Number(resumeId),
-        user_id: Number(recruiterId)
-      }
-    })
-    if (!data) {
-      res.status(200).json({
-        message: 'Resume is unable to view',
+    let id = Number(userId)
+    const user = await prisma.resumes
+      .findMany({
+        where: { owner_id: id },
+        orderBy: {
+          create_at: 'desc'
+        },
+        include: {
+          owner: true
+        }
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: 'Something went wrong',
+          status: 'error'
+        })
+        prisma.$disconnect()
+        return
+      })
+    if (!user) {
+      res.status(404).json({
+        message: 'Cannot get user resumes',
         status: 'error'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
-      message: 'Recruiter allow to watch',
+      message: 'Successfully get user resumes',
       status: 'ok',
-      data: data
+      data: user
     })
+    prisma.$disconnect()
+    return
   }
 }

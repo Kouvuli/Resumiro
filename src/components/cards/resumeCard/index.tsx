@@ -25,6 +25,7 @@ import {
 import { useRouter } from 'next/router'
 import { decryptText } from '@utils/cryptoUtil'
 import { useSession } from 'next-auth/react'
+import candidateProfileSlice from '@redux/reducers/candidateProfileSlice'
 export interface ResumeCardProps {
   index?: number
   type?: number
@@ -82,7 +83,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
     dispatch(
       checkIfAllowedToView({
         resumeId: id,
-        userId: Number(session!.user!.name!),
+        userId: Number(session!.user!.id),
         source: decryptText(data, resumeKey),
         title: 'Yêu cầu xem CV',
         recipient: owner.id,
@@ -90,6 +91,17 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
         isPublic: isPublic
       })
     )
+    if (router.pathname !== 'ca-nhan') {
+      dispatch(
+        candidateProfileSlice.actions.changeSnackBarMessage({
+          message: 'Đã gửi yêu cầu thành công',
+          messageType: 'success'
+        })
+      )
+      dispatch(
+        candidateProfileSlice.actions.toggleSnackBar({ showMessage: true })
+      )
+    }
   }
 
   const updateResumePrivacyHandler = () => {
@@ -148,16 +160,6 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                 }}
               >
                 <Link href={`/ung-vien/${owner.id}`}>Cá nhân</Link>
-              </Button>
-              <Button
-                variant="text"
-                startIcon={<FavoriteBorderIcon />}
-                sx={{
-                  textTransform: 'none',
-                  mb: 1
-                }}
-              >
-                Chính
               </Button>
             </div>
           </div>
@@ -283,22 +285,9 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             <Button
               variant="text"
               size="small"
-              startIcon={<FavoriteBorderIcon />}
-              sx={{
-                textTransform: 'none',
-                mb: 1
-              }}
-            >
-              Chính
-            </Button>
-          </div>
-          <div className={styles['action']}>
-            <Button
-              variant="text"
-              size="small"
               onClick={deleteHandler}
               startIcon={<DeleteOutlineRoundedIcon />}
-              sx={{ textTransform: 'none', color: 'grey[200]' }}
+              sx={{ textTransform: 'none' }}
             >
               Xoá
             </Button>

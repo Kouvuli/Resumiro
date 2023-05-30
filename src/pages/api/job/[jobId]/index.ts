@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,6 +12,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  const session = await getServerSession(req, res, authOptions)
+
   const prisma = new PrismaClient()
   const { jobId } = req.query
   prisma.$connect()
@@ -87,6 +91,16 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'PATCH') {
+    if (
+      !session ||
+      (session.user?.role !== 'recruiter' && session.user?.role !== 'admin')
+    ) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const {
       title,
       location_id,
@@ -147,6 +161,16 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
+    if (
+      !session ||
+      (session.user?.role !== 'recruiter' && session.user?.role !== 'admin')
+    ) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     await prisma.jobs_skills.deleteMany({
       where: {
         job_id: id

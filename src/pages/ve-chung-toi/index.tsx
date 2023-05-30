@@ -1,3 +1,11 @@
+import React, { useState } from 'react'
+import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import { styled } from '@mui/material/styles'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import ArticleLayout from '@components/layouts/article'
+
 const teamMembers = [
   {
     name: 'Nguyễn Minh Phụng',
@@ -35,15 +43,7 @@ const teamMembers = [
       'CKO is a skilled developer with expertise in front-end technologies. She enjoys building user-friendly and intuitive interfaces.'
   }
 ]
-// export default AboutUs;
-import React, { useState } from 'react'
-// import styled from 'styled-components'
-import { Carousel } from 'react-responsive-carousel'
-import 'react-responsive-carousel/lib/styles/carousel.min.css'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
-import { styled } from '@mui/material/styles'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import ArticleLayout from '@components/layouts/article'
+
 const Container = styled('div')(({ theme }) => ({
   maxWidth: '800px',
   margin: '0 auto',
@@ -53,7 +53,7 @@ const Container = styled('div')(({ theme }) => ({
 const Title = styled('li')(({ theme }) => ({
   textAlign: 'center',
 
-  fontSize: '45px',
+  fontSize: '30px',
   fontWeight: 'bold',
   marginBottom: '20px'
 }))
@@ -85,7 +85,7 @@ const TeamImage = styled('img')(({ theme }) => ({
 const MemberName = styled('h2')(({ theme }) => ({
   paddingTop: '10px',
   paddingBottom: '5px',
-  fontSize: '20px',
+  fontSize: '25px',
   fontWeight: 'bold',
   marginBottom: '5px'
 }))
@@ -94,83 +94,50 @@ const MemberRole = styled('p')(({ theme }) => ({
   fontSize: '20px',
   paddingBottom: '5px',
   color: '#999999',
-  marginBottom: '10px',
-
+  marginBottom: '10px'
 }))
 
 const MemberDetails = styled('div')(({ theme }) => ({
   marginTop: '20px',
-  paddingBottom: '5px',
+  paddingBottom: '5px'
 }))
 
 const MemberDetailsTitle = styled('h3')(({ theme }) => ({
-  fontSize: '25px',
+  fontSize: '20px',
   fontWeight: 'bold',
-  marginBottom: '10px',
-
+  marginBottom: '10px'
 }))
 
 const MemberDetailsText = styled('p')(({ theme }) => ({
-  fontSize: '20px',
+  fontSize: '18px',
   color: '#666666',
   marginBottom: '5px',
-  lineHeight: '1.2',
+  lineHeight: '1.4'
 }))
-
-// const PrevButton = styled('button')(({ theme }) => ({
-//   position: 'absolute',
-//   top: '50%',
-//   left: '10px',
-//   transform: 'translateY(-50%)',
-//   padding: '10px',
-//   backgroundColor: '#f0f0f0',
-//   border: 'none',
-//   borderRadius: '4px',
-//   color: '#333',
-//   fontSize: '16px',
-//   cursor: 'pointer',
-//   zIndex: 1
-// }))
-
-// const NextButton = styled('button')(({ theme }) => ({
-//   position: 'absolute',
-//   top: '50%',
-//   right: '10px',
-//   transform: 'translateY(-50%)',
-//   padding: '10px',
-//   backgroundColor: '#f0f0f0',
-//   border: 'none',
-//   borderRadius: '4px',
-//   color: '#333',
-//   fontSize: '16px',
-//   cursor: 'pointer',
-//   zIndex: 1
-// }))
 
 const CustomeIndicatorSelected = styled('li')(({ theme }) => ({
   background: theme.palette.primary.main,
   borderRadius: '50%',
   width: '8px',
   height: '8px',
-  cursor: "pointer",
-  display: "inline-block",
-  margin: "0 8px",
-  transition: "opacity .25s ease-in"
+  cursor: 'pointer',
+  display: 'inline-block',
+  margin: '0 8px',
+  transition: 'opacity .25s ease-in'
 }))
 
 const CustomeIndicator = styled('li')(({ theme }) => ({
-  background: "white",
+  background: 'white',
   borderRadius: '50%',
   width: '8px',
   height: '8px',
-  cursor: "pointer",
-  display: "inline-block",
-  margin: "0 8px",
-  transition: "opacity .25s ease-in",
-  border:"1px solid",
-  opacity:"0.2"
+  cursor: 'pointer',
+  display: 'inline-block',
+  margin: '0 8px',
+  transition: 'opacity .25s ease-in',
+  border: '1px solid',
+  opacity: '0.2'
 }))
-
 
 const AboutUs: React.FC = () => {
   const [currentMember, setCurrentMember] = useState(0)
@@ -218,7 +185,7 @@ const AboutUs: React.FC = () => {
   }
 
   return (
-    <ArticleLayout>
+    <ArticleLayout title="Về chúng tôi">
       <Container>
         <section className="Thông tin nhóm">
           <Title>Thông tin nhóm</Title>
@@ -248,7 +215,13 @@ const AboutUs: React.FC = () => {
               onChange={handleCarouselChange}
               showStatus={false}
               swipeScrollTolerance={100}
-              renderArrowPrev={(onClickHandler, hasPrev, label) =>
+              renderArrowPrev={(
+                onClickHandler:
+                  | React.MouseEventHandler<SVGSVGElement>
+                  | undefined,
+                hasPrev: any,
+                label: any
+              ) =>
                 hasPrev && (
                   // <PrevButton onClick={onClickHandler} title={label}>
                   //   Previous
@@ -265,7 +238,13 @@ const AboutUs: React.FC = () => {
                   />
                 )
               }
-              renderArrowNext={(onClickHandler, hasNext, label) =>
+              renderArrowNext={(
+                onClickHandler:
+                  | React.MouseEventHandler<SVGSVGElement>
+                  | undefined,
+                hasNext: any,
+                label: any
+              ) =>
                 hasNext && (
                   // <NextButton onClick={onClickHandler} title={label}>
                   //   Next
@@ -282,7 +261,14 @@ const AboutUs: React.FC = () => {
                   />
                 )
               }
-              renderIndicator={(onClickHandler, isSelected, index, label) => {
+              renderIndicator={(
+                onClickHandler:
+                  | React.MouseEventHandler<HTMLLIElement>
+                  | undefined,
+                isSelected: any,
+                index: any,
+                label: any
+              ) => {
                 return isSelected ? (
                   <CustomeIndicatorSelected onClick={onClickHandler} />
                 ) : (

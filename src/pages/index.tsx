@@ -301,7 +301,7 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              <Typography variant="h4">Những bài blog về nhóm</Typography>
+              <Typography variant="h4">Những bài blog về Resumiro</Typography>
             </motion.div>
             <Slider items={blogList} />
           </section>

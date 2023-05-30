@@ -46,16 +46,6 @@ const variants: Variants = {
     y: 0
   }
 }
-// const style = {
-//   position: 'absolute' as 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: 400,
-//   bgcolor: 'background.paper',
-//   boxShadow: 24,
-//   p: 4
-// }
 
 const CustomListItem = styled(ListItem)(({}) => ({
   paddingLeft: 'unset',
@@ -110,12 +100,12 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           company_id: Number(company),
           start: start,
           finish: finish,
-          user_id: Number(session!.user!.name),
+          user_id: Number(session!.user!.id),
           source: uploadedExperience
         },
         company_id: Number(company),
         content: 'Xác thực công ty',
-        owner_id: Number(session!.user!.name)
+        owner_id: Number(session!.user!.id)
       })
     )
 
@@ -156,15 +146,16 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           />
           <CardContent sx={{ py: 'unset' }}>
             <List disablePadding>
-              {experiences!.map((item, index) => (
-                <CustomListItem key={index}>
-                  <ExperienceItem
-                    data={item}
-                    allCompanies={allCompanies}
-                    isModify={isModify}
-                  />
-                </CustomListItem>
-              ))}
+              {experiences &&
+                experiences!.map((item, index) => (
+                  <CustomListItem key={index}>
+                    <ExperienceItem
+                      data={item}
+                      allCompanies={allCompanies}
+                      isModify={isModify}
+                    />
+                  </CustomListItem>
+                ))}
             </List>
           </CardContent>
         </Card>
@@ -205,15 +196,16 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
         />
         <CardContent sx={{ py: 'unset' }}>
           <List disablePadding>
-            {experiences!.map((item, index) => (
-              <CustomListItem key={index}>
-                <ExperienceItem
-                  data={item}
-                  allCompanies={allCompanies}
-                  isModify={isModify}
-                />
-              </CustomListItem>
-            ))}
+            {experiences &&
+              experiences!.map((item, index) => (
+                <CustomListItem key={index}>
+                  <ExperienceItem
+                    data={item}
+                    allCompanies={allCompanies}
+                    isModify={isModify}
+                  />
+                </CustomListItem>
+              ))}
           </List>
 
           <Modal open={open} onClose={handleClose}>

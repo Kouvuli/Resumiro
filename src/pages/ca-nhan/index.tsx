@@ -48,10 +48,10 @@ const ProfilePage = () => {
     dispatch(fetchAllFields())
   }, [])
   useEffect(() => {
-    if (session?.user?.email === 'candidate') {
-      dispatch(fetchCandidateById(session!.user!.name!))
+    if (session!.user!.role === 'candidate') {
+      dispatch(fetchCandidateById(session!.user!.id))
     } else {
-      dispatch(fetchRecruiterById(session!.user!.name!))
+      dispatch(fetchRecruiterById(session!.user!.id))
       if (user.company_id) {
         dispatch(fetchAllRecruiterSameCompany(user.company_id))
       }
@@ -166,9 +166,7 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       }
     }
   }
-  // const candidate = await resumiroApi
-  //   .getCandidateById(session!.user!.name!)
-  //   .then(res => res.data)
+
   return {
     props: {
       session: session

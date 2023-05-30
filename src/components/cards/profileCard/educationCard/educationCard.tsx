@@ -91,11 +91,11 @@ const EducationCard: React.FC<EducationCardProps> = ({
           name: name,
           verified_at: new Date(verified_at),
           source: uploadedCertificate,
-          candidate_id: Number(session!.user!.name)
+          candidate_id: Number(session!.user!.id)
         },
         company_id: Number(company),
         content: 'Xác thực chứng chỉ',
-        owner_id: Number(session!.user!.name)
+        owner_id: Number(session!.user!.id)
       })
     )
     setOpen(false)
@@ -139,11 +139,12 @@ const EducationCard: React.FC<EducationCardProps> = ({
           />
           <CardContent sx={{ py: 'unset' }}>
             <List disablePadding>
-              {educations!.map((education, index) => (
-                <CustomListItem key={index}>
-                  <EducationItem data={education} isModify={isModify} />
-                </CustomListItem>
-              ))}
+              {educations &&
+                educations!.map((education, index) => (
+                  <CustomListItem key={index}>
+                    <EducationItem data={education} isModify={isModify} />
+                  </CustomListItem>
+                ))}
             </List>
           </CardContent>
         </Card>
@@ -184,11 +185,12 @@ const EducationCard: React.FC<EducationCardProps> = ({
         />
         <CardContent sx={{ py: 'unset' }}>
           <List disablePadding>
-            {educations!.map((education, index) => (
-              <CustomListItem key={index}>
-                <EducationItem data={education} isModify={isModify} />
-              </CustomListItem>
-            ))}
+            {educations &&
+              educations!.map((education, index) => (
+                <CustomListItem key={index}>
+                  <EducationItem data={education} isModify={isModify} />
+                </CustomListItem>
+              ))}
           </List>
         </CardContent>
       </Card>

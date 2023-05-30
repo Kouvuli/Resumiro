@@ -1,5 +1,5 @@
 import { Container, Grid } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import BasicInfoCard from '@components/cards/profileCard/basicInfoCard'
 import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import ImagesCard from '@components/cards/profileCard/imagesCard'
@@ -8,16 +8,31 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
 import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
 import resumiroApi from '@apis/resumiroApi'
-interface RecruiterProfilePageProps {
-  user: any
-}
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { recruiterProfileSelector } from '@redux/selectors'
+import { fetchRecruiterById } from '@redux/reducers/recruiterProfileSlice'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+interface RecruiterProfilePageProps {}
 
-const RecruiterProfilePage: React.FC<RecruiterProfilePageProps> = ({
-  user
-}) => {
+const RecruiterProfilePage: React.FC<RecruiterProfilePageProps> = ({}) => {
+  const { data: session } = useSession()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { user, message, messageType, showMessage } = useAppSelector(
+    recruiterProfileSelector
+  )
+  useEffect(() => {
+    if (session) {
+      const recruiterId = Array.isArray(router.query!.recruiterId!)
+        ? router.query!.recruiterId![0]
+        : router.query!.recruiterId!
+      dispatch(fetchRecruiterById(recruiterId))
+    }
+  }, [])
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
-      <ArticleLayout title="Cá nhân">
+      <ArticleLayout title={`Trang cá nhân của ${user.username}`}>
         <Container
           sx={{
             paddingTop: '2rem ',
@@ -75,13 +90,9 @@ export async function getServerSideProps(context: {
     }
   }
 
-  if (session?.user?.email === 'recruiter') {
+  if (session.user!.role === 'recruiter') {
     return {
       notFound: true
-      // redirect: {
-      //   destination: '/404',
-      //   permanent: false
-      // }
     }
   }
   const recruiterDetail = await resumiroApi

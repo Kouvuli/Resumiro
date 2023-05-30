@@ -17,8 +17,20 @@ const initialState = {
   job_type: '',
   min_salary: '',
   max_salary: '',
-  experience: ''
+  experience: '',
+  recruiter: {},
+  hasAddJob: false
 }
+
+export const fetchRecruiterById = createAsyncThunk(
+  'get-recruiter-by-id',
+  async (id: string) => {
+    const { data } = await resumiroApi
+      .getRecruiterById(id)
+      .then(res => res.data)
+    return data
+  }
+)
 
 export const createJob = createAsyncThunk('create-job', async (input: any) => {
   const data = await resumiroApi.insertJob(input).then(res => res.data)
@@ -56,7 +68,8 @@ const jobSlice = createSlice({
     changeSnackBarMessage: (state, action) => {
       state.message = action.payload.message
       state.messageType = action.payload.messageType
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: builder => {
     builder
@@ -73,6 +86,18 @@ const jobSlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(fetchRecruiterById.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchRecruiterById.fulfilled, (state, action) => {
+        state.recruiter = action.payload
+        state.hasAddJob = true
+        state.loading = false
+      })
+      .addCase(fetchRecruiterById.rejected, (state, action) => {
         state.loading = false
       })
   }

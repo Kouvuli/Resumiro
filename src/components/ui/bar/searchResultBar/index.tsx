@@ -19,15 +19,6 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({
   handleChange,
   options
 }) => {
-  const [formats, setFormats] = React.useState(() => ['bold', 'italic'])
-
-  const handleFormat = (
-    event: React.MouseEvent<HTMLElement>,
-    newFormats: string[]
-  ) => {
-    setFormats(newFormats)
-  }
-
   return (
     <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
       <Typography sx={{ flexGrow: 1 }} variant="h5">
@@ -43,15 +34,6 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({
         kết quả
       </Typography>
       {options && <RoundSelect options={options} handleChange={handleChange} />}
-
-      <ToggleButtonGroup
-        value={formats}
-        onChange={handleFormat}
-        sx={{ marginLeft: '10px' }}
-      >
-        <Toggle icon={<ViewHeadlineOutlinedIcon />}></Toggle>
-        <Toggle icon={<GridViewOutlinedIcon />}></Toggle>
-      </ToggleButtonGroup>
     </Grid>
   )
 }

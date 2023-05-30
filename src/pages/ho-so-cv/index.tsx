@@ -147,7 +147,7 @@ export async function getServerSideProps(context: {
       }
     }
   }
-  if (session?.user?.email === 'candidate') {
+  if (session.user!.role === 'candidate') {
     return {
       redirect: {
         destination: '/ho-so-cv/ung-vien',

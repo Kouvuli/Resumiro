@@ -19,7 +19,9 @@ const initialState = {
   total: 0,
   q: '',
   order_by: '',
-  location: ''
+  location: '',
+  user: {},
+  hasAddCompany: false
 }
 
 export const createCompany = createAsyncThunk(
@@ -49,6 +51,14 @@ export const updateRecruiterCompany = createAsyncThunk(
     const data = await resumiroApi
       .updateRecruiterCompany(input.id, input.data)
       .then(res => res.data)
+    return data
+  }
+)
+
+export const fetchUserById = createAsyncThunk(
+  'get-user-by-id',
+  async (id: string) => {
+    const { data } = await resumiroApi.getUserById(id).then(res => res.data)
     return data
   }
 )
@@ -84,7 +94,7 @@ const companySlice = createSlice({
         state.showMessage = true
         state.message = action.payload.message
         state.messageType = 'success'
-
+        state.hasAddCompany = false
         state.createdCompany = action.payload.data
         state.loading = false
       })
@@ -142,6 +152,20 @@ const companySlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(fetchUserById.pending, (state, action) => {
+        state.loading = true
+      })
+      .addCase(fetchUserById.fulfilled, (state, action) => {
+        state.user = action.payload
+        if (action.payload?.company && action.payload.role === 'admin') {
+          state.hasAddCompany = true
+        }
+        state.loading = false
+      })
+      .addCase(fetchUserById.rejected, (state, action) => {
         state.loading = false
       })
   }

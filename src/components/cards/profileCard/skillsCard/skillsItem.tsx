@@ -27,7 +27,7 @@ const SkillItem: React.FC<SkillItemProps> = ({ id, name, isModify }) => {
   const deleteHandler = () => {
     dispatch(
       deleteCandidateSkill({
-        id: session!.user!.name!,
+        id: session!.user!.id,
         data: { skill_id: id! }
       })
     )
