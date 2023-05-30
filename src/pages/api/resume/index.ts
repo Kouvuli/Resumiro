@@ -146,7 +146,7 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'POST') {
-    if (!session || session.user?.role !== 'candiate') {
+    if (!session || session.user?.role !== 'candidate') {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'
