@@ -110,7 +110,7 @@ const Footer: React.FC = () => {
             <FooterTitle>Trợ giúp</FooterTitle>
             <CustomList>
               <li>
-                <Link href="#">Chính sách và điều khoản</Link>
+                <Link href="/chinh-sach-va-dieu-khoan">Chính sách và điều khoản</Link>
               </li>
               <li>
                 <Link href="/ve-chung-toi">Về chúng tôi</Link>
