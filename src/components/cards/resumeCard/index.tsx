@@ -91,7 +91,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
         isPublic: isPublic
       })
     )
-    if (router.pathname !== 'ca-nhan') {
+    if (router.pathname !== 'ca-nhan' && !isPublic) {
       dispatch(
         candidateProfileSlice.actions.changeSnackBarMessage({
           message: 'Đã gửi yêu cầu thành công',

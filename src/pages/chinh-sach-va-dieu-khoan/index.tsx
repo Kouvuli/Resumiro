@@ -7,7 +7,7 @@ import ArticleLayout from '@components/layouts/article'
 
 const sectionTitleStyle = {
   marginTop: '16px',
-  marginBottom: '8px',
+  marginBottom: '20px',
   fontSize: '25px'
 }
 
@@ -22,12 +22,13 @@ const Hr = styled('hr')(({ theme }) => ({
   borderTop: '1px solid #eee'
 }))
 
-const Heading = styled('span')(({ theme }) => ({
+const Heading = styled('div')(({ theme }) => ({
   marginLeft: '20px'
 }))
 
 const List = styled('li')(({ theme }) => ({
-  marginLeft: '40px'
+  marginLeft: '40px',
+  lineHeight: '1.5'
 }))
 
 const Main = styled('main')(({ theme }) => ({
@@ -39,7 +40,9 @@ const PrivacyPolicyPage = () => {
   return (
     <ArticleLayout title="Điều khoản và chính sách">
       <div style={{ background: '#F0F0F0', padding: '2% 0' }}>
-        <Container style={{ margin: 'auto', background: '#FFFFFF' }}>
+        <Container
+          style={{ margin: 'auto', background: '#FFFFFF', borderRadius: '5px' }}
+        >
           <Main>
             <Typography
               variant="h3"
@@ -52,7 +55,7 @@ const PrivacyPolicyPage = () => {
             <Typography variant="h5" style={sectionTitleStyle}>
               I. Chính sách bảo mật
             </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            <div style={paragraphStyle}>
               <Heading>1. Bảo mật thông tin cá nhân:</Heading>
               <br />
               <List>
@@ -71,8 +74,8 @@ const PrivacyPolicyPage = () => {
                 bất kỳ bên thứ ba nào mà không có sự đồng ý rõ ràng từ người
                 dùng.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
               <Heading>2. Quyền riêng tư của người dùng:</Heading>
               <br />
               <List>
@@ -86,8 +89,9 @@ const PrivacyPolicyPage = () => {
                 thông tin cá nhân của người dùng khỏi việc truy cập trái phép,
                 mất mát hoặc sử dụng sai mục đích.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>3. Sử dụng cookie:</Heading>
               <br />
               <List>
@@ -105,12 +109,13 @@ const PrivacyPolicyPage = () => {
                 - Người dùng có quyền tắt chức năng cookie trên trình duyệt nếu
                 muốn.
               </List>
-            </Typography>
+            </div>
 
             <Typography variant="h5" style={sectionTitleStyle}>
               II. Điều khoản sử dụng
             </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>1. Tạo tài khoản:</Heading>
               <br />
               <List>
@@ -124,8 +129,9 @@ const PrivacyPolicyPage = () => {
               </List>
               <br />
               <List>- Mỗi người dùng chỉ được phép tạo một tài khoản.</List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>2. Chia sẻ CV và thông tin tuyển dụng:</Heading>
               <br />
               <List>
@@ -140,8 +146,9 @@ const PrivacyPolicyPage = () => {
                 không bao gồm thông tin cá nhân nhạy cảm, chẳng hạn như số CMND
                 hoặc thông tin liên hệ.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>3. Quyền và trách nhiệm của người dùng:</Heading>
               <br />
               <List>
@@ -155,8 +162,9 @@ const PrivacyPolicyPage = () => {
                 các quy định bản quyền và không vi phạm quyền sở hữu trí tuệ của
                 người khác.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>4. Phản ánh và xử lý vi phạm:</Heading>
               <br />
               <List>
@@ -175,12 +183,13 @@ const PrivacyPolicyPage = () => {
                 - Trong trường hợp vi phạm luật pháp, trang web có thể báo cáo
                 hoạt động của người dùng cho cơ quan có thẩm quyền.
               </List>
-            </Typography>
+            </div>
 
             <Typography variant="h5" style={sectionTitleStyle}>
               III. Quyền sở hữu trí tuệ
             </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>1. Bản quyền:</Heading>
               <br />
               <List>
@@ -195,8 +204,9 @@ const PrivacyPolicyPage = () => {
                 phối nội dung trang web mà không có sự cho phép rõ ràng từ chúng
                 tôi hoặc chủ sở hữu tương ứng.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>2. Quyền sở hữu nội dung:</Heading>
               <br />
               <List>
@@ -211,12 +221,13 @@ const PrivacyPolicyPage = () => {
                 công bố và phân phối nội dung đó cho mục đích vận hành và quảng
                 cáo trang web Resumiro.
               </List>
-            </Typography>
+            </div>
 
             <Typography variant="h5" style={sectionTitleStyle}>
               IV. Miễn trừ trách nhiệm
             </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>1. Tính chính xác của thông tin:</Heading>
               <br />
               <List>
@@ -229,8 +240,9 @@ const PrivacyPolicyPage = () => {
                 thiếu chính xác, lỗi sót hoặc mất mát nào liên quan đến thông
                 tin được cung cấp bởi người dùng hoặc bên thứ ba.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>2. Truy cập và sử dụng trang web:</Heading>
               <br />
               <List>
@@ -239,8 +251,9 @@ const PrivacyPolicyPage = () => {
                 gồm nhưng không giới hạn, thiệt hại trực tiếp, gián tiếp, ngẫu
                 nhiên hoặc hậu quả.
               </List>
-            </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            </div>
+            <div style={paragraphStyle}>
+              {' '}
               <Heading>3. Liên kết đến bên thứ ba:</Heading>
               <br />
               <List>
@@ -253,12 +266,13 @@ const PrivacyPolicyPage = () => {
                 dung, chính sách bảo mật hoặc hoạt động của bất kỳ trang web bên
                 thứ ba nào.
               </List>
-            </Typography>
+            </div>
 
             <Typography variant="h5" style={sectionTitleStyle}>
               V. Liên hệ
             </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            <div style={paragraphStyle}>
+              {' '}
               <div style={{ marginLeft: '20px' }}>
                 Nếu bạn có bất kỳ câu hỏi, ý kiến hoặc yêu cầu liên quan đến
                 chính sách bảo mật và điều khoản sử dụng trang web Resumiro, vui
@@ -276,12 +290,13 @@ const PrivacyPolicyPage = () => {
                 Chúng tôi sẽ cố gắng phản hồi cho bạn trong thời gian ngắn và
                 giải đáp mọi thắc mắc của bạn.
               </div>
-            </Typography>
+            </div>
 
             <Typography variant="h5" style={sectionTitleStyle}>
               VI. Thay đổi chính sách và quy định
             </Typography>
-            <Typography variant="body1" style={paragraphStyle}>
+            <div style={paragraphStyle}>
+              {' '}
               <List>
                 - Chúng tôi có quyền điều chỉnh và cập nhật chính sách bảo mật
                 và quy định sử dụng theo quyết định của chúng tôi.
@@ -292,7 +307,7 @@ const PrivacyPolicyPage = () => {
                 email để người dùng có thể nắm bắt và đồng ý với các điều khoản
                 mới.
               </List>
-            </Typography>
+            </div>
             <Typography variant="body1" style={paragraphStyle}>
               Chúng tôi mong rằng các chính sách bảo mật và điều khoản sử dụng
               trên trang web Resumiro sẽ giúp đảm bảo sự an toàn và bảo vệ thông
