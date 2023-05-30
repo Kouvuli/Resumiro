@@ -160,7 +160,7 @@ const companySlice = createSlice({
       })
       .addCase(fetchUserById.fulfilled, (state, action) => {
         state.user = action.payload
-        if (action.payload?.company && action.payload.role === 'admin') {
+        if (!action.payload?.company_id && action.payload.role === 'admin') {
           state.hasAddCompany = true
         }
         state.loading = false

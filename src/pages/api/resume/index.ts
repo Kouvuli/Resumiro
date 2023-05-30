@@ -15,13 +15,6 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions)
 
-  if (!session) {
-    res.status(401).json({
-      message: 'Unauthorized',
-      status: 'error'
-    })
-    return
-  }
   const prisma = new PrismaClient()
   prisma.$connect()
 
@@ -153,7 +146,7 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'POST') {
-    if (session.user?.role !== 'candiate') {
+    if (!session || session.user?.role !== 'candiate') {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'
