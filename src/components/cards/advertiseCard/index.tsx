@@ -42,7 +42,7 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
       alignItems="center"
       columnSpacing={2}
     >
-      <GridItem item xs={12} md={5} >
+      <GridItem item xs={12} md={5}>
         <motion.div
           style={{ flexDirection: 'column', alignItems: 'start' }}
           // variants={advertiseCardVariants}
@@ -72,7 +72,11 @@ const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
           </Link>
         </motion.div>
       </GridItem>
-      <GridItem item  md={7} sx={{ height: '500px',display:{"xs":"none","md":"block" }}}></GridItem>
+      <GridItem
+        item
+        md={7}
+        sx={{ height: '500px', display: { xs: 'none', md: 'block' } }}
+      ></GridItem>
     </Grid>
   )
 }

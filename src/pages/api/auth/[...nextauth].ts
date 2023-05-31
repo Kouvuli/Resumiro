@@ -34,12 +34,17 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      async authorize(credentials: {
-        username: string
-        password: string
-        signedNonce?: string
-        address_wallet?: string
-      }) {
+      credentials: {
+        username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
+        password: { label: 'Password', type: 'password' },
+        signedNonce: { label: 'Signed Nonce', type: 'text' },
+        address_wallet: {
+          label: 'Address Wallet',
+          type: 'text',
+          placeholder: '0x...'
+        }
+      },
+      async authorize(credentials) {
         const prisma = new PrismaClient()
         prisma.$connect()
         if (!credentials) return null
@@ -81,14 +86,14 @@ export const authOptions: NextAuthOptions = {
 
           if (!user) {
             prisma.$disconnect()
-            return
+            return null
             // throw new Error('No user found')
           }
 
           const isValid = await verifyPassword(password, user.password)
           if (!isValid) {
             prisma.$disconnect()
-            return
+            return null
             // throw new Error('Could not log you in')
           }
         }
@@ -104,10 +109,10 @@ export const authOptions: NextAuthOptions = {
 
         prisma.$disconnect()
         return {
-          id: user.id,
-          name: user.id,
+          id: user.id.toString(),
+          name: user.username,
           image: user.avatar,
-          email: user.role,
+          email: user.email,
           walletAddress: user.address_wallet,
           role: user.role
         }

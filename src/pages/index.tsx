@@ -125,7 +125,7 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
   return (
     <>
       <section>
-        <ArticleLayout>
+        <ArticleLayout title="Trang chủ">
           <SectionBackgroundDark>
             <div
               style={{

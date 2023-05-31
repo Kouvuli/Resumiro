@@ -25,7 +25,9 @@ const NotFoundPage = () => {
         <Button
           color="primary"
           href="/"
-          variant="text"
+          variant="contained"
+          disableElevation
+          disableRipple
           sx={{ p: '8px 16px', width: 200 }}
         >
           Trở về trang chủ
