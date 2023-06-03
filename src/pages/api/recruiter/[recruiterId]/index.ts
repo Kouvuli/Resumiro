@@ -77,6 +77,14 @@ export default async function handler(
       })
       return
     }
+
+    if (recruiterId !== session.user?.id) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const { avatar, background, full_name, email, phone } = req.body
     const data = await prisma.users
       .update({
@@ -115,6 +123,13 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
+    if (recruiterId !== session.user?.id) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const data = await prisma.users
       .delete({
         where: {

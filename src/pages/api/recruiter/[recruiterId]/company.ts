@@ -26,7 +26,20 @@ export default async function handler(
   prisma.$connect()
   if (req.method === 'PATCH') {
     const { company_id } = req.body
-
+    const user = await prisma.users.findFirst({
+      where: {
+        company_id: Number(company_id),
+        role: 'admin'
+      }
+    })
+    if (user?.id !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     const data = await prisma.users.update({
       where: {
         id: Number(recruiterId)
