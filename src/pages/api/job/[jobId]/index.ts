@@ -196,7 +196,7 @@ export default async function handler(
       return
     }
 
-    const userCompany = await prisma.users.findFirst({
+    const user = await prisma.users.findFirst({
       where: {
         id: Number(session.user?.id)
       },
@@ -206,13 +206,13 @@ export default async function handler(
     })
     let isOwned = false
 
-    userCompany?.jobs.forEach((item: any) => {
+    user?.jobs.forEach((item: any) => {
       if (item.id === id) {
         isOwned = true
       }
     })
 
-    if (!isOwned) {
+    if (!isOwned || user?.company_id === null) {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'
