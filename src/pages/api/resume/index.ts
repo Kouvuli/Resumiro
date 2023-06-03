@@ -156,6 +156,14 @@ export default async function handler(
     }
     const { title, resume, resume_key, owner_id } = req.body
 
+    if (Number(owner_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     const existingOwner = await prisma.users.findFirst({
       where: {
         id: owner_id
