@@ -42,6 +42,29 @@ export default async function handler(
 
   if (req.method === 'PATCH') {
     const { is_public } = req.body
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      },
+      include: {
+        resumes: true
+      }
+    })
+    let isOwned = false
+
+    user?.resumes.forEach((item: any) => {
+      if (item.id === id) {
+        isOwned = true
+      }
+    })
+
+    if (!isOwned) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const data = await prisma.resumes
       .update({
         where: { id: id },

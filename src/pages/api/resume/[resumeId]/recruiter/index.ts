@@ -47,6 +47,15 @@ export default async function handler(
       }
     })
 
+    if (Number(recruiter_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
     if (!existingRecruiter) {
       res.status(404).json({
         message: 'Recruiter not found',
