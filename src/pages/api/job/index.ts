@@ -293,6 +293,20 @@ export default async function handler(
       skill
     } = req.body
 
+    const userCompany = await prisma.users.findFirst({
+      where: {
+        id: Number(owner_id)
+      }
+    })
+
+    if (userCompany?.company_id !== Number(company_id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     let data = await prisma.jobs.create({
       data: {
         title: title,

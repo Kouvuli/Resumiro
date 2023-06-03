@@ -111,6 +111,30 @@ export default async function handler(
       skill
     } = req.body
 
+    const userCompany = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      },
+      include: {
+        jobs: true
+      }
+    })
+    let isOwned = false
+
+    userCompany?.jobs.forEach((item: any) => {
+      if (item.id === id) {
+        isOwned = true
+      }
+    })
+
+    if (!isOwned) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     let data = await prisma.jobs.update({
       where: {
         id: id
@@ -171,6 +195,31 @@ export default async function handler(
       })
       return
     }
+
+    const userCompany = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      },
+      include: {
+        jobs: true
+      }
+    })
+    let isOwned = false
+
+    userCompany?.jobs.forEach((item: any) => {
+      if (item.id === id) {
+        isOwned = true
+      }
+    })
+
+    if (!isOwned) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     await prisma.jobs_skills.deleteMany({
       where: {
         job_id: id

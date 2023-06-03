@@ -67,6 +67,16 @@ export default async function handler(
         }
       }
     })
+
+    if (Number(candidateId) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
     if (!data) {
       res.status(200).json({
         message: 'Cannot cancel applied job',
