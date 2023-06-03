@@ -41,7 +41,20 @@ export default async function handler(
 
   if (req.method === 'PATCH') {
     const { status } = req.body
+    let certificate = await prisma.request.findFirst({
+      where: {
+        certificate_id: Number(certificateId)
+      }
+    })
 
+    if (Number(certificate!.receiver_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     if (!status) {
       res.status(400).json({
         message: 'Missing input',

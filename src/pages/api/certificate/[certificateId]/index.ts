@@ -42,7 +42,20 @@ export default async function handler(
   if (req.method === 'PATCH') {
     const { name, verified_at, source } = req.body
 
-    let data
+    let data = await prisma.certificates.findFirst({
+      where: {
+        id: Number(certificateId)
+      }
+    })
+
+    if (Number(data?.user_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     if (!name || !verified_at) {
       res.status(400).json({
         message: 'Missing input',
@@ -79,25 +92,31 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
+    let data = await prisma.certificates.findFirst({
+      where: {
+        id: Number(certificateId)
+      }
+    })
+
+    if (Number(data?.user_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     await prisma.request.deleteMany({
       where: {
         certificate_id: Number(certificateId!)
       }
     })
-    const data = await prisma.certificates
-      .delete({
-        where: {
-          id: Number(certificateId!)
-        }
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: 'Something went wrong',
-          status: 'error'
-        })
-        prisma.$disconnect()
-        return
-      })
+    data = await prisma.certificates.delete({
+      where: {
+        id: Number(certificateId!)
+      }
+    })
+
     if (!data) {
       res.status(404).json({
         message: 'Cannot delete certificate',
