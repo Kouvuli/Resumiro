@@ -150,7 +150,7 @@ export async function getServerSideProps(context: {
   }
 
   const requests = await resumiroApi
-    .getRequestsByReceiverId(Number(session?.user?.name), context.query)
+    .getRequestsByReceiverId(Number(session?.user?.id), context.query)
     .then(res => res.data)
 
   return {
