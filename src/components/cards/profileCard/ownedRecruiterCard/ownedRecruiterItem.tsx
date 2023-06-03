@@ -43,7 +43,7 @@ const OwnedRecruiterItem: React.FC<OwnedRecruiterItemProps> = ({
     <CustomOwnedRecruiterItem>
       <CardHeader
         avatar={
-          <Image
+          <img
             style={{ borderRadius: '5px' }}
             src={data.avatar || '/images/default-user.jpg'}
             width={80}

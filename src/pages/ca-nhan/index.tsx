@@ -15,7 +15,6 @@ import profileSlice, {
   fetchAllCompanies,
   fetchAllFields,
   fetchAllLocations,
-  fetchAllRecruiterSameCompany,
   fetchAllSkills,
   fetchCandidateById,
   fetchRecruiterById
@@ -52,9 +51,6 @@ const ProfilePage = () => {
       dispatch(fetchCandidateById(session!.user!.id))
     } else {
       dispatch(fetchRecruiterById(session!.user!.id))
-      if (user.company_id) {
-        dispatch(fetchAllRecruiterSameCompany(user.company_id))
-      }
     }
   }, [showMessage])
 

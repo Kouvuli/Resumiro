@@ -63,10 +63,14 @@ export const fetchRecruiterById = createAsyncThunk(
 )
 export const fetchAllRecruiterSameCompany = createAsyncThunk(
   'get-all-recruiter-same-company',
-  async (id: any) => {
+  async (id: any, { dispatch }) => {
     const { data } = await resumiroApi
       .getRecruitersByCompanyId(id)
       .then(res => res.data)
+
+    if (data.company_id) {
+      dispatch(fetchAllRecruiterSameCompany(data.company_id))
+    }
     return data
   }
 )
