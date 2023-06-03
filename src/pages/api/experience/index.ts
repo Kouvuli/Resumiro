@@ -25,6 +25,14 @@ export default async function handler(
   prisma.$connect()
   if (req.method === 'POST') {
     const { position, start, finish, company_id, user_id, source } = req.body
+    if (Number(user_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     const existingCandidate = await prisma.users.findFirst({
       where: {
         id: Number(user_id)

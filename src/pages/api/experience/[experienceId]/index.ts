@@ -42,7 +42,19 @@ export default async function handler(
 
   if (req.method === 'PATCH') {
     const { position, start, finish, company_id, source } = req.body
-
+    let experience = await prisma.experiences.findFirst({
+      where: {
+        id: Number(experienceId)
+      }
+    })
+    if (Number(experience?.user_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     if (!position || !start || !finish || !company_id || !source) {
       res.status(400).json({
         message: 'Missing input',
@@ -96,6 +108,19 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
+    let experience = await prisma.experiences.findFirst({
+      where: {
+        id: Number(experienceId)
+      }
+    })
+    if (Number(experience?.user_id) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
     await prisma.request.deleteMany({
       where: {
         experience_id: Number(experienceId!)
