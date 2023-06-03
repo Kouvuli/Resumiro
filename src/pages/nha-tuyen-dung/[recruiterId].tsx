@@ -19,9 +19,7 @@ const RecruiterProfilePage: React.FC<RecruiterProfilePageProps> = ({}) => {
   const { data: session } = useSession()
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const { user, message, messageType, showMessage } = useAppSelector(
-    recruiterProfileSelector
-  )
+  const { user } = useAppSelector(recruiterProfileSelector)
   useEffect(() => {
     if (session) {
       const recruiterId = Array.isArray(router.query!.recruiterId!)
@@ -95,14 +93,10 @@ export async function getServerSideProps(context: {
       notFound: true
     }
   }
-  const recruiterDetail = await resumiroApi
-    .getRecruiterById(recruiterId)
-    .then(res => res.data)
 
   return {
     props: {
-      session: session,
-      user: recruiterDetail.data
+      session: session
     }
   }
 }
