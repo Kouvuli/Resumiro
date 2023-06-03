@@ -68,6 +68,21 @@ export default async function handler(
       address,
       introduction
     } = req.body
+
+    const user = await prisma.users.findFirst({
+      where: {
+        company_id: Number(companyId),
+        role: 'admin'
+      }
+    })
+    if (Number(user!.id) !== Number(session.user?.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     let data = await prisma.companies.update({
       where: {
         id: id

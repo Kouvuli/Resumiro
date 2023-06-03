@@ -108,6 +108,19 @@ export default async function handler(
     }
     const { name, logo, background, about, location_id, scale } = req.body
 
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      }
+    })
+    if (user?.company_id !== null) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     let data = await prisma.companies.create({
       data: {
         name: name,
