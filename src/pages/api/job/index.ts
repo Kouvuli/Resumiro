@@ -292,8 +292,15 @@ export default async function handler(
       owner_id,
       skill
     } = req.body
-
-    if (Number(session.user.id) !== Number(owner_id)) {
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      }
+    })
+    if (
+      Number(session.user.id) !== Number(owner_id) ||
+      user?.company_id === null
+    ) {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'

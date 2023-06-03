@@ -212,7 +212,7 @@ export default async function handler(
       }
     })
 
-    if (!isOwned || user?.company_id === null) {
+    if (!isOwned) {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'
