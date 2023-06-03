@@ -77,6 +77,13 @@ export default async function handler(
     return
   } else if (req.method === 'PATCH') {
     const { avatar, background, full_name, email, phone } = req.body
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const data = await prisma.users
       .update({
         where: {

@@ -27,7 +27,13 @@ export default async function handler(
   prisma.$connect()
   if (req.method === 'PATCH') {
     const { about } = req.body
-
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const data = await prisma.users.update({
       where: {
         id: Number(candidateId)

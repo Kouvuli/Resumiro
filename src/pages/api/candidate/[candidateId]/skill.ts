@@ -26,6 +26,13 @@ export default async function handler(
   prisma.$connect()
   if (req.method === 'POST') {
     const { skill_id } = req.body
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const existingSkill = await prisma.skills.findFirst({
       where: {
         id: Number(skill_id)
@@ -82,6 +89,13 @@ export default async function handler(
     return
   } else if (req.method === 'DELETE') {
     const { skill_id } = req.body
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const existingSkill = await prisma.skills.findFirst({
       where: {
         id: Number(skill_id)
