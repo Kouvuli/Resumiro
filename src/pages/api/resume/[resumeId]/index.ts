@@ -26,6 +26,29 @@ export default async function handler(
   prisma.$connect()
   let id = Number(resumeId)
   if (req.method === 'DELETE') {
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      },
+      include: {
+        resumes: true
+      }
+    })
+    let isOwned = false
+
+    user?.resumes.forEach((item: any) => {
+      if (item.id === id) {
+        isOwned = true
+      }
+    })
+
+    if (!isOwned) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     await prisma.resume_allowed_user.deleteMany({
       where: {
         resume_id: id
