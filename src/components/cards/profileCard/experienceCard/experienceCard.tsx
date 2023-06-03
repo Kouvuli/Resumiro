@@ -104,7 +104,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           source: uploadedExperience
         },
         company_id: Number(company),
-        content: 'Xác thực công ty',
+        content: 'Xác thực kinh nghiệm',
         owner_id: Number(session!.user!.id)
       })
     )
