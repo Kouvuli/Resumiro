@@ -22,20 +22,34 @@ export const deleteRequestById = createAsyncThunk(
 
 export const updateCertifcateStatus = createAsyncThunk(
   'update-certifcate-status',
-  async (input: { id: number; data: { status: string } }) => {
+  async (
+    input: {
+      id: number
+      data: { status: string }
+      requestId: number
+    },
+    { dispatch }
+  ) => {
     const data = await resumiroApi
       .updateCertifcateStatus(input.id, input.data)
       .then(res => res.data)
+    dispatch(deleteRequestById(input.requestId))
+
     return data
   }
 )
 
 export const updateExperienceStatus = createAsyncThunk(
   'update-experience-status',
-  async (input: { id: number; data: { status: string } }) => {
+  async (
+    input: { id: number; data: { status: string }; requestId: number },
+    { dispatch }
+  ) => {
     const data = await resumiroApi
       .updateExperienceStatus(input.id, input.data)
       .then(res => res.data)
+
+    dispatch(deleteRequestById(input.requestId))
     return data
   }
 )

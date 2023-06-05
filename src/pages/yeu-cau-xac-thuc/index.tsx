@@ -28,7 +28,6 @@ interface AuthenRequestPageProps {
 }
 const AuthenRequestPage: React.FC<AuthenRequestPageProps> = ({ data }) => {
   const dispatch = useAppDispatch()
-  const { data: session, status } = useSession()
   const router = useRouter()
 
   const {

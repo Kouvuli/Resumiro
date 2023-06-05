@@ -49,10 +49,12 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     data: certificates | null
   ) => {
     dispatch(
-      updateCertifcateStatus({ id: data!.id, data: { status: 'verified' } })
+      updateCertifcateStatus({
+        id: data!.id,
+        data: { status: 'verified' },
+        requestId: request.id
+      })
     )
-
-    dispatch(deleteRequestById(request.id))
 
     router.push({
       pathname: router.pathname
@@ -64,10 +66,12 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     data: experiences | null
   ) => {
     dispatch(
-      updateExperienceStatus({ id: data!.id, data: { status: 'verified' } })
+      updateExperienceStatus({
+        id: data!.id,
+        data: { status: 'verified' },
+        requestId: request.id
+      })
     )
-
-    dispatch(deleteRequestById(request.id))
 
     router.push({
       pathname: router.pathname
@@ -79,10 +83,12 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     data: experiences | null
   ) => {
     dispatch(
-      updateExperienceStatus({ id: data!.id, data: { status: 'rejected' } })
+      updateExperienceStatus({
+        id: data!.id,
+        data: { status: 'rejected' },
+        requestId: request.id
+      })
     )
-
-    dispatch(deleteRequestById(request.id))
 
     router.push({
       pathname: router.pathname
@@ -94,10 +100,12 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     data: null | certificates
   ) => {
     dispatch(
-      updateCertifcateStatus({ id: data!.id, data: { status: 'rejected' } })
+      updateCertifcateStatus({
+        id: data!.id,
+        data: { status: 'rejected' },
+        requestId: request.id
+      })
     )
-
-    dispatch(deleteRequestById(request.id))
 
     router.push({
       pathname: router.pathname
