@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
+import { NextRouter } from 'next/router'
 
 const initialState = {
   showMessage: false,
@@ -14,8 +15,13 @@ const initialState = {
 
 export const deleteRequestById = createAsyncThunk(
   'delete-request-by-id',
-  async (id: number) => {
-    const data = await resumiroApi.deleteRequestById(id).then(res => res.data)
+  async (input: { id: number; router: NextRouter }) => {
+    const data = await resumiroApi
+      .deleteRequestById(input.id)
+      .then(res => res.data)
+    input.router.push({
+      pathname: input.router.pathname
+    })
     return data
   }
 )
@@ -27,13 +33,14 @@ export const updateCertifcateStatus = createAsyncThunk(
       id: number
       data: { status: string }
       requestId: number
+      router: NextRouter
     },
     { dispatch }
   ) => {
     const data = await resumiroApi
       .updateCertifcateStatus(input.id, input.data)
       .then(res => res.data)
-    dispatch(deleteRequestById(input.requestId))
+    dispatch(deleteRequestById({ id: input.requestId, router: input.router }))
 
     return data
   }
@@ -42,14 +49,19 @@ export const updateCertifcateStatus = createAsyncThunk(
 export const updateExperienceStatus = createAsyncThunk(
   'update-experience-status',
   async (
-    input: { id: number; data: { status: string }; requestId: number },
+    input: {
+      id: number
+      data: { status: string }
+      requestId: number
+      router: NextRouter
+    },
     { dispatch }
   ) => {
     const data = await resumiroApi
       .updateExperienceStatus(input.id, input.data)
       .then(res => res.data)
 
-    dispatch(deleteRequestById(input.requestId))
+    dispatch(deleteRequestById({ id: input.requestId, router: input.router }))
     return data
   }
 )

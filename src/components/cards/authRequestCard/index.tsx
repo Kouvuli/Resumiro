@@ -52,7 +52,8 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
       updateCertifcateStatus({
         id: data!.id,
         data: { status: 'verified' },
-        requestId: request.id
+        requestId: request.id,
+        router: router
       })
     )
 
@@ -69,7 +70,8 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
       updateExperienceStatus({
         id: data!.id,
         data: { status: 'verified' },
-        requestId: request.id
+        requestId: request.id,
+        router: router
       })
     )
 
@@ -86,7 +88,8 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
       updateExperienceStatus({
         id: data!.id,
         data: { status: 'rejected' },
-        requestId: request.id
+        requestId: request.id,
+        router: router
       })
     )
 
@@ -103,7 +106,8 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
       updateCertifcateStatus({
         id: data!.id,
         data: { status: 'rejected' },
-        requestId: request.id
+        requestId: request.id,
+        router: router
       })
     )
 
