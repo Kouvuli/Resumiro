@@ -34,7 +34,7 @@ export default async function handler(
     })
     if (
       user?.id !== Number(session.user.id) &&
-      session.user?.role !== 'recruiter'
+      session.user?.role === 'recruiter'
     ) {
       res.status(401).json({
         message: 'Unauthorized',
