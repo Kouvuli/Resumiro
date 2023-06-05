@@ -55,7 +55,7 @@ export default async function handler(
       prisma.$disconnect()
       return
     }
-    if (!position || !start || !finish || !company_id || !source) {
+    if (!position || !start || !finish || !company_id) {
       res.status(400).json({
         message: 'Missing input',
         status: 'error'

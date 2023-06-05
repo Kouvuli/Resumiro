@@ -41,13 +41,13 @@ export default async function handler(
 
   if (req.method === 'PATCH') {
     const { status } = req.body
-    let experience = await prisma.request.findFirst({
+    let request = await prisma.request.findFirst({
       where: {
-        certificate_id: Number(experienceId)
+        experience_id: Number(experienceId)
       }
     })
 
-    if (Number(experience!.receiver_id) !== Number(session.user.id)) {
+    if (Number(request!.receiver_id) !== Number(session.user.id)) {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'
