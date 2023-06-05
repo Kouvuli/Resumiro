@@ -32,7 +32,10 @@ export default async function handler(
         role: 'admin'
       }
     })
-    if (user?.id !== Number(session.user.id)) {
+    if (
+      user?.id !== Number(session.user.id) &&
+      session.user?.role !== 'recruiter'
+    ) {
       res.status(401).json({
         message: 'Unauthorized',
         status: 'error'

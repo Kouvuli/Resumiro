@@ -41,24 +41,32 @@ export default async function handler(
 
   if (req.method === 'POST') {
     const { recruiter_id } = req.body
+
     const existingRecruiter = await prisma.users.findFirst({
       where: {
         id: Number(recruiter_id)
       }
     })
 
-    if (Number(recruiter_id) !== Number(session.user.id)) {
-      res.status(401).json({
-        message: 'Unauthorized',
+    if (!existingRecruiter) {
+      res.status(404).json({
+        message: 'Recruiter not found',
         status: 'error'
       })
       prisma.$disconnect()
       return
     }
 
-    if (!existingRecruiter) {
-      res.status(404).json({
-        message: 'Recruiter not found',
+    const owner = await prisma.resumes.findFirst({
+      where: {
+        id: Number(resumeId),
+        owner_id: Number(session.user.id)
+      }
+    })
+
+    if (!owner) {
+      res.status(401).json({
+        message: 'Unauthorized',
         status: 'error'
       })
       prisma.$disconnect()
