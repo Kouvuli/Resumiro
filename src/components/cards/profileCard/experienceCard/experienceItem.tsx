@@ -26,6 +26,7 @@ import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
 import { compareDates } from '@utils/timeUtil'
+import Link from 'next/link'
 const CustomExperienceItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -118,6 +119,11 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
                 {data.start} - {data.finish}
               </Typography>
             </div>
+            {data.source && (
+              <Link href={data.source} target="_blank">
+                Xem file
+              </Link>
+            )}
             <div style={{ flexGrow: 1 }}></div>
             {isModify && (
               <div>

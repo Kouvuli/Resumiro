@@ -24,6 +24,7 @@ import {
   deleteCertificate,
   updateCertificate
 } from '@redux/reducers/profileSlice'
+import Link from 'next/link'
 import { compareDates } from '@utils/timeUtil'
 const CustomEducationItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
@@ -124,6 +125,11 @@ const EducationItem: React.FC<EducationItemProps> = ({
                   )}
               </Typography>
             </div>
+            {data.source && (
+              <Link href={data.source} target="_blank">
+                Xem file
+              </Link>
+            )}
             <div style={{ flexGrow: 1 }} />
             {isModify && (
               <div>
