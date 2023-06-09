@@ -2,6 +2,11 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
+
+export const config = {
+  runtime: 'edge'
+}
+
 export type Data = {
   message: string
   status: string
