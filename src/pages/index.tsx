@@ -349,7 +349,7 @@ export async function getServerSideProps() {
 }
 
 export const config = {
-  runtime: 'edge'
+  runtime: 'experimental-edge'
 }
 
 export default Home
