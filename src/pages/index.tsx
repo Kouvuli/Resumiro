@@ -39,14 +39,11 @@ const titleVariants: Variants = {
 }
 const SectionBackgroundLight = styled(MuiBox)(({ theme }) => ({
   background: theme.palette.primary.light
-  // height: '90vh',
 }))
 
-const SectionBackgroundDark = styled(MuiBox)(({}) => ({
-  // background: theme.palette.primary.main,
+const SectionBackgroundDark = styled(MuiBox)(() => ({
   background: "url('/images/banner.jpg') no-repeat ",
   backgroundSize: 'cover'
-  // height: '90vh',
 }))
 
 const featureLists: FeatureType[] = [
