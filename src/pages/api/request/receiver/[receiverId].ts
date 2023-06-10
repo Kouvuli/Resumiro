@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 type Data = {
   message: string
   status: string
@@ -10,7 +10,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
   const { receiverId } = req.query
   prisma.$connect()
   if (req.method === 'GET') {

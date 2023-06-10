@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 import { hashPassword } from '@utils/authUtils'
 import { randomToken } from '@utils/cryptoUtil'
 type Data = {
@@ -16,7 +16,6 @@ export default async function handler(
     return
   }
   const { username, password, address_wallet, role } = req.body
-  const prisma = new PrismaClient()
   prisma.$connect()
 
   if (!username || !password || !address_wallet) {

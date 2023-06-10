@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
@@ -15,7 +15,6 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions)
 
-  const prisma = new PrismaClient()
   prisma.$connect()
   if (req.method === 'GET') {
     const {

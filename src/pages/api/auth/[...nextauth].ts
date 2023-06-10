@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 import { verifyPassword } from '@utils/authUtils'
 import { NextAuthOptions } from 'next-auth'
 import { ethers } from 'ethers'
@@ -45,7 +45,6 @@ export const authOptions: NextAuthOptions = {
         }
       },
       async authorize(credentials) {
-        const prisma = new PrismaClient()
         prisma.$connect()
         if (!credentials) return null
 

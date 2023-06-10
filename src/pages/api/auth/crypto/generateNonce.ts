@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 import crypto from 'crypto'
 
 interface Data {
@@ -19,7 +19,6 @@ export default async function generateNonce(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
   const { address_wallet } = req.body
   prisma.$connect()
   if (req.method !== 'POST') return
