@@ -34,14 +34,14 @@ const recruiterProfileSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchRecruiterById.pending, (state, action) => {
+      .addCase(fetchRecruiterById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchRecruiterById.fulfilled, (state, action) => {
         state.loading = false
         state.user = action.payload
       })
-      .addCase(fetchRecruiterById.rejected, (state, action) => {
+      .addCase(fetchRecruiterById.rejected, (state, _action) => {
         state.loading = false
       })
   }

@@ -15,23 +15,23 @@ const paragraphStyle = {
   marginBottom: '16px'
 }
 
-const Hr = styled('hr')(({ theme }) => ({
+const Hr = styled('hr')(({}) => ({
   marginTop: '20px',
   marginBottom: '20px',
   border: 0,
   borderTop: '1px solid #eee'
 }))
 
-const Heading = styled('div')(({ theme }) => ({
+const Heading = styled('div')(({}) => ({
   marginLeft: '20px'
 }))
 
-const List = styled('li')(({ theme }) => ({
+const List = styled('li')(({}) => ({
   marginLeft: '40px',
   lineHeight: '1.5'
 }))
 
-const Main = styled('main')(({ theme }) => ({
+const Main = styled('main')(({}) => ({
   margin: 'auto',
   paddingBottom: '20px'
 }))

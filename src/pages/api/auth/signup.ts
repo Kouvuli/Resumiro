@@ -1,8 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient, roles } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { hashPassword } from '@utils/authUtils'
-import { getToken } from 'next-auth/jwt'
 import { randomToken } from '@utils/cryptoUtil'
 type Data = {
   message: string

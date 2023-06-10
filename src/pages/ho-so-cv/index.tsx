@@ -2,12 +2,10 @@ import Container from '@mui/material/Container'
 import React from 'react'
 import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
-import SuitableJob from '@components/lists/suitableJob'
 import ArticleLayout from '@components/layouts/article'
 import { ResumeCardProps } from '@components/cards/resumeCard'
-import { JobCardProps } from '@components/cards/jobCard'
 import resumiroApi from '@apis/resumiroApi'
-import { Job, Resume } from '@shared/interfaces'
+import { Resume } from '@shared/interfaces'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import SearchBar from '@components/ui/bar/searchBar'
@@ -16,7 +14,7 @@ import Image from 'next/image'
 import Filter from '@components/lists/filter'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import resumeSlice from '@redux/reducers/resumeSlice'
-import { jobSelector, resumeSelector } from '@redux/selectors'
+import { resumeSelector } from '@redux/selectors'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
 import MySnackBar from '@components/ui/bar/snackbar'
@@ -85,8 +83,8 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
   }
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: false }))
   }

@@ -1,16 +1,11 @@
 import React from 'react'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import { ToggleButtonGroup } from '@mui/material'
-import Toggle from '@components/ui/button/toggleButton'
-
-import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
-import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
 import RoundSelect from '@components/ui/select'
 
 interface SearchResultBarProps {
   numberSearch: number
-  handleChange?: (value: string) => void
+  handleChange?: (_value: string) => void
   options?: { value: string; label: string }[]
 }
 

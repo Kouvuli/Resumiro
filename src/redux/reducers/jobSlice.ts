@@ -73,7 +73,7 @@ const jobSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(createJob.pending, (state, action) => {
+      .addCase(createJob.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createJob.fulfilled, (state, action) => {
@@ -89,7 +89,7 @@ const jobSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(fetchRecruiterById.pending, (state, action) => {
+      .addCase(fetchRecruiterById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchRecruiterById.fulfilled, (state, action) => {
@@ -97,7 +97,7 @@ const jobSlice = createSlice({
         state.hasAddJob = true
         state.loading = false
       })
-      .addCase(fetchRecruiterById.rejected, (state, action) => {
+      .addCase(fetchRecruiterById.rejected, (state, _action) => {
         state.loading = false
       })
   }

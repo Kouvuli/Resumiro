@@ -34,7 +34,7 @@ const GridItem = styled(Grid)(({ theme }) => ({
 }))
 
 const AdvertiseCard: React.FC<AdvertiseCardProps> = ({}) => {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   return (
     <Grid
       container

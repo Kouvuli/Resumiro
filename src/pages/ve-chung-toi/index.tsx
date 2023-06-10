@@ -6,51 +6,13 @@ import { styled } from '@mui/material/styles'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArticleLayout from '@components/layouts/article'
 
-const teamMembers = [
-  {
-    name: 'Nguyễn Minh Phụng',
-    role: 'Leader',
-    image: '/images/Blog_1.png',
-    details:
-      'CKO is a skilled developer with expertise in front-end technologies. She enjoys building user-friendly and intuitive interfaces.'
-  },
-  {
-    name: 'Lê Đức Tâm',
-    role: 'Developer',
-    image: '/images/Blog_1.png',
-    details:
-      'CKO is a skilled developer with expertise in front-end technologies. She enjoys building user-friendly and intuitive interfaces.'
-  },
-  {
-    name: 'Mạch Vi Phong',
-    role: 'Developer',
-    image: '/images/Blog_1.png',
-    details:
-      'CKO is a skilled developer with expertise in front-end technologies. She enjoys building user-friendly and intuitive interfaces.'
-  },
-  {
-    name: 'Nguyễn Quang Định',
-    role: 'Developer',
-    image: '/images/Blog_1.png',
-    details:
-      'CKO is a skilled developer with expertise in front-end technologies. She enjoys building user-friendly and intuitive interfaces.'
-  },
-  {
-    name: 'Nguyễn Bá Ngọc',
-    role: 'Developer',
-    image: '/images/Blog_1.png',
-    details:
-      'CKO is a skilled developer with expertise in front-end technologies. She enjoys building user-friendly and intuitive interfaces.'
-  }
-]
-
-const Container = styled('div')(({ theme }) => ({
+const Container = styled('div')(() => ({
   maxWidth: '800px',
   margin: '0 auto',
   padding: '40px'
 }))
 
-const Title = styled('li')(({ theme }) => ({
+const Title = styled('li')(() => ({
   textAlign: 'center',
 
   fontSize: '30px',
@@ -58,23 +20,23 @@ const Title = styled('li')(({ theme }) => ({
   marginBottom: '20px'
 }))
 
-const CarouselContainer = styled('li')(({ theme }) => ({
+const CarouselContainer = styled('li')(() => ({
   marginBottom: '30px'
 }))
 
-const MemberContainer = styled('div')(({ theme }) => ({
+const MemberContainer = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: '20px'
 }))
 
-const MemberImage = styled('img')(({ theme }) => ({
+const MemberImage = styled('img')(() => ({
   borderRadius: '50%',
   marginRottom: '10px'
 }))
 
-const TeamImage = styled('img')(({ theme }) => ({
+const TeamImage = styled('img')(() => ({
   borderRadius: '5%',
   marginBottom: '10px',
   magin: 'auto',
@@ -82,7 +44,7 @@ const TeamImage = styled('img')(({ theme }) => ({
   width: '100%'
 }))
 
-const MemberName = styled('h2')(({ theme }) => ({
+const MemberName = styled('h2')(() => ({
   paddingTop: '10px',
   paddingBottom: '5px',
   fontSize: '25px',
@@ -90,25 +52,25 @@ const MemberName = styled('h2')(({ theme }) => ({
   marginBottom: '5px'
 }))
 
-const MemberRole = styled('p')(({ theme }) => ({
+const MemberRole = styled('p')(() => ({
   fontSize: '20px',
   paddingBottom: '5px',
   color: '#999999',
   marginBottom: '10px'
 }))
 
-const MemberDetails = styled('div')(({ theme }) => ({
+const MemberDetails = styled('div')(() => ({
   marginTop: '20px',
   paddingBottom: '5px'
 }))
 
-const MemberDetailsTitle = styled('h3')(({ theme }) => ({
+const MemberDetailsTitle = styled('h3')(() => ({
   fontSize: '20px',
   fontWeight: 'bold',
   marginBottom: '10px'
 }))
 
-const MemberDetailsText = styled('p')(({ theme }) => ({
+const MemberDetailsText = styled('p')(() => ({
   fontSize: '18px',
   color: '#666666',
   marginBottom: '5px',
@@ -126,7 +88,7 @@ const CustomeIndicatorSelected = styled('li')(({ theme }) => ({
   transition: 'opacity .25s ease-in'
 }))
 
-const CustomeIndicator = styled('li')(({ theme }) => ({
+const CustomeIndicator = styled('li')(() => ({
   background: 'white',
   borderRadius: '50%',
   width: '8px',
@@ -220,7 +182,7 @@ const AboutUs: React.FC = () => {
                   | React.MouseEventHandler<SVGSVGElement>
                   | undefined,
                 hasPrev: any,
-                label: any
+                _label: any
               ) =>
                 hasPrev && (
                   // <PrevButton onClick={onClickHandler} title={label}>
@@ -243,7 +205,7 @@ const AboutUs: React.FC = () => {
                   | React.MouseEventHandler<SVGSVGElement>
                   | undefined,
                 hasNext: any,
-                label: any
+                _label: any
               ) =>
                 hasNext && (
                   // <NextButton onClick={onClickHandler} title={label}>
@@ -266,8 +228,8 @@ const AboutUs: React.FC = () => {
                   | React.MouseEventHandler<HTMLLIElement>
                   | undefined,
                 isSelected: any,
-                index: any,
-                label: any
+                _index: any,
+                _label: any
               ) => {
                 return isSelected ? (
                   <CustomeIndicatorSelected onClick={onClickHandler} />

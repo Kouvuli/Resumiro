@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
-import { Recruiter, Resume } from '@shared/interfaces'
+import { Resume } from '@shared/interfaces'
 import socket from '@libs/socket'
-import headerSlice from './headerSlice'
 
 const initialState = {
   loading: false,
@@ -409,7 +408,7 @@ const profileSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(uploadExperience.pending, (state, action) => {
+      .addCase(uploadExperience.pending, (state, _action) => {
         state.uploadExperienceLoading = true
       })
       .addCase(uploadExperience.fulfilled, (state, action) => {
@@ -426,7 +425,7 @@ const profileSlice = createSlice({
         state.uploadExperienceLoading = false
       })
 
-      .addCase(uploadCertificate.pending, (state, action) => {
+      .addCase(uploadCertificate.pending, (state, _action) => {
         state.uploadCertificateLoading = true
       })
       .addCase(uploadCertificate.fulfilled, (state, action) => {
@@ -443,39 +442,39 @@ const profileSlice = createSlice({
         state.uploadCertificateLoading = false
       })
 
-      .addCase(fetchCandidateById.pending, (state, action) => {
+      .addCase(fetchCandidateById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchCandidateById.fulfilled, (state, action) => {
         state.loading = false
         state.user = action.payload
       })
-      .addCase(fetchCandidateById.rejected, (state, action) => {
+      .addCase(fetchCandidateById.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(fetchRecruiterById.pending, (state, action) => {
+      .addCase(fetchRecruiterById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchRecruiterById.fulfilled, (state, action) => {
         state.loading = false
         state.user = action.payload
       })
-      .addCase(fetchRecruiterById.rejected, (state, action) => {
+      .addCase(fetchRecruiterById.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(fetchAllCompanies.pending, (state, action) => {
+      .addCase(fetchAllCompanies.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllCompanies.fulfilled, (state, action) => {
         state.loading = false
         state.allCompanies = action.payload
       })
-      .addCase(fetchAllCompanies.rejected, (state, action) => {
+      .addCase(fetchAllCompanies.rejected, (state, _action) => {
         state.loading = false
       })
-      .addCase(createExperience.pending, (state, action) => {
+      .addCase(createExperience.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createExperience.fulfilled, (state, action) => {
@@ -495,7 +494,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(createCertificate.pending, (state, action) => {
+      .addCase(createCertificate.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createCertificate.fulfilled, (state, action) => {
@@ -516,40 +515,40 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(fetchAllSkills.pending, (state, action) => {
+      .addCase(fetchAllSkills.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllSkills.fulfilled, (state, action) => {
         state.loading = false
         state.allSkills = action.payload
       })
-      .addCase(fetchAllSkills.rejected, (state, action) => {
+      .addCase(fetchAllSkills.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(fetchAllLocations.pending, (state, action) => {
+      .addCase(fetchAllLocations.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllLocations.fulfilled, (state, action) => {
         state.loading = false
         state.allLocations = action.payload
       })
-      .addCase(fetchAllLocations.rejected, (state, action) => {
+      .addCase(fetchAllLocations.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(fetchAllFields.pending, (state, action) => {
+      .addCase(fetchAllFields.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllFields.fulfilled, (state, action) => {
         state.loading = false
         state.allFields = action.payload
       })
-      .addCase(fetchAllFields.rejected, (state, action) => {
+      .addCase(fetchAllFields.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(createCandidateSkill.pending, (state, action) => {
+      .addCase(createCandidateSkill.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createCandidateSkill.fulfilled, (state, action) => {
@@ -565,7 +564,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateCandidateBasicInfo.pending, (state, action) => {
+      .addCase(updateCandidateBasicInfo.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateCandidateBasicInfo.fulfilled, (state, action) => {
@@ -581,7 +580,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateCandidateAbout.pending, (state, action) => {
+      .addCase(updateCandidateAbout.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateCandidateAbout.fulfilled, (state, action) => {
@@ -597,7 +596,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteExperience.pending, (state, action) => {
+      .addCase(deleteExperience.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteExperience.fulfilled, (state, action) => {
@@ -613,7 +612,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateExperience.pending, (state, action) => {
+      .addCase(updateExperience.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateExperience.fulfilled, (state, action) => {
@@ -629,7 +628,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteCertificate.pending, (state, action) => {
+      .addCase(deleteCertificate.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteCertificate.fulfilled, (state, action) => {
@@ -645,7 +644,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateCertificate.pending, (state, action) => {
+      .addCase(updateCertificate.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateCertificate.fulfilled, (state, action) => {
@@ -661,7 +660,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteCandidateSkill.pending, (state, action) => {
+      .addCase(deleteCandidateSkill.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteCandidateSkill.fulfilled, (state, action) => {
@@ -677,7 +676,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateRecruiterCompany.pending, (state, action) => {
+      .addCase(updateRecruiterCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateRecruiterCompany.fulfilled, (state, action) => {
@@ -693,7 +692,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateRecruiterBasicInfo.pending, (state, action) => {
+      .addCase(updateRecruiterBasicInfo.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateRecruiterBasicInfo.fulfilled, (state, action) => {
@@ -709,7 +708,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteJob.pending, (state, action) => {
+      .addCase(deleteJob.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteJob.fulfilled, (state, action) => {
@@ -725,7 +724,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateJob.pending, (state, action) => {
+      .addCase(updateJob.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateJob.fulfilled, (state, action) => {
@@ -741,29 +740,29 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(fetchNonCompanyRecruiters.pending, (state, action) => {
+      .addCase(fetchNonCompanyRecruiters.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchNonCompanyRecruiters.fulfilled, (state, action) => {
         state.loading = false
         state.recruitersNonCompany = action.payload
       })
-      .addCase(fetchNonCompanyRecruiters.rejected, (state, action) => {
+      .addCase(fetchNonCompanyRecruiters.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(fetchAllRecruiterSameCompany.pending, (state, action) => {
+      .addCase(fetchAllRecruiterSameCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllRecruiterSameCompany.fulfilled, (state, action) => {
         state.loading = false
         state.recruitersSameCompany = action.payload
       })
-      .addCase(fetchAllRecruiterSameCompany.rejected, (state, action) => {
+      .addCase(fetchAllRecruiterSameCompany.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(updateCompany.pending, (state, action) => {
+      .addCase(updateCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateCompany.fulfilled, (state, action) => {
@@ -779,7 +778,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteCompanyFromRecruiter.pending, (state, action) => {
+      .addCase(deleteCompanyFromRecruiter.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteCompanyFromRecruiter.fulfilled, (state, action) => {
@@ -795,7 +794,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(applyCompany.pending, (state, action) => {
+      .addCase(applyCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(applyCompany.fulfilled, (state, action) => {
@@ -816,7 +815,7 @@ const profileSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(fetchAllUserResumes.pending, (state, action) => {
+      .addCase(fetchAllUserResumes.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllUserResumes.fulfilled, (state, action) => {
@@ -824,7 +823,7 @@ const profileSlice = createSlice({
         state.allUserResumes = action.payload
         state.loading = false
       })
-      .addCase(fetchAllUserResumes.rejected, (state, action) => {
+      .addCase(fetchAllUserResumes.rejected, (state, _action) => {
         state.loading = false
       })
   }

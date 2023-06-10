@@ -4,12 +4,10 @@ import React from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
-import { useAppDispatch } from '@hooks/index'
-import jobSlice from '@redux/reducers/jobSlice'
 
 interface SearchTextFieldProps {
   style?: React.CSSProperties
-  handleSearchTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleSearchTextChange: (_e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const CustomOutlinedInput = styled(OutlinedInput)(({}) => ({

@@ -66,7 +66,7 @@ const jobDetailSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(applyJob.pending, (state, action) => {
+      .addCase(applyJob.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(applyJob.fulfilled, (state, action) => {
@@ -82,7 +82,7 @@ const jobDetailSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(cancelJob.pending, (state, action) => {
+      .addCase(cancelJob.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(cancelJob.fulfilled, (state, action) => {
@@ -98,7 +98,7 @@ const jobDetailSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(checkIsApplied.pending, (state, action) => {
+      .addCase(checkIsApplied.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(checkIsApplied.fulfilled, (state, action) => {
@@ -109,11 +109,11 @@ const jobDetailSlice = createSlice({
         }
         state.loading = false
       })
-      .addCase(checkIsApplied.rejected, (state, action) => {
+      .addCase(checkIsApplied.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(createNotification.pending, (state, action) => {
+      .addCase(createNotification.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createNotification.fulfilled, (state, action) => {
@@ -125,7 +125,7 @@ const jobDetailSlice = createSlice({
           message: action.payload.data
         })
       })
-      .addCase(createNotification.rejected, (state, action) => {
+      .addCase(createNotification.rejected, (state, _action) => {
         state.loading = false
       })
   }

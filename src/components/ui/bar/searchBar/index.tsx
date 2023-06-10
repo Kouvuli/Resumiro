@@ -5,9 +5,9 @@ import RoundButton from '@components/ui/button/roundButton'
 import RoundSelect from '@components/ui/select'
 
 interface SearchBarProps {
-  handleChangeLocation?: (value: string) => void
+  handleChangeLocation?: (_value: string) => void
   handleSearch: () => void
-  handleSearchTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleSearchTextChange: (_e: React.ChangeEvent<HTMLInputElement>) => void
   handleAddJob?: () => void
   handleAddCompany?: () => void
   hasAddJob?: boolean

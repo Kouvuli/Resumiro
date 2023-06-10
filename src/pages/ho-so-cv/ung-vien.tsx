@@ -4,10 +4,9 @@ import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
 import SuitableJob from '@components/lists/suitableJob'
 import ArticleLayout from '@components/layouts/article'
-import { ResumeCardProps } from '@components/cards/resumeCard'
 import { JobCardProps } from '@components/cards/jobCard'
 import resumiroApi from '@apis/resumiroApi'
-import { Job, Resume } from '@shared/interfaces'
+import { Job } from '@shared/interfaces'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import { Modal, Box, Button, CircularProgress, TextField } from '@mui/material'
@@ -91,8 +90,8 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
     }
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: false }))
   }

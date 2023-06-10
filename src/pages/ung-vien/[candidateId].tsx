@@ -11,7 +11,7 @@ import ArticleLayout from '@components/layouts/article'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
 import resumiroApi from '@apis/resumiroApi'
-import { Candidate, Company, Skill } from '@shared/interfaces'
+import { Company, Skill } from '@shared/interfaces'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useSession } from 'next-auth/react'
 import candidateProfileSlice, {
@@ -44,8 +44,8 @@ const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
     }
   }, [])
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(
       candidateProfileSlice.actions.toggleSnackBar({ showMessage: false })
@@ -125,7 +125,6 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const { candidateId } = context.query
   const session = await getServerSession(context.req, context.res, authOptions)
 
   if (!session) {

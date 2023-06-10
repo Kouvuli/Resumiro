@@ -129,7 +129,7 @@ const headerSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchUserById.pending, (state, action) => {
+      .addCase(fetchUserById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchUserById.fulfilled, (state, action) => {
@@ -137,11 +137,11 @@ const headerSlice = createSlice({
         state.user = action.payload
         socket.emit('join_room', action.payload.room.token)
       })
-      .addCase(fetchUserById.rejected, (state, action) => {
+      .addCase(fetchUserById.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(fetchUserNotification.pending, (state, action) => {
+      .addCase(fetchUserNotification.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchUserNotification.fulfilled, (state, action) => {
@@ -149,21 +149,21 @@ const headerSlice = createSlice({
         state.notificationList = action.payload.notifications
         state.unreadNotification = action.payload.counts
       })
-      .addCase(fetchUserNotification.rejected, (state, action) => {
+      .addCase(fetchUserNotification.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(deleteNotificationById.pending, (state, action) => {
+      .addCase(deleteNotificationById.pending, (state, _action) => {
         state.loading = true
       })
-      .addCase(deleteNotificationById.fulfilled, (state, action) => {
+      .addCase(deleteNotificationById.fulfilled, (state, _action) => {
         state.loading = false
       })
-      .addCase(deleteNotificationById.rejected, (state, action) => {
+      .addCase(deleteNotificationById.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(allowRecruiterToView.pending, (state, action) => {
+      .addCase(allowRecruiterToView.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(allowRecruiterToView.fulfilled, (state, action) => {
@@ -184,7 +184,7 @@ const headerSlice = createSlice({
         state.messageType = 'error'
       })
 
-      .addCase(updateRecruiterCompany.pending, (state, action) => {
+      .addCase(updateRecruiterCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateRecruiterCompany.fulfilled, (state, action) => {

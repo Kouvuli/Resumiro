@@ -152,6 +152,7 @@ const Filter: React.FC<FilterProps> = ({ type }) => {
           <FormGroup>
             {allSkills.map((skill: { id: number; name: string }) => (
               <FormControlLabel
+                key={skill.id}
                 control={
                   <Checkbox
                     // checked={skill.name}

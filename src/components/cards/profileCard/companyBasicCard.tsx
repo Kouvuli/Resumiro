@@ -1,10 +1,8 @@
 import {
-  Avatar,
   Box,
   Card,
   CardContent,
   CardHeader,
-  CardMedia,
   Grid,
   IconButton,
   Modal,
@@ -16,7 +14,6 @@ import AddIcon from '@mui/icons-material/Add'
 import React, { useState } from 'react'
 import { locations, companies, roles } from '@prisma/client'
 import { styled } from '@mui/material/styles'
-import Link from 'next/link'
 import Image from 'next/image'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector } from '@redux/selectors'
@@ -25,7 +22,6 @@ import Button from '@mui/material/Button'
 import profileSlice, {
   applyCompany,
   updateCompany,
-  updateRecruiterCompany,
   uploadBackground,
   uploadLogo
 } from '@redux/reducers/profileSlice'

@@ -8,8 +8,6 @@ import {
   ListItemButton,
   ListItemText
 } from '@mui/material'
-import IconButton from '@mui/material/IconButton'
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { useRouter } from 'next/router'
 import MyPopover from '@components/ui/popover'
 import Link from 'next/link'
@@ -17,7 +15,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { signOut, useSession } from 'next-auth/react'
 import Button from '@mui/material/Button'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { headerSelector, profileSelector } from '@redux/selectors'
+import { headerSelector } from '@redux/selectors'
 import profileSlice from '@redux/reducers/profileSlice'
 import socket from '@libs/socket'
 import headerSlice, {
@@ -278,7 +276,7 @@ const Header = () => {
   }, [refreshNotification, session])
 
   useEffect(() => {
-    socket.on('receive_message', data => {
+    socket.on('receive_message', _data => {
       dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
     })
   }, [socket])
@@ -386,8 +384,8 @@ const Header = () => {
     </List>
   )
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(headerSlice.actions.toggleSnackBar({ showMessage: false }))
   }

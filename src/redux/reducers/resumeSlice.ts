@@ -150,18 +150,18 @@ const resumeSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchAllSkills.pending, (state, action) => {
+      .addCase(fetchAllSkills.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllSkills.fulfilled, (state, action) => {
         state.loading = false
         state.allSkills = action.payload
       })
-      .addCase(fetchAllSkills.rejected, (state, action) => {
+      .addCase(fetchAllSkills.rejected, (state, _action) => {
         state.loading = false
       })
 
-      .addCase(uploadResume.pending, (state, action) => {
+      .addCase(uploadResume.pending, (state, _action) => {
         state.uploadLoading = true
       })
       .addCase(uploadResume.fulfilled, (state, action) => {
@@ -178,7 +178,7 @@ const resumeSlice = createSlice({
         state.uploadLoading = false
       })
 
-      .addCase(createResume.pending, (state, action) => {
+      .addCase(createResume.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createResume.fulfilled, (state, action) => {
@@ -194,7 +194,7 @@ const resumeSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteResume.pending, (state, action) => {
+      .addCase(deleteResume.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteResume.fulfilled, (state, action) => {
@@ -210,7 +210,7 @@ const resumeSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(checkIfAllowedToView.pending, (state, action) => {
+      .addCase(checkIfAllowedToView.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(checkIfAllowedToView.fulfilled, (state, action) => {
@@ -232,7 +232,7 @@ const resumeSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateResumePrivacy.pending, (state, action) => {
+      .addCase(updateResumePrivacy.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateResumePrivacy.fulfilled, (state, action) => {
@@ -248,14 +248,14 @@ const resumeSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(fetchAllUserResumes.pending, (state, action) => {
+      .addCase(fetchAllUserResumes.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchAllUserResumes.fulfilled, (state, action) => {
         state.allResumes.data = action.payload
         state.loading = false
       })
-      .addCase(fetchAllUserResumes.rejected, (state, action) => {
+      .addCase(fetchAllUserResumes.rejected, (state, _action) => {
         state.loading = false
       })
   }

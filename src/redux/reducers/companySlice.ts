@@ -87,7 +87,7 @@ const companySlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(createCompany.pending, (state, action) => {
+      .addCase(createCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(createCompany.fulfilled, (state, action) => {
@@ -105,7 +105,7 @@ const companySlice = createSlice({
         state.loading = false
       })
 
-      .addCase(uploadLogo.pending, (state, action) => {
+      .addCase(uploadLogo.pending, (state, _action) => {
         state.uploadLogoLoading = true
       })
       .addCase(uploadLogo.fulfilled, (state, action) => {
@@ -122,7 +122,7 @@ const companySlice = createSlice({
         state.uploadLogoLoading = false
       })
 
-      .addCase(uploadBackground.pending, (state, action) => {
+      .addCase(uploadBackground.pending, (state, _action) => {
         state.uploadBackgroundLoading = true
       })
       .addCase(uploadBackground.fulfilled, (state, action) => {
@@ -139,7 +139,7 @@ const companySlice = createSlice({
         state.uploadBackgroundLoading = false
       })
 
-      .addCase(updateRecruiterCompany.pending, (state, action) => {
+      .addCase(updateRecruiterCompany.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateRecruiterCompany.fulfilled, (state, action) => {
@@ -155,7 +155,7 @@ const companySlice = createSlice({
         state.loading = false
       })
 
-      .addCase(fetchUserById.pending, (state, action) => {
+      .addCase(fetchUserById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(fetchUserById.fulfilled, (state, action) => {
@@ -165,7 +165,7 @@ const companySlice = createSlice({
         }
         state.loading = false
       })
-      .addCase(fetchUserById.rejected, (state, action) => {
+      .addCase(fetchUserById.rejected, (state, _action) => {
         state.loading = false
       })
   }

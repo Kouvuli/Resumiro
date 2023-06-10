@@ -4,13 +4,12 @@ import { styled } from '@mui/material/styles'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
 import CardContent from '@mui/material/CardContent'
 import { users } from '@prisma/client'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { useAppDispatch } from '@hooks/index'
 import {
   updateRecruiterCompany,
   allowRecruiterToView,
   deleteNotificationById
 } from '@redux/reducers/headerSlice'
-import { headerSelector } from '@redux/selectors'
 import { useSession } from 'next-auth/react'
 interface NotificationCardProps {
   id: number

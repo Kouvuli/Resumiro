@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import Button from '@mui/material/Button'
 import ArticleLayout from '@components/layouts/article'
 const NotFoundPage = () => {

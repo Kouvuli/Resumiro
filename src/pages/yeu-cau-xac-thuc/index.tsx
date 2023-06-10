@@ -9,7 +9,6 @@ import SearchResultBar from '@components/ui/bar/searchResultBar'
 import Image from 'next/image'
 import RoundPagination from '@components/ui/pagination/roundPagination'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { authRequestSelector } from '@redux/selectors'
 import authRequestSlice from '@redux/reducers/authRequestSlice'
@@ -62,8 +61,8 @@ const AuthenRequestPage: React.FC<AuthenRequestPageProps> = ({ data }) => {
     dispatch(authRequestSlice.actions.changeSearchText(e.target.value))
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(authRequestSlice.actions.toggleSnackBar({ showMessage: false }))
   }

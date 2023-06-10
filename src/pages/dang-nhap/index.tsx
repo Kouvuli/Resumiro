@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
@@ -24,8 +22,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { useSession } from 'next-auth/react'
 
 export default function SignInPage() {
-  const { message, messageType, showMessage, success } =
-    useAppSelector(signInSelector)
+  const { message, messageType, showMessage } = useAppSelector(signInSelector)
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { status } = useSession()
@@ -60,8 +57,8 @@ export default function SignInPage() {
   }
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(signInSlice.actions.toggleSnackBar({ showMessage: false }))
   }

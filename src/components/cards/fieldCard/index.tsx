@@ -56,7 +56,6 @@ const CustomJobText = styled(Typography)(({ theme }) => ({
 }))
 
 const FieldCard: React.FC<Field> = ({
-  id,
   fieldTitle,
   description,
   vacantNumber

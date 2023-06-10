@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import Container from '@mui/material/Container'
 import ArticleLayout from '@components/layouts/article'
@@ -10,9 +10,8 @@ import DenseChip from '@components/ui/chip/DenseChip'
 import { styled } from '@mui/material/styles'
 import CompanyBriefCard from '@components/cards/detailCard/jobDetail/companyBriefCard'
 import SuitableJob from '@components/lists/suitableJob'
-import { Company, Job, Skill } from '@shared/interfaces'
+import { Job } from '@shared/interfaces'
 import { JobCardProps } from '@components/cards/jobCard'
-import parse from 'html-react-parser'
 import resumiroApi from '@apis/resumiroApi'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { jobDetailSelector } from '@redux/selectors'
@@ -125,7 +124,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
   } = data
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
-  const { isApplied, showMessage, message, messageType, loading } =
+  const { isApplied, showMessage, message, messageType } =
     useAppSelector(jobDetailSelector)
 
   useEffect(() => {
@@ -174,8 +173,8 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     }
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(jobDetailSlice.actions.toggleSnackBar({ showMessage: false }))
   }

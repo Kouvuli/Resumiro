@@ -8,7 +8,7 @@ import SearchBar from '@components/ui/bar/searchBar'
 import ArticleLayout from '@components/layouts/article'
 import { JobCardProps } from '@components/cards/jobCard'
 import resumiroApi from '@apis/resumiroApi'
-import { Job, Recruiter, Skill } from '@shared/interfaces'
+import { Job, Skill } from '@shared/interfaces'
 import Image from 'next/image'
 import _ from 'lodash'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
@@ -33,8 +33,6 @@ import {
   Select,
   SelectChangeEvent
 } from '@mui/material'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { useSession } from 'next-auth/react'
 import MySnackBar from '@components/ui/bar/snackbar'
 type JobListPerPage = {
@@ -97,7 +95,6 @@ const JobPage: React.FC<JobPageProps> = ({
     loading,
     page,
     limit,
-    total,
     showMessage,
     message,
     messageType,
@@ -232,8 +229,8 @@ const JobPage: React.FC<JobPageProps> = ({
     })
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(jobSlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -478,9 +475,6 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  // const { page = 1, limit = 7 } = context.query
-  const session = await getServerSession(context.req, context.res, authOptions)
-
   const jobs = await resumiroApi.getJobs(context.query).then(res => res.data)
 
   const jobList = jobs.data.map((job: Job) => {

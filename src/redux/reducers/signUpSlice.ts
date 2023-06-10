@@ -1,8 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { ethers } from 'ethers'
 import resumiroApi from '@apis/resumiroApi'
-import { useRouter } from 'next/router'
-import { signIn } from 'next-auth/react'
 const initialState = {
   showMessage: false,
   message: '',
@@ -41,7 +38,7 @@ const signUpSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(signUp.pending, (state, action) => {
+      .addCase(signUp.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(signUp.fulfilled, (state, action) => {

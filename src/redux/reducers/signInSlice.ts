@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { ethers } from 'ethers'
 import resumiroApi from '@apis/resumiroApi'
-import { useRouter } from 'next/router'
 import { signIn } from 'next-auth/react'
-import { networks } from '@shared/networks'
 const initialState = {
   showMessage: false,
   message: '',
@@ -75,23 +73,23 @@ const signInSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(signInWallet.pending, (state, action) => {
+      .addCase(signInWallet.pending, (state, _action) => {
         state.loading = true
       })
-      .addCase(signInWallet.fulfilled, (state, action) => {
+      .addCase(signInWallet.fulfilled, (state, _action) => {
         state.showMessage = true
         state.message = 'Đăng nhập ví thành công'
         state.messageType = 'success'
         state.loading = false
       })
-      .addCase(signInWallet.rejected, (state, action) => {
+      .addCase(signInWallet.rejected, (state, _action) => {
         state.showMessage = true
         state.message = 'Đăng nhập ví thất bại'
         state.messageType = 'error'
         state.loading = false
       })
 
-      .addCase(signInNormal.pending, (state, action) => {
+      .addCase(signInNormal.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(signInNormal.fulfilled, (state, action) => {
@@ -106,7 +104,7 @@ const signInSlice = createSlice({
 
         state.loading = false
       })
-      .addCase(signInNormal.rejected, (state, action) => {
+      .addCase(signInNormal.rejected, (state, _action) => {
         state.showMessage = true
         state.message = 'Đăng nhập thất bại'
         state.messageType = 'error'

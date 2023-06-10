@@ -1,7 +1,6 @@
 import React from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
@@ -12,7 +11,6 @@ import BusinessCenterRoundedIcon from '@mui/icons-material/BusinessCenterRounded
 
 import Image from 'next/image'
 import TagButton from '@components/ui/button/tagButton'
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import Link from 'next/link'
 import { locations } from '@prisma/client'
 export interface CompanyCardProps {
@@ -46,7 +44,6 @@ const jobCardVariants: Variants = {
 }
 
 const CompanyCard: React.FC<CompanyCardProps> = ({
-  type,
   id,
   logo,
   companyName,

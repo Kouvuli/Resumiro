@@ -55,8 +55,8 @@ const ProfilePage = () => {
   }, [showMessage])
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(profileSlice.actions.toggleSnackBar({ showMessage: false }))
   }

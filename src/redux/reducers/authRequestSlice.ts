@@ -84,7 +84,7 @@ const authRequestSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(updateCertifcateStatus.pending, (state, action) => {
+      .addCase(updateCertifcateStatus.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateCertifcateStatus.fulfilled, (state, action) => {
@@ -100,7 +100,7 @@ const authRequestSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(updateExperienceStatus.pending, (state, action) => {
+      .addCase(updateExperienceStatus.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(updateExperienceStatus.fulfilled, (state, action) => {
@@ -116,7 +116,7 @@ const authRequestSlice = createSlice({
         state.loading = false
       })
 
-      .addCase(deleteRequestById.pending, (state, action) => {
+      .addCase(deleteRequestById.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(deleteRequestById.fulfilled, (state, action) => {

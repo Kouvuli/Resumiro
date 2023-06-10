@@ -9,14 +9,13 @@ import styles from './styles.module.css'
 import { Button } from '@mui/material'
 import ShareIcon from '@mui/icons-material/Share'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
 import { users } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { useAppDispatch } from '@hooks/index'
 import {
   checkIfAllowedToView,
   deleteResume,
@@ -69,12 +68,12 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   resumeKey,
   isPublic
 }) => {
-  const [page, setPage] = useState(1)
+  const [page, _setPage] = useState(1)
   const canvasRef = useRef(null)
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const { pdfDocument, pdfPage } = usePdf({
+  const { pdfDocument } = usePdf({
     file: decryptText(data, resumeKey),
     canvasRef,
     page

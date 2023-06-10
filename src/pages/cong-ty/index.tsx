@@ -7,7 +7,7 @@ import CompanyCard, { CompanyCardProps } from '@components/cards/companyCard'
 import RoundPagination from '@components/ui/pagination/roundPagination'
 import ArticleLayout from '@components/layouts/article'
 import resumiroApi from '@apis/resumiroApi'
-import { Company, Recruiter } from '@shared/interfaces'
+import { Company } from '@shared/interfaces'
 import companySlice, {
   createCompany,
   fetchUserById,
@@ -21,8 +21,6 @@ import { companySelector } from '@redux/selectors'
 import Image from 'next/image'
 import _ from 'lodash'
 import { Box, Button, CircularProgress, Modal, TextField } from '@mui/material'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { Input } from 'antd'
 import { locations } from '@prisma/client'
 import MySnackBar from '@components/ui/bar/snackbar'
@@ -66,12 +64,10 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     loading,
     page,
     limit,
-    total,
     createdCompany,
     q,
     location,
     order_by,
-    user,
     hasAddCompany
   } = useAppSelector(companySelector)
   useEffect(() => {
@@ -198,8 +194,8 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
   }
 
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(companySlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -438,8 +434,6 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const session = await getServerSession(context.req, context.res, authOptions)
-
   const allLocations = await resumiroApi.getLocations().then(res => res.data)
   const companies = await resumiroApi
     .getCompanies(context.query)

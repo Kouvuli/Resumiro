@@ -7,7 +7,6 @@ import ArticleLayout from '@components/layouts/article'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
 import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
-import resumiroApi from '@apis/resumiroApi'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { recruiterProfileSelector } from '@redux/selectors'
 import { fetchRecruiterById } from '@redux/reducers/recruiterProfileSlice'
@@ -76,7 +75,6 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const { recruiterId } = context.query
   const session = await getServerSession(context.req, context.res, authOptions)
 
   if (!session) {

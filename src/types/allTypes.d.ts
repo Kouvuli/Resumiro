@@ -1,4 +1,5 @@
-import { DefaultSession, DefaultUser } from 'next-auth'
+/* eslint-disable no-unused-vars */
+import { DefaultUser } from 'next-auth'
 import { roles } from '@prisma/client'
 declare module 'react-responsive-carousel'
 

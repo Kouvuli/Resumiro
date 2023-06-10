@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 import { useAppDispatch } from '@hooks/index'
 import { certificates, experiences } from '@prisma/client'
 import {
-  deleteRequestById,
   updateCertifcateStatus,
   updateExperienceStatus
 } from '@redux/reducers/authRequestSlice'

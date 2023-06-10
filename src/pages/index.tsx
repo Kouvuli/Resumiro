@@ -42,7 +42,7 @@ const SectionBackgroundLight = styled(MuiBox)(({ theme }) => ({
   // height: '90vh',
 }))
 
-const SectionBackgroundDark = styled(MuiBox)(({ theme }) => ({
+const SectionBackgroundDark = styled(MuiBox)(({}) => ({
   // background: theme.palette.primary.main,
   background: "url('/images/banner.jpg') no-repeat ",
   backgroundSize: 'cover'

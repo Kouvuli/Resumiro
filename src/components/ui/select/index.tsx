@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react'
-import { styled } from '@mui/material/styles'
-import { Select, SelectProps } from 'antd'
-import styles from './styles.module.css'
-import { DefaultOptionType } from 'antd/es/select'
+import { Select } from 'antd'
 import { useAppDispatch } from '@hooks/index'
 import jobSlice from '@redux/reducers/jobSlice'
-const { Option } = Select
 interface RoundSelectProps {
   style?: React.CSSProperties
-  handleChange?: (value: string) => void
+  handleChange?: (_value: string) => void
   options: { value: string; label: string }[]
 }
 

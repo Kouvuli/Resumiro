@@ -24,8 +24,6 @@ import { CircularProgress } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import CancelIcon from '@mui/icons-material/Cancel'
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
-import { compareDates } from '@utils/timeUtil'
 import Link from 'next/link'
 const CustomExperienceItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
