@@ -116,12 +116,17 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                 {data.start} - {data.finish}
               </Typography>
+              {data.source && (
+                <Link
+                  href={data.source}
+                  style={{ color: 'blue', fontWeight: '600' }}
+                  target="_blank"
+                >
+                  Xem file
+                </Link>
+              )}
             </div>
-            {data.source && (
-              <Link href={data.source} target="_blank">
-                Xem file
-              </Link>
-            )}
+
             <div style={{ flexGrow: 1 }}></div>
             {isModify && (
               <div>

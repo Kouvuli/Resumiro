@@ -124,11 +124,7 @@ const EducationItem: React.FC<EducationItemProps> = ({
                   )}
               </Typography>
             </div>
-            {data.source && (
-              <Link href={data.source} target="_blank">
-                Xem file
-              </Link>
-            )}
+
             <div style={{ flexGrow: 1 }} />
             {isModify && (
               <div>
@@ -143,13 +139,24 @@ const EducationItem: React.FC<EducationItemProps> = ({
           </div>
         }
         subheader={
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mb: 1, fontSize: '1.1rem' }}
-          >
-            {new Date(data.verified_at).toLocaleDateString()}
-          </Typography>
+          <>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mb: 1, fontSize: '1.1rem' }}
+            >
+              {new Date(data.verified_at).toLocaleDateString()}
+            </Typography>
+            {data.source && (
+              <Link
+                href={data.source}
+                style={{ color: 'blue', fontWeight: '600' }}
+                target="_blank"
+              >
+                Xem file
+              </Link>
+            )}
+          </>
         }
         sx={{ padding: '0', alignItems: 'start' }}
       />
