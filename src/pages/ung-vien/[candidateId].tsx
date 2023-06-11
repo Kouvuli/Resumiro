@@ -10,7 +10,6 @@ import ImagesCard from '@components/cards/profileCard/imagesCard'
 import ArticleLayout from '@components/layouts/article'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-import resumiroApi from '@apis/resumiroApi'
 import { Company, Skill } from '@shared/interfaces'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useSession } from 'next-auth/react'
@@ -20,6 +19,7 @@ import candidateProfileSlice, {
 import { candidateProfileSelector } from '@redux/selectors'
 import { useRouter } from 'next/router'
 import MySnackBar from '@components/ui/bar/snackbar'
+import prisma from '@libs/prisma'
 interface CandidateProfilePageProps {
   allCompanies: Company[]
   allSkills: Skill[]
@@ -142,14 +142,14 @@ export async function getServerSideProps(context: {
     }
   }
 
-  const allCompanies = await resumiroApi.getAllCompanies().then(res => res.data)
-  const allSkills = await resumiroApi.getAllSkills().then(res => res.data)
+  const allCompanies = await prisma.companies.findMany()
+  const allSkills = await prisma.skills.findMany()
 
   return {
     props: {
       session: session,
-      allCompanies: allCompanies.data,
-      allSkills: allSkills.data
+      allCompanies: allCompanies,
+      allSkills: allSkills
     }
   }
 }

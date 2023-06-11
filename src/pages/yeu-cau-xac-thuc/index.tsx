@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import ArticleLayout from '@components/layouts/article'
@@ -11,21 +11,16 @@ import RoundPagination from '@components/ui/pagination/roundPagination'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useRouter } from 'next/router'
 import { authRequestSelector } from '@redux/selectors'
-import authRequestSlice from '@redux/reducers/authRequestSlice'
+import authRequestSlice, {
+  getAuthRequests
+} from '@redux/reducers/authRequestSlice'
 import AuthRequestCard from '@components/cards/authRequestCard'
-import resumiroApi from '@apis/resumiroApi'
 import _ from 'lodash'
 import { Request } from '@shared/interfaces'
-type RequestListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: Request[]
-}
-interface AuthenRequestPageProps {
-  data: RequestListPerPage
-}
-const AuthenRequestPage: React.FC<AuthenRequestPageProps> = ({ data }) => {
+import { useSession } from 'next-auth/react'
+
+interface AuthenRequestPageProps {}
+const AuthenRequestPage: React.FC<AuthenRequestPageProps> = () => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
@@ -33,12 +28,19 @@ const AuthenRequestPage: React.FC<AuthenRequestPageProps> = ({ data }) => {
     showMessage,
     message,
     messageType,
-
+    data,
     page,
     limit,
 
     q
   } = useAppSelector(authRequestSelector)
+  const { data: session } = useSession()
+  useEffect(() => {
+    dispatch(
+      getAuthRequests({ userId: session!.user!.id, query: router.query })
+    )
+  }, [router.query])
+
   const searchHandler = () => {
     let query: any = {}
     if (page !== '') {
@@ -56,6 +58,7 @@ const AuthenRequestPage: React.FC<AuthenRequestPageProps> = ({ data }) => {
       query: query
     })
   }
+
   const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     dispatch(authRequestSlice.actions.changeSearchText(e.target.value))
@@ -88,13 +91,15 @@ const AuthenRequestPage: React.FC<AuthenRequestPageProps> = ({ data }) => {
             hasLocationSelect={false}
             hasAddCompany={false}
           />
-          <SearchResultBar numberSearch={data.data.length} />
+          {data.data && <SearchResultBar numberSearch={data.data.length} />}
           {!_.isEmpty(data.data) ? (
-            data.data.map((request, index) => (
-              <Grid item xs={12} md={6} lg={4} key={index}>
-                <AuthRequestCard request={request} />
-              </Grid>
-            ))
+            data.data.map(
+              (request: Request, index: React.Key | null | undefined) => (
+                <Grid item xs={12} md={6} lg={4} key={index}>
+                  <AuthRequestCard request={request} />
+                </Grid>
+              )
+            )
           ) : (
             <Image
               style={{ display: 'flex', margin: 'auto' }}
@@ -147,19 +152,9 @@ export async function getServerSideProps(context: {
     }
   }
 
-  const requests = await resumiroApi
-    .getRequestsByReceiverId(Number(session?.user?.id), context.query)
-    .then(res => res.data)
-
   return {
     props: {
-      session: session,
-      data: {
-        perPage: requests.pagination.limit,
-        page: requests.pagination.page,
-        totalPage: requests.pagination.total,
-        data: requests.data
-      }
+      session: session
     }
   }
 }

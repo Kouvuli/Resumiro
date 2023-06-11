@@ -10,8 +10,24 @@ const initialState = {
   success: '',
   page: 1,
   limit: 9,
-  q: ''
+  q: '',
+  data: {
+    perPage: 9,
+    page: 1,
+    totalPage: 0,
+    data: []
+  }
 }
+
+export const getAuthRequests = createAsyncThunk(
+  'get-auth-requests',
+  async (input: { userId: string; query: object }) => {
+    const requests = await resumiroApi
+      .getRequestsByReceiverId(Number(input.userId), input.query)
+      .then(res => res.data)
+    return requests
+  }
+)
 
 export const deleteRequestById = createAsyncThunk(
   'delete-request-by-id',

@@ -23,7 +23,8 @@ import jobDetailSlice, {
   createNotification
 } from '@redux/reducers/jobDetailSlice'
 import MySnackBar from '@components/ui/bar/snackbar'
-
+import prisma from '@libs/prisma'
+import { locations, companies, jobs } from '@prisma/client'
 const DetailJobList = styled(`ul`)(({ theme }) => ({
   listStyle: 'none',
   '& li p': {
@@ -295,8 +296,45 @@ export async function getServerSideProps(context: { query: { id: string } }) {
   const { id } = context.query
 
   const jobDetail = await resumiroApi.getJobById(id).then(res => res.data)
-  const sameCompanyJob: JobCardProps[] = jobDetail.data.company.jobs.map(
-    (job: Job) => {
+
+  const jobs = await prisma.jobs.findFirst({
+    where: { id: Number(id) },
+    include: {
+      owner: {
+        include: {
+          room: true
+        }
+      },
+      company: {
+        include: {
+          jobs: {
+            where: {
+              id: {
+                not: Number(id)
+              }
+            },
+            include: {
+              location: true,
+              company: true
+            }
+          }
+        }
+      },
+      location: true,
+      jobs_skills: {
+        select: {
+          skill: true
+        }
+      }
+    }
+  })
+  const sameCompanyJob: JobCardProps[] = jobs!.company.jobs.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
       return {
         id: job.id,
         jobTitle: job.title,

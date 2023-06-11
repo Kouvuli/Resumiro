@@ -6,16 +6,15 @@ import JobGrid from '@components/grid/jobGrid'
 import SearchResultBar from '@components/ui/bar/searchResultBar'
 import SearchBar from '@components/ui/bar/searchBar'
 import ArticleLayout from '@components/layouts/article'
-import { JobCardProps } from '@components/cards/jobCard'
-import resumiroApi from '@apis/resumiroApi'
-import { Job, Skill } from '@shared/interfaces'
+import { Skill } from '@shared/interfaces'
 import Image from 'next/image'
 import _ from 'lodash'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { jobSelector } from '@redux/selectors'
 import jobSlice, {
   createJob,
-  fetchRecruiterById
+  fetchRecruiterById,
+  getJobs
 } from '@redux/reducers/jobSlice'
 import { useRouter } from 'next/router'
 import Modal from '@mui/material/Modal'
@@ -35,14 +34,9 @@ import {
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import MySnackBar from '@components/ui/bar/snackbar'
-type JobListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: JobCardProps[]
-}
+import prisma from '@libs/prisma'
+
 interface JobPageProps {
-  data: JobListPerPage
   allSkills: Skill[]
   allFields: fields[]
   allLocations: locations[]
@@ -79,7 +73,6 @@ const jobTypes = [
 ]
 
 const JobPage: React.FC<JobPageProps> = ({
-  data,
   allSkills,
   allFields,
   allLocations
@@ -106,7 +99,8 @@ const JobPage: React.FC<JobPageProps> = ({
     max_salary,
     experience,
     recruiter,
-    hasAddJob
+    hasAddJob,
+    data
   } = useAppSelector(jobSelector)
 
   useEffect(() => {
@@ -114,6 +108,10 @@ const JobPage: React.FC<JobPageProps> = ({
       dispatch(fetchRecruiterById(session.user!.id))
     }
   }, [])
+
+  useEffect(() => {
+    dispatch(getJobs(router.query))
+  }, [router.query])
 
   const searchHandler = () => {
     let query: any = {}
@@ -442,11 +440,13 @@ const JobPage: React.FC<JobPageProps> = ({
             hasAddJob={hasAddJob}
           />
 
-          <SearchResultBar
-            options={orderOptions}
-            numberSearch={data.data.length}
-            handleChange={handleJobOrderChange}
-          />
+          {data.data && (
+            <SearchResultBar
+              options={orderOptions}
+              numberSearch={data.data.length}
+              handleChange={handleJobOrderChange}
+            />
+          )}
 
           <Grid item display={{ xs: 'none', md: 'unset' }} md={3}>
             <Filter />
@@ -470,42 +470,23 @@ const JobPage: React.FC<JobPageProps> = ({
   )
 }
 
-export async function getServerSideProps(context: {
-  req: any
-  res: any
-  query: any
-}) {
-  const jobs = await resumiroApi.getJobs(context.query).then(res => res.data)
+export async function getServerSideProps() {
+  const allSkills = await prisma.skills.findMany()
 
-  const jobList = jobs.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
-    }
-  })
+  const allFields = await prisma.fields
+    .findMany({
+      include: {
+        jobs: true
+      }
+    })
+    .then(data => JSON.parse(JSON.stringify(data)))
 
-  const allSkills = await resumiroApi.getAllSkills().then(res => res.data)
-
-  const allFields = await resumiroApi.getFields().then(res => res.data)
-
-  const allLocations = await resumiroApi.getLocations().then(res => res.data)
+  const allLocations = await prisma.locations.findMany()
   return {
     props: {
-      data: {
-        perPage: jobs.pagination.limit,
-        page: jobs.pagination.page,
-        totalPage: jobs.pagination.total,
-        data: jobList
-      },
-      allSkills: allSkills.data,
-      allFields: allFields.data,
-      allLocations: allLocations.data
+      allSkills: allSkills,
+      allFields: allFields,
+      allLocations: allLocations
     }
   }
 }

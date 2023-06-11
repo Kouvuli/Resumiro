@@ -5,8 +5,6 @@ import ResumeGrid from '@components/grid/resumeGrid'
 import SuitableJob from '@components/lists/suitableJob'
 import ArticleLayout from '@components/layouts/article'
 import { JobCardProps } from '@components/cards/jobCard'
-import resumiroApi from '@apis/resumiroApi'
-import { Job } from '@shared/interfaces'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import { Modal, Box, Button, CircularProgress, TextField } from '@mui/material'
@@ -21,6 +19,8 @@ import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { encryptText, randomToken } from '@utils/cryptoUtil'
+import prisma from '@libs/prisma'
+import { jobs, locations, companies } from '@prisma/client'
 
 interface ResumePageProps {
   suitableList: JobCardProps[]
@@ -240,21 +240,35 @@ export async function getServerSideProps(context: { req: any; res: any }) {
     }
   }
 
-  const data2 = await resumiroApi
-    .getJobs({ page: 1, limit: 7 })
-    .then(res => res.data)
-  const suitableList = data2.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
+  const data2 = await prisma.jobs
+    .findMany({
+      skip: 0,
+      take: 7,
+      include: {
+        company: true,
+        location: true
+      }
+    })
+    .then(res => JSON.parse(JSON.stringify(res)))
+  const suitableList = data2.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
+      return {
+        id: job.id,
+        logo: job.company.logo,
+        jobTitle: job.title,
+        companyName: job.company.name,
+        location: job.location,
+        salary: job.salary,
+        experience: job.experience,
+        createAt: job.create_at
+      }
     }
-  })
+  )
   return {
     props: {
       suitableList: suitableList

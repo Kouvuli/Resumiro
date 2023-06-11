@@ -2,6 +2,7 @@ import React from 'react'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import RoundSelect from '@components/ui/select'
+import Box from '@mui/material/Box'
 
 interface SearchResultBarProps {
   numberSearch: number
@@ -16,18 +17,22 @@ const SearchResultBar: React.FC<SearchResultBarProps> = ({
 }) => {
   return (
     <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-      <Typography sx={{ flexGrow: 1 }} variant="h5">
-        Đã tìm thấy{' '}
-        <span>
-          <Typography
-            variant="h5"
-            sx={{ display: 'inline-block', color: 'info.dark' }}
-          >
-            {numberSearch}
-          </Typography>
-        </span>{' '}
-        kết quả
-      </Typography>
+      {numberSearch && numberSearch > 0 ? (
+        <Typography sx={{ flexGrow: 1 }} variant="h5">
+          Đã tìm thấy{' '}
+          <span>
+            <Typography
+              variant="h5"
+              sx={{ display: 'inline-block', color: 'info.dark' }}
+            >
+              {numberSearch}
+            </Typography>
+          </span>{' '}
+          kết quả
+        </Typography>
+      ) : (
+        <Box sx={{ flexGrow: 1 }}></Box>
+      )}
       {options && <RoundSelect options={options} handleChange={handleChange} />}
     </Grid>
   )

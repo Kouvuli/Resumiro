@@ -6,11 +6,11 @@ import SearchBar from '@components/ui/bar/searchBar'
 import CompanyCard, { CompanyCardProps } from '@components/cards/companyCard'
 import RoundPagination from '@components/ui/pagination/roundPagination'
 import ArticleLayout from '@components/layouts/article'
-import resumiroApi from '@apis/resumiroApi'
-import { Company } from '@shared/interfaces'
+
 import companySlice, {
   createCompany,
   fetchUserById,
+  getCompanies,
   updateRecruiterCompany,
   uploadBackground,
   uploadLogo
@@ -25,15 +25,10 @@ import { Input } from 'antd'
 import { locations } from '@prisma/client'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
+import prisma from '@libs/prisma'
 const { TextArea } = Input
-type CompanyListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: CompanyCardProps[]
-}
+
 interface CompanyPageProps {
-  data: CompanyListPerPage
   allLocations: locations[]
 }
 
@@ -44,11 +39,7 @@ const orderOptions = [
   }
 ]
 
-const CompanyPage: React.FC<CompanyPageProps> = ({
-  data,
-
-  allLocations
-}) => {
+const CompanyPage: React.FC<CompanyPageProps> = ({ allLocations }) => {
   const dispatch = useAppDispatch()
   const { data: session, status } = useSession()
   const [open, setOpen] = useState(false)
@@ -66,15 +57,22 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     limit,
     createdCompany,
     q,
+    total,
     location,
     order_by,
-    hasAddCompany
+    hasAddCompany,
+    data
   } = useAppSelector(companySelector)
   useEffect(() => {
     if (status === 'authenticated') {
       dispatch(fetchUserById(session!.user!.id))
     }
   }, [])
+
+  useEffect(() => {
+    dispatch(getCompanies(router.query))
+  }, [router.query])
+
   useEffect(() => {
     if (createdCompany) {
       dispatch(
@@ -388,17 +386,24 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
             handleAddCompany={handleOpenAddCompanyModal}
             hasAddCompany={hasAddCompany}
           />
-          <SearchResultBar
-            numberSearch={data.data.length}
-            handleChange={handleCompanyOrderChange}
-            options={orderOptions}
-          />
-          {!_.isEmpty(data.data) ? (
-            data.data.map((company, index) => (
-              <Grid item xs={12} md={6} lg={4} key={index}>
-                <CompanyCard {...company} />
-              </Grid>
-            ))
+          {data && (
+            <SearchResultBar
+              numberSearch={data.length}
+              handleChange={handleCompanyOrderChange}
+              options={orderOptions}
+            />
+          )}
+          {!_.isEmpty(data) ? (
+            data.map(
+              (
+                company: JSX.IntrinsicAttributes & CompanyCardProps,
+                index: React.Key | null | undefined
+              ) => (
+                <Grid item xs={12} md={6} lg={4} key={index}>
+                  <CompanyCard {...company} />
+                </Grid>
+              )
+            )
           ) : (
             <Image
               style={{ display: 'flex', margin: 'auto' }}
@@ -418,10 +423,7 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
               mt: 4
             }}
           >
-            <RoundPagination
-              page={Number(data.page)}
-              totalPage={Number(data.totalPage)}
-            />
+            <RoundPagination page={Number(page)} totalPage={Number(total)} />
           </Grid>
         </Grid>
       </Container>
@@ -429,34 +431,12 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
   )
 }
 
-export async function getServerSideProps(context: {
-  req: any
-  res: any
-  query: any
-}) {
-  const allLocations = await resumiroApi.getLocations().then(res => res.data)
-  const companies = await resumiroApi
-    .getCompanies(context.query)
-    .then(res => res.data)
-  const companyList = companies.data.map((company: Company) => {
-    return {
-      id: company.id,
-      logo: company.logo,
-      companyName: company.name,
-      location: company.location,
-      scale: company.scale,
-      hiringNumber: company.jobs.length
-    }
-  })
+export async function getServerSideProps() {
+  const allLocations = await prisma.locations.findMany()
+
   return {
     props: {
-      data: {
-        perPage: companies.pagination.limit,
-        page: companies.pagination.page,
-        totalPage: companies.pagination.total,
-        data: companyList
-      },
-      allLocations: allLocations.data
+      allLocations: allLocations
     }
   }
 }

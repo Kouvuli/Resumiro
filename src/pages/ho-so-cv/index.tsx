@@ -1,11 +1,8 @@
 import Container from '@mui/material/Container'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
 import ArticleLayout from '@components/layouts/article'
-import { ResumeCardProps } from '@components/cards/resumeCard'
-import resumiroApi from '@apis/resumiroApi'
-import { Resume } from '@shared/interfaces'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import SearchBar from '@components/ui/bar/searchBar'
@@ -13,21 +10,13 @@ import SearchResultBar from '@components/ui/bar/searchResultBar'
 import Image from 'next/image'
 import Filter from '@components/lists/filter'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import resumeSlice from '@redux/reducers/resumeSlice'
+import resumeSlice, { getResumes } from '@redux/reducers/resumeSlice'
 import { resumeSelector } from '@redux/selectors'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
 import MySnackBar from '@components/ui/bar/snackbar'
-type ResumeListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: ResumeCardProps[]
-}
 
-interface ResumeRecruiterPageProps {
-  data: ResumeListPerPage
-}
+interface ResumeRecruiterPageProps {}
 
 const orderOptions = [
   {
@@ -44,17 +33,30 @@ const orderOptions = [
   }
 ]
 
-const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
+const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({}) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const { page, limit, skill, q, order_by, showMessage, message, messageType } =
-    useAppSelector(resumeSelector)
+  const {
+    page,
+    limit,
+    skill,
+    q,
+    order_by,
+    showMessage,
+    message,
+    messageType,
+    allResumes
+  } = useAppSelector(resumeSelector)
+
+  useEffect(() => {
+    dispatch(getResumes(router.query))
+  }, [router.query])
   const searchHandler = () => {
     let query: any = {}
-    if (page !== '') {
+    if (!page) {
       query.page = 1
     }
-    if (limit !== '') {
+    if (!limit) {
       query.limit = limit
     }
     if (q !== '') {
@@ -103,18 +105,20 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
             handleSearchTextChange={handleSearchTextChange}
           />
 
-          <SearchResultBar
-            options={orderOptions}
-            numberSearch={data.data.length}
-            handleChange={handleJobOrderChange}
-          />
+          {allResumes.data && (
+            <SearchResultBar
+              options={orderOptions}
+              numberSearch={allResumes.data.length}
+              handleChange={handleJobOrderChange}
+            />
+          )}
 
           <Grid item display={{ xs: 'none', md: 'unset' }} md={3}>
             <Filter type={2} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {!_.isEmpty(data.data) ? (
-              <ResumeGrid {...data} type={2} />
+            {!_.isEmpty(allResumes.data) ? (
+              <ResumeGrid {...allResumes} type={2} />
             ) : (
               <Image
                 style={{ display: 'flex', margin: 'auto' }}
@@ -153,28 +157,10 @@ export async function getServerSideProps(context: {
       }
     }
   }
-  const resumes = await resumiroApi.getResumes().then(res => res.data)
-
-  const convertData = resumes.data.map((item: Resume) => {
-    return {
-      id: item.id,
-      resumeTitle: item.title,
-      data: item.data,
-      createAt: item.create_at,
-      owner: item.owner,
-      isPublic: item.is_public,
-      resumeKey: item.resume_key
-    }
-  })
 
   return {
     props: {
-      data: {
-        perPage: resumes.pagination.limit,
-        page: resumes.pagination.page,
-        totalPage: resumes.pagination.total,
-        data: convertData
-      }
+      session
     }
   }
 }

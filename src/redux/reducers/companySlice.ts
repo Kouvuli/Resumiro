@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import resumiroApi from '@apis/resumiroApi'
+import { Company } from '@shared/interfaces'
 
 const initialState = {
   showMessage: false,
@@ -21,7 +22,8 @@ const initialState = {
   order_by: '',
   location: '',
   user: {},
-  hasAddCompany: false
+  hasAddCompany: false,
+  data: null
 }
 
 export const createCompany = createAsyncThunk(
@@ -42,6 +44,26 @@ export const uploadBackground = createAsyncThunk(
   async (body: any) => {
     const data = await resumiroApi.uploadFile(body).then(res => res.data)
     return data
+  }
+)
+
+export const getCompanies = createAsyncThunk(
+  'get-companies',
+  async (query: any) => {
+    const companies = await resumiroApi
+      .getCompanies(query)
+      .then(res => res.data)
+    const companyList = companies.data.map((company: Company) => {
+      return {
+        id: company.id,
+        logo: company.logo,
+        companyName: company.name,
+        location: company.location,
+        scale: company.scale,
+        hiringNumber: company.jobs.length
+      }
+    })
+    return { companies, companyList }
   }
 )
 
@@ -166,6 +188,19 @@ const companySlice = createSlice({
         state.loading = false
       })
       .addCase(fetchUserById.rejected, (state, _action) => {
+        state.loading = false
+      })
+
+      .addCase(getCompanies.pending, (state, _action) => {
+        state.loading = true
+      })
+      .addCase(getCompanies.fulfilled, (state, action) => {
+        state.data = action.payload.companyList
+        state.page = action.payload.companies.pagination.page
+        state.limit = action.payload.companies.pagination.limit
+        state.total = action.payload.companies.pagination.total
+      })
+      .addCase(getCompanies.rejected, (state, _action) => {
         state.loading = false
       })
   }

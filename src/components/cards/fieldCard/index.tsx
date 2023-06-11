@@ -94,7 +94,7 @@ const FieldCard: React.FC<Field> = ({
             }}
           >
             <CustomJobText variant="body1" color="primary.main">
-              Việc làm còn trống:
+              Việc làm đang tuyển:
             </CustomJobText>
             <Typography
               sx={{

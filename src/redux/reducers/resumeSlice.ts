@@ -48,6 +48,26 @@ export const fetchAllUserResumes = createAsyncThunk(
   }
 )
 
+export const getResumes = createAsyncThunk(
+  'get-resumes',
+  async (query: any) => {
+    const resumes = await resumiroApi.getResumes(query).then(res => res.data)
+
+    const convertData = resumes.data.map((item: Resume) => {
+      return {
+        id: item.id,
+        resumeTitle: item.title,
+        data: item.data,
+        createAt: item.create_at,
+        owner: item.owner,
+        isPublic: item.is_public,
+        resumeKey: item.resume_key
+      }
+    })
+    return { resumes, convertData }
+  }
+)
+
 export const updateResumePrivacy = createAsyncThunk(
   'update-resume-privacy',
   async (input: { resumeId: string; isPublic: boolean }) => {
@@ -256,6 +276,20 @@ const resumeSlice = createSlice({
         state.loading = false
       })
       .addCase(fetchAllUserResumes.rejected, (state, _action) => {
+        state.loading = false
+      })
+
+      .addCase(getResumes.pending, (state, _action) => {
+        state.loading = true
+      })
+      .addCase(getResumes.fulfilled, (state, action) => {
+        state.allResumes.data = action.payload.convertData
+        state.allResumes.perPage = action.payload.resumes.pagination.limit
+        state.allResumes.page = action.payload.resumes.pagination.page
+        state.allResumes.totalPage = action.payload.resumes.pagination.total
+        state.loading = false
+      })
+      .addCase(getResumes.rejected, (state, _action) => {
         state.loading = false
       })
   }

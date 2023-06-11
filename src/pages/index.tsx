@@ -21,9 +21,9 @@ import Achieve4Icon from '@components/ui/icons/achieve4Icon'
 import AboutUsCard from '@components/cards/aboutUsCard'
 import AdvertiseCard from '@components/cards/advertiseCard'
 import ArticleLayout from '@components/layouts/article'
-import { Achievement, Blog, FeatureType, Field, Job } from '@shared/interfaces'
-import resumiroApi from '@apis/resumiroApi'
-import { fields, jobs } from '@prisma/client'
+import { Achievement, Blog, FeatureType, Field } from '@shared/interfaces'
+import { fields, jobs, locations, companies } from '@prisma/client'
+import prisma from '@libs/prisma'
 const titleVariants: Variants = {
   initial: {
     opacity: 0,
@@ -309,33 +309,49 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
 }
 
 export async function getServerSideProps() {
-  const jobs = await resumiroApi
-    .getJobs({ page: 1, limit: 7 })
-    .then(res => res.data)
-
-  const latestJobLists = jobs.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
-    }
-  })
-  const jobFields = await resumiroApi.getFields().then(res => res.data)
-  const jobFieldsList = jobFields.data.map(
-    (item: fields & { jobs: jobs[] }) => {
+  const jobs = await prisma.jobs
+    .findMany({
+      skip: 0,
+      take: 7,
+      include: {
+        company: true,
+        location: true
+      }
+    })
+    .then(res => JSON.parse(JSON.stringify(res)))
+  const latestJobLists = jobs.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
       return {
-        id: item.id,
-        fieldTitle: item.name,
-        description: item.description,
-        vacantNumber: item.jobs.length
+        id: job.id,
+        logo: job.company.logo,
+        jobTitle: job.title,
+        companyName: job.company.name,
+        location: job.location,
+        salary: job.salary,
+        experience: job.experience,
+        createAt: job.create_at
       }
     }
   )
+
+  const fields = await prisma.fields.findMany({
+    include: {
+      jobs: true
+    }
+  })
+  const jobFieldsList = fields.map((item: fields & { jobs: jobs[] }) => {
+    return {
+      id: item.id,
+      fieldTitle: item.name,
+      description: item.description,
+      vacantNumber: item.jobs.length
+    }
+  })
 
   return {
     props: {

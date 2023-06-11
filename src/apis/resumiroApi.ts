@@ -9,9 +9,9 @@ const resumiroApi = {
     const url = '/job'
     return request.get(url, { params })
   },
-  getResumes: () => {
+  getResumes: (params: object) => {
     const url = '/resume'
-    return request.get(url)
+    return request.get(url, { params })
   },
   getJobById: (id: string) => {
     const url = `/job/${id}`
