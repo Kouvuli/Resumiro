@@ -15,7 +15,7 @@ import { users } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import {
   checkIfAllowedToView,
   deleteResume,
