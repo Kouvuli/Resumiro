@@ -21,7 +21,10 @@ import { useState } from 'react'
 import { profileSelector, web3Selector } from '@redux/selectors'
 import { companies } from '@prisma/client'
 import { CircularProgress } from '@mui/material'
-import { useSession } from 'next-auth/react'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import HourglassFullIcon from '@mui/icons-material/HourglassFull'
+import CancelIcon from '@mui/icons-material/Cancel'
+import Link from 'next/link'
 const CustomExperienceItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -91,8 +94,28 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
           />
         }
         title={
-          <Typography variant="h6" color="text.primary" sx={{ mb: 1 }}>
+          <Typography
+            variant="h6"
+            color="text.primary"
+            sx={{ mb: 1, display: 'flex', alignItems: 'center' }}
+          >
             {data.position}
+
+            {data.status === 'pending' && (
+              <HourglassFullIcon
+                sx={{ fontSize: '1.3rem', ml: 1, color: 'rgba(0,0,0,0.5)' }}
+              />
+            )}
+            {data.status === 'rejected' && (
+              <CancelIcon
+                sx={{ fontSize: '1.3rem', ml: 1, color: 'warning.main' }}
+              />
+            )}
+            {data.status === 'verified' && (
+              <CheckCircleIcon
+                sx={{ fontSize: '1.3rem', ml: 1, color: 'info.main' }}
+              />
+            )}
           </Typography>
         }
         subheader={
@@ -104,7 +127,17 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                 {data.start} - {data.finish}
               </Typography>
+              {data.source && (
+                <Link
+                  href={data.source}
+                  style={{ color: 'blue', fontWeight: '600' }}
+                  target="_blank"
+                >
+                  Xem file
+                </Link>
+              )}
             </div>
+
             <div style={{ flexGrow: 1 }}></div>
             {isModify && (
               <div>

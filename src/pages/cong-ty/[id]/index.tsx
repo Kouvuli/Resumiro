@@ -4,10 +4,9 @@ import { Container, Grid } from '@mui/material'
 import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import CompanyDetailCard from '@components/cards/detailCard/companyDetail/companyDetailCard'
 import CompanyDescriptionCard from '@components/cards/detailCard/companyDetail/companyDescriptionCard'
-// import ImagesCard from '@components/cards/profileCard/imagesCard'
 import { Company } from '@shared/interfaces'
 import resumiroApi from '@apis/resumiroApi'
-import { smootherstep } from 'three/src/math/MathUtils'
+import prisma from '@libs/prisma'
 
 const CompanyDetailPage: React.FC<Company> = ({
   background,
@@ -55,11 +54,15 @@ const CompanyDetailPage: React.FC<Company> = ({
 export async function getServerSideProps(context: { query: { id: string } }) {
   const { id } = context.query
 
-  const companyDetail = await resumiroApi
-    .getCompanyById(id)
-    .then(res => res.data)
+  const companyDetail = await prisma.companies.findFirst({
+    where: { id: Number(id) },
+    include: {
+      location: true
+    }
+  })
+
   return {
-    props: companyDetail.data
+    props: companyDetail
   }
 }
 

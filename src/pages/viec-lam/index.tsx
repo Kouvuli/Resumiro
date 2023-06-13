@@ -6,14 +6,16 @@ import JobGrid from '@components/grid/jobGrid'
 import SearchResultBar from '@components/ui/bar/searchResultBar'
 import SearchBar from '@components/ui/bar/searchBar'
 import ArticleLayout from '@components/layouts/article'
-import { JobCardProps } from '@components/cards/jobCard'
-import resumiroApi from '@apis/resumiroApi'
-import { Job, Recruiter, Skill } from '@shared/interfaces'
+import { Skill } from '@shared/interfaces'
 import Image from 'next/image'
 import _ from 'lodash'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { jobSelector, web3Selector } from '@redux/selectors'
-import jobSlice, { createJob } from '@redux/reducers/jobSlice'
+import jobSlice, {
+  createJob,
+  fetchRecruiterById,
+  getJobs
+} from '@redux/reducers/jobSlice'
 import { useRouter } from 'next/router'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
@@ -30,22 +32,14 @@ import {
   Select,
   SelectChangeEvent
 } from '@mui/material'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { useSession } from 'next-auth/react'
 import MySnackBar from '@components/ui/bar/snackbar'
-type JobListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: JobCardProps[]
-}
+import prisma from '@libs/prisma'
+
 interface JobPageProps {
-  data: JobListPerPage
   allSkills: Skill[]
   allFields: fields[]
   allLocations: locations[]
-  recruiter?: Recruiter
 }
 
 const orderOptions = [
@@ -79,22 +73,13 @@ const jobTypes = [
 ]
 
 const JobPage: React.FC<JobPageProps> = ({
-  data,
   allSkills,
   allFields,
-  allLocations,
-  recruiter
+  allLocations
 }) => {
   const [open, setOpen] = useState(false)
   const [skill, setSkill] = useState<string[]>([])
   const { data: session } = useSession()
-  const [hasAddJob, setHasAddJob] = useState(false)
-  useEffect(() => {
-    if (!_.isEmpty(recruiter)) {
-      setHasAddJob(true)
-    }
-  }, [])
-
   const handleOpenAddJobModal = () => setOpen(true)
   const handleCloseAddJobModal = () => setOpen(false)
   const dispatch = useAppDispatch()
@@ -103,7 +88,6 @@ const JobPage: React.FC<JobPageProps> = ({
     loading,
     page,
     limit,
-    total,
     showMessage,
     message,
     messageType,
@@ -113,9 +97,23 @@ const JobPage: React.FC<JobPageProps> = ({
     job_type,
     min_salary,
     max_salary,
-    experience
+    experience,
+    recruiter,
+    hasAddJob,
+    data
   } = useAppSelector(jobSelector)
   const { resumiro, wallet } = useAppSelector(web3Selector)
+
+  useEffect(() => {
+    if (session && session.user!.role !== 'candidate') {
+      dispatch(fetchRecruiterById(session.user!.id))
+    }
+  }, [])
+
+  useEffect(() => {
+    dispatch(getJobs(router.query))
+  }, [router.query])
+
   const searchHandler = () => {
     let query: any = {}
     if (page !== '') {
@@ -241,8 +239,8 @@ const JobPage: React.FC<JobPageProps> = ({
     })
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(jobSlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -454,11 +452,13 @@ const JobPage: React.FC<JobPageProps> = ({
             hasAddJob={hasAddJob}
           />
 
-          <SearchResultBar
-            options={orderOptions}
-            numberSearch={data.data.length}
-            handleChange={handleJobOrderChange}
-          />
+          {data.data && (
+            <SearchResultBar
+              options={orderOptions}
+              numberSearch={data.data.length}
+              handleChange={handleJobOrderChange}
+            />
+          )}
 
           <Grid item display={{ xs: 'none', md: 'unset' }} md={3}>
             <Filter />
@@ -482,52 +482,23 @@ const JobPage: React.FC<JobPageProps> = ({
   )
 }
 
-export async function getServerSideProps(context: {
-  req: any
-  res: any
-  query: any
-}) {
-  // const { page = 1, limit = 7 } = context.query
-  const session = await getServerSession(context.req, context.res, authOptions)
+export async function getServerSideProps() {
+  const allSkills = await prisma.skills.findMany()
 
-  const jobs = await resumiroApi.getJobs(context.query).then(res => res.data)
+  const allFields = await prisma.fields
+    .findMany({
+      include: {
+        jobs: true
+      }
+    })
+    .then(data => JSON.parse(JSON.stringify(data)))
 
-  const jobList = jobs.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
-    }
-  })
-  let recruiter: any = { data: {} }
-  if (session && session!.user!.email === 'recruiter') {
-    recruiter = await resumiroApi
-      .getRecruiterById(session!.user!.name!)
-      .then(res => res.data)
-  }
-
-  const allSkills = await resumiroApi.getAllSkills().then(res => res.data)
-
-  const allFields = await resumiroApi.getFields().then(res => res.data)
-
-  const allLocations = await resumiroApi.getLocations().then(res => res.data)
+  const allLocations = await prisma.locations.findMany()
   return {
     props: {
-      data: {
-        perPage: jobs.pagination.limit,
-        page: jobs.pagination.page,
-        totalPage: jobs.pagination.total,
-        data: jobList
-      },
-      allSkills: allSkills.data,
-      allFields: allFields.data,
-      allLocations: allLocations.data,
-      recruiter: recruiter.data
+      allSkills: allSkills,
+      allFields: allFields,
+      allLocations: allLocations
     }
   }
 }

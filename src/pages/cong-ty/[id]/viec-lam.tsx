@@ -1,12 +1,12 @@
 import React from 'react'
-import resumiroApi from '@apis/resumiroApi'
 import { JobCardProps } from '@components/cards/jobCard'
-import { Job } from '@shared/interfaces'
 import { Container } from '@mui/material'
 import Image from 'next/image'
 import JobGrid from '@components/grid/jobGrid'
 import ArticleLayout from '@components/layouts/article'
 import _ from 'lodash'
+import prisma from '@libs/prisma'
+import { companies, jobs, locations } from '@prisma/client'
 
 type JobListPerPage = {
   perPage: number
@@ -44,29 +44,53 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const jobs = await resumiroApi
-    .getJobsOfCompany(context.query.id, context.query)
-    .then(res => res.data)
+  const { page, limit, id } = context.query
+  let p = Number(page)
+  let l = Number(limit)
 
-  const jobList = jobs.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
+  const jobs = await prisma.jobs.findMany({
+    skip: (p - 1) * l,
+    take: l,
+    where: {
+      company_id: Number(id)
+    },
+
+    include: {
+      company: true,
+      location: true
+    }
+  })
+  const jobList = jobs.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
+      return {
+        id: job.id,
+        logo: job.company.logo,
+        jobTitle: job.title,
+        companyName: job.company.name,
+        location: job.location,
+        salary: job.salary,
+        experience: job.experience,
+        createAt: job.create_at
+      }
+    }
+  )
+  const totalJobs = await prisma.jobs.count({
+    where: {
+      company_id: Number(id)
     }
   })
 
   return {
     props: {
       data: {
-        perPage: jobs.pagination.limit,
-        page: jobs.pagination.page,
-        totalPage: jobs.pagination.total,
+        perPage: limit,
+        page: page,
+        totalPage: Math.round(totalJobs / l),
         data: jobList
       }
     }

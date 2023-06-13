@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -147,7 +147,7 @@ const JobDetailCard: React.FC<JobDetailCardProps> = ({
           </li>
         </ul>
       </CardContent>
-      {session && session!.user!.email! === 'candidate' && (
+      {session && session.user!.role === 'candidate' && (
         <CardActions sx={{ padding: '24px 24px 24px 0' }}>
           <RoundButton
             primary

@@ -1,40 +1,35 @@
-import SkillCard from '@components/cards/profileCard/skillsCard/skillsCard'
 import { Container, Grid } from '@mui/material'
 import React, { useEffect } from 'react'
-import ExperienceCard from '@components/cards/profileCard/experienceCard/experienceCard'
-import AboutMeCard from '@components/cards/profileCard/aboutMeCard'
-import EducationCard from '@components/cards/profileCard/educationCard/educationCard'
 import BasicInfoCard from '@components/cards/profileCard/basicInfoCard'
 import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import ImagesCard from '@components/cards/profileCard/imagesCard'
 import ArticleLayout from '@components/layouts/article'
-import { useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-import {
-  fetchAllCompanies,
-  fetchAllSkills,
-  fetchCandidateById,
-  fetchRecruiterById
-} from '@redux/reducers/profileSlice'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
-import MySnackBar from '@components/ui/bar/snackbar'
-import CompanyCard from '@components/cards/companyCard'
 import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
-import resumiroApi from '@apis/resumiroApi'
-import { candidates, companies, recruiters, skills } from '@prisma/client'
-import { Candidate, Company, Skill } from '@shared/interfaces'
-interface RecruiterProfilePageProps {
-  user: any
-}
+import { useAppDispatch, useAppSelector } from '@hooks/index'
+import { recruiterProfileSelector } from '@redux/selectors'
+import { fetchRecruiterById } from '@redux/reducers/recruiterProfileSlice'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+interface RecruiterProfilePageProps {}
 
-const RecruiterProfilePage: React.FC<RecruiterProfilePageProps> = ({
-  user
-}) => {
+const RecruiterProfilePage: React.FC<RecruiterProfilePageProps> = ({}) => {
+  const { data: session } = useSession()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { user } = useAppSelector(recruiterProfileSelector)
+  useEffect(() => {
+    if (session) {
+      const recruiterId = Array.isArray(router.query!.recruiterId!)
+        ? router.query!.recruiterId![0]
+        : router.query!.recruiterId!
+      dispatch(fetchRecruiterById(recruiterId))
+    }
+  }, [])
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
-      <ArticleLayout title="Cá nhân">
+      <ArticleLayout title={`Trang cá nhân của ${user.username}`}>
         <Container
           sx={{
             paddingTop: '2rem ',
@@ -80,7 +75,6 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const { recruiterId } = context.query
   const session = await getServerSession(context.req, context.res, authOptions)
 
   if (!session) {
@@ -92,23 +86,15 @@ export async function getServerSideProps(context: {
     }
   }
 
-  if (session?.user?.email === 'recruiter') {
+  if (session.user!.role === 'recruiter') {
     return {
       notFound: true
-      // redirect: {
-      //   destination: '/404',
-      //   permanent: false
-      // }
     }
   }
-  const recruiterDetail = await resumiroApi
-    .getRecruiterById(recruiterId)
-    .then(res => res.data)
 
   return {
     props: {
-      session: session,
-      user: recruiterDetail.data
+      session: session
     }
   }
 }

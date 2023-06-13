@@ -6,7 +6,7 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 
 interface FilterTextFieldProps {
   label: string
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (_event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const CustomFilterTextField = styled(OutlinedInput)(({}) => ({

@@ -11,7 +11,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import RoundButton from '@components/ui/button/roundButton'
 import { locations } from '@prisma/client'
-import { Job } from '@shared/interfaces'
 import { useRouter } from 'next/router'
 interface CompanyDetailCardProps {
   companyName: string

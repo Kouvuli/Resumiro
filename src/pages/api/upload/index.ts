@@ -66,7 +66,7 @@ apiRoute.post(async (req, res) => {
 
   res.status(200).json({
     message: 'Upload file successfully',
-    status: 'success',
+    status: 'ok',
     data: url
   })
 })

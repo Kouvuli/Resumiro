@@ -87,7 +87,7 @@ const CompanyBriefCard: React.FC<CompanyBriefCardProps> = ({
                 {scale}
               </Typography>
 
-              <IconButton sx={{ my: 1 }} href={website}>
+              <IconButton sx={{ my: 1 }} href={website!}>
                 <LanguageIcon />
               </IconButton>
             </div>

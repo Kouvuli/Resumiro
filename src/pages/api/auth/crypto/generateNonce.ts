@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 import crypto from 'crypto'
 
 interface Data {
@@ -19,7 +19,6 @@ export default async function generateNonce(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
   const { address_wallet } = req.body
   prisma.$connect()
   if (req.method !== 'POST') return
@@ -33,9 +32,7 @@ export default async function generateNonce(
   // Create or update the nonce for the given user
   //  see: https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#upsert
 
-  let user
-
-  user = await prisma.users.update({
+  await prisma.users.update({
     where: { address_wallet: address_wallet },
     data: {
       nonce: {

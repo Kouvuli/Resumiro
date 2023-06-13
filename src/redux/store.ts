@@ -1,9 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
+import authRequestSlice from './reducers/authRequestSlice'
+import candidateProfileSlice from './reducers/candidateProfileSlice'
 import companySlice from './reducers/companySlice'
 import headerSlice from './reducers/headerSlice'
 import jobDetailSlice from './reducers/jobDetailSlice'
 import jobSlice from './reducers/jobSlice'
 import profileSlice from './reducers/profileSlice'
+import recruiterProfileSlice from './reducers/recruiterProfileSlice'
 import resumeSlice from './reducers/resumeSlice'
 import signInSlice from './reducers/signInSlice'
 import signUpSlice from './reducers/signUpSlice'
@@ -19,9 +22,11 @@ const store = configureStore({
     signIn: signInSlice.reducer,
     signUp: signUpSlice.reducer,
     header: headerSlice.reducer,
+    authRequest: authRequestSlice.reducer,
+    candidateProfile: candidateProfileSlice.reducer,
+    recruiterProfile: recruiterProfileSlice.reducer,
     web3: web3Slice.reducer,
   },
-  // web3Slice is current using non-serializable values (provider, Resumiro class). This setting is for ignoring the warnings. 
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({
     serializableCheck: false,

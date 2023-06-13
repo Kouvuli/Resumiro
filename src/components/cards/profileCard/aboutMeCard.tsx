@@ -57,7 +57,7 @@ const AboutMeCard: React.FC<AboutMeCardProps> = ({ type, style, about }) => {
 
     dispatch(
       updateCandidateAbout({
-        id: session!.user!.name!,
+        id: session!.user!.id,
         data: {
           about: about
         }

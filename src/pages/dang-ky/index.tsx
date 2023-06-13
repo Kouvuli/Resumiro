@@ -36,8 +36,8 @@ const roles = [
     label: 'Recruiter'
   },
   {
-    value: 'admin_recruiter',
-    label: 'Admin Recruiter'
+    value: 'admin',
+    label: 'Admin'
   }
 ]
 
@@ -163,8 +163,8 @@ export default function SignUpPage() {
   }
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(signUpSlice.actions.toggleSnackBar({ showMessage: false }))
   }

@@ -2,7 +2,6 @@ import React from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import Image from 'next/image'
 import { styled } from '@mui/material/styles'
 import { certificates } from '@prisma/client'
 import { IconButton, Button } from '@mui/material'
@@ -16,10 +15,16 @@ import { Box } from '@mui/material'
 import { TextField } from '@mui/material'
 import { Grid } from '@mui/material'
 import { CircularProgress } from '@mui/material'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import HourglassFullIcon from '@mui/icons-material/HourglassFull'
+import CancelIcon from '@mui/icons-material/Cancel'
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
 import {
   deleteCertificate,
   updateCertificate
 } from '@redux/reducers/profileSlice'
+import Link from 'next/link'
+import { compareDates } from '@utils/timeUtil'
 const CustomEducationItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
   width: '100%'
@@ -27,10 +32,15 @@ const CustomEducationItem = styled(Card)(({}) => ({
 
 interface EducationItemProps {
   data: certificates
+
   isModify: boolean
 }
 
-const EducationItem: React.FC<EducationItemProps> = ({ data, isModify }) => {
+const EducationItem: React.FC<EducationItemProps> = ({
+  data,
+
+  isModify
+}) => {
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
   const { resumiro, wallet } = useAppSelector(web3Selector)
@@ -79,11 +89,49 @@ const EducationItem: React.FC<EducationItemProps> = ({ data, isModify }) => {
               <Typography
                 variant="h6"
                 color="text.primary"
-                sx={{ mb: 1.4, fontSize: '1.2rem' }}
+                sx={{
+                  mb: 1.4,
+                  fontSize: '1.1rem',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
               >
                 {data.name}
+
+                {compareDates(data.verified_at, new Date()) < 0 && (
+                  <AccessTimeFilledIcon
+                    sx={{
+                      fontSize: '1.3rem',
+                      ml: 1,
+                      color: 'warning.main'
+                    }}
+                  />
+                )}
+                {data.status === 'pending' &&
+                  compareDates(data.verified_at, new Date()) >= 0 && (
+                    <HourglassFullIcon
+                      sx={{
+                        fontSize: '1.3rem',
+                        ml: 1,
+                        color: 'rgba(0,0,0,0.5)'
+                      }}
+                    />
+                  )}
+                {data.status === 'rejected' &&
+                  compareDates(data.verified_at, new Date()) >= 0 && (
+                    <CancelIcon
+                      sx={{ fontSize: '1.3rem', ml: 1, color: 'warning.main' }}
+                    />
+                  )}
+                {data.status === 'verified' &&
+                  compareDates(data.verified_at, new Date()) >= 0 && (
+                    <CheckCircleIcon
+                      sx={{ fontSize: '1.3rem', ml: 1, color: 'info.main' }}
+                    />
+                  )}
               </Typography>
             </div>
+
             <div style={{ flexGrow: 1 }} />
             {isModify && (
               <div>
@@ -98,13 +146,24 @@ const EducationItem: React.FC<EducationItemProps> = ({ data, isModify }) => {
           </div>
         }
         subheader={
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mb: 1, fontSize: '1.1rem' }}
-          >
-            {new Date(data.verified_at).toLocaleDateString()}
-          </Typography>
+          <>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mb: 1, fontSize: '1.1rem' }}
+            >
+              {new Date(data.verified_at).toLocaleDateString()}
+            </Typography>
+            {data.source && (
+              <Link
+                href={data.source}
+                style={{ color: 'blue', fontWeight: '600' }}
+                target="_blank"
+              >
+                Xem file
+              </Link>
+            )}
+          </>
         }
         sx={{ padding: '0', alignItems: 'start' }}
       />

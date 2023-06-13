@@ -1,10 +1,10 @@
 import React from 'react'
 import { Card, CardHeader, Typography } from '@mui/material'
-import Image from 'next/image'
-import { candidates } from '@prisma/client'
+import { users } from '@prisma/client'
 import { styled } from '@mui/material/styles'
+import Link from 'next/link'
 interface JobApplicantItemProps {
-  data: candidates
+  data: users
 }
 const CustomJobApplicantItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
@@ -15,20 +15,20 @@ const JobApplicantItem: React.FC<JobApplicantItemProps> = ({ data }) => {
     <CustomJobApplicantItem sx={{ width: '100%' }}>
       <CardHeader
         avatar={
-          data.avatar && (
-            <Image
-              style={{ borderRadius: '5px' }}
-              src={data.avatar!}
-              width={80}
-              height={80}
-              alt="avatar"
-            />
-          )
+          <img
+            style={{ borderRadius: '5px' }}
+            src={data.avatar ? data.avatar : '/images/default-user.jpg'}
+            width={80}
+            height={80}
+            alt="avatar"
+          />
         }
         title={
-          <Typography variant="h6" color="text.primary" sx={{ mb: 1 }}>
-            {data.full_name}
-          </Typography>
+          <Link href={`/ung-vien/${data.id}`}>
+            <Typography variant="h6" color="text.primary" sx={{ mb: 1 }}>
+              {data.full_name ? data.full_name : data.username}
+            </Typography>
+          </Link>
         }
         subheader={
           <div>

@@ -7,8 +7,7 @@ import {
   certificates,
   experiences,
   locations,
-  jobs_skills,
-  jobs_applicants,
+  request,
   notifications,
   notifications_users,
   rooms
@@ -30,6 +29,12 @@ export type Resume = resumes & {
   owner: users & {
     users_skills: { candidate_id: number; skill_id: number }[]
   }
+}
+
+export type Request = request & {
+  owner: users
+  certificate: certificates | null
+  experience: experiences | null
 }
 
 export type Company = companies & {

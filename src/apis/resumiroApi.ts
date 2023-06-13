@@ -77,6 +77,7 @@ const resumiroApi = {
     finish: string
     user_id: number
     company_id: number
+    source: string
   }) => {
     const url = '/experience'
     return request.post(url, data)
@@ -88,6 +89,7 @@ const resumiroApi = {
       start: string
       finish: string
       company_id: number
+      source: string
     }
   ) => {
     const url = `/experience/${id}`
@@ -101,6 +103,7 @@ const resumiroApi = {
     name: string
     verified_at: Date
     candidate_id: number
+    source: string
   }) => {
     const url = '/certificate'
     return request.post(url, data)
@@ -110,6 +113,7 @@ const resumiroApi = {
     data: {
       name: string
       verified_at: Date
+      source: string
     }
   ) => {
     const url = `/certificate/${id}`
@@ -215,7 +219,7 @@ const resumiroApi = {
   },
   uploadFile: (data: any) => {
     const url = '/upload'
-    console.log(data)
+
     return request.post(url, data)
   },
   insertResume: (data: { title: string; data: string; owner_id: number }) => {
@@ -287,7 +291,7 @@ const resumiroApi = {
     content: string
     author_id: number
     notification_type_id: number
-    object_url: string
+    object_url: string | null
     recipients: string
   }) => {
     const url = `/notification`
@@ -303,6 +307,66 @@ const resumiroApi = {
   },
   getUserNotification: (id: number) => {
     const url = `/user/${id}/notification`
+    return request.get(url)
+  },
+  insertRequest: (data: {
+    content: string
+    certificate_id: number | null
+    experience_id: number | null
+    receiver_id: number
+    owner_id: number
+  }) => {
+    const url = `/request`
+    return request.post(url, data)
+  },
+  getCompanyAdmin(id: number) {
+    const url = `/company/${id}/admin`
+    return request.get(url)
+  },
+  getRequestsByReceiverId: (receiverId: number, params: object) => {
+    const url = `/request/receiver/${receiverId}`
+    return request.get(url, { params })
+  },
+  updateCertifcateStatus(id: number, data: { status: string }) {
+    const url = `/certificate/${id}/status`
+    return request.patch(url, data)
+  },
+  updateExperienceStatus(id: number, data: { status: string }) {
+    const url = `/experience/${id}/status`
+    return request.patch(url, data)
+  },
+  deleteRequestById(id: number) {
+    const url = `/request/${id}`
+    return request.delete(url)
+  },
+  getRoomByUserId(id: number) {
+    const url = `/user/${id}/room`
+    return request.get(url)
+  },
+  checkResumeIsAbleToView(recruiterId: number, resumeId: number) {
+    const url = `/resume/${resumeId}/recruiter/${recruiterId}`
+    return request.get(url)
+  },
+  allowRecruiterToView: (
+    id: number,
+    data: {
+      recruiter_id: number
+    }
+  ) => {
+    const url = `/resume/${id}/recruiter`
+    return request.post(url, data)
+  },
+  updateResumePrivacy: (
+    id: string,
+    data: {
+      is_public: boolean
+    }
+  ) => {
+    const url = `/resume/${id}/privacy`
+    return request.patch(url, data)
+  },
+  getAllUserResumes: (id: number) => {
+    const url = `/user/${id}/resume`
     return request.get(url)
   }
   // updatePost: (id, data) => {

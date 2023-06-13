@@ -2,7 +2,6 @@ import React from 'react'
 import Grid from '@mui/material/Grid'
 import JobCard, { JobCardProps } from '@components/cards/jobCard'
 import RoundPagination from '@components/ui/pagination/roundPagination'
-import { Job } from '@shared/interfaces'
 interface JobGridProps {
   perPage: number
   page: number

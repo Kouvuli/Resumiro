@@ -79,17 +79,18 @@ const OwnedJobCard: React.FC<OwnedJobCardProps> = ({
         />
         <CardContent sx={{ py: 'unset' }}>
           <List disablePadding>
-            {jobs!.map((item, index) => (
-              <CustomListItem key={index}>
-                <OwnedJobItem
-                  data={item}
-                  isModify={isModify}
-                  allFields={allFields}
-                  allLocations={allLocations}
-                  allSkills={allSkills}
-                />
-              </CustomListItem>
-            ))}
+            {jobs &&
+              jobs.map((item, index) => (
+                <CustomListItem key={index}>
+                  <OwnedJobItem
+                    data={item}
+                    isModify={isModify}
+                    allFields={allFields}
+                    allLocations={allLocations}
+                    allSkills={allSkills}
+                  />
+                </CustomListItem>
+              ))}
           </List>
         </CardContent>
       </Card>

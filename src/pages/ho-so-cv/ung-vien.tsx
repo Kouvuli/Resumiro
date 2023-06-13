@@ -1,18 +1,16 @@
 import Container from '@mui/material/Container'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
 import SuitableJob from '@components/lists/suitableJob'
 import ArticleLayout from '@components/layouts/article'
-import { ResumeCardProps } from '@components/cards/resumeCard'
 import { JobCardProps } from '@components/cards/jobCard'
-import resumiroApi from '@apis/resumiroApi'
-import { Job, Resume } from '@shared/interfaces'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import { Modal, Box, Button, CircularProgress, TextField } from '@mui/material'
 import resumeSlice, {
   createResume,
+  fetchAllUserResumes,
   uploadResume
 } from '@redux/reducers/resumeSlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
@@ -20,22 +18,15 @@ import { resumeSelector, web3Selector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-type ResumeListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: ResumeCardProps[]
-}
+import { encryptText, randomToken } from '@utils/cryptoUtil'
+import prisma from '@libs/prisma'
+import { jobs, locations, companies } from '@prisma/client'
 
 interface ResumePageProps {
-  resumeList: ResumeListPerPage
   suitableList: JobCardProps[]
 }
 
-const ResumePage: React.FC<ResumePageProps> = ({
-  resumeList,
-  suitableList
-}) => {
+const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
@@ -45,14 +36,20 @@ const ResumePage: React.FC<ResumePageProps> = ({
     message,
     messageType,
     loading,
-    uploadedResume
+    uploadedResume,
+    allResumes
   } = useAppSelector(resumeSelector)
   const { resumiro, wallet } = useAppSelector(web3Selector)
   const [openModal, setOpenModal] = useState(false)
   const handleOpenModal = () => {
-    dispatch(resumeSlice.actions.reset())
+    dispatch(resumeSlice.actions.resetForm())
     setOpenModal(true)
   }
+  useEffect(() => {
+    if (session) {
+      dispatch(fetchAllUserResumes(session!.user!.id))
+    }
+  }, [showMessage, session])
   const handleCloseModal = () => setOpenModal(false)
   const addResumeHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -68,16 +65,18 @@ const ResumePage: React.FC<ResumePageProps> = ({
       dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+    const key = randomToken()
     await resumiro.addResume({
       title,
-      data: uploadedResume,
+      data: encryptText(uploadedResume, key),
       candidateAddress: wallet.address
     })
     dispatch(
       createResume({
         title,
-        resume: uploadedResume,
-        owner_id: Number(session!.user!.name!)
+        resume_key: key,
+        resume: encryptText(uploadedResume, key),
+        owner_id: Number(session!.user!.id)
       })
     )
     router.push({
@@ -88,7 +87,7 @@ const ResumePage: React.FC<ResumePageProps> = ({
 
   const resumeUploadHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const data = e.target.files![0]
-    console.log(data)
+
     if (data) {
       const body = new FormData()
 
@@ -97,8 +96,8 @@ const ResumePage: React.FC<ResumePageProps> = ({
     }
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -154,7 +153,9 @@ const ResumePage: React.FC<ResumePageProps> = ({
                   )
                 }
               >
-                Tải CV
+                {uploadedResume
+                  ? uploadedResume.substring(21, 45) + '...'
+                  : 'Tải CV'}
                 <input
                   hidden
                   onChange={resumeUploadHandler}
@@ -210,7 +211,7 @@ const ResumePage: React.FC<ResumePageProps> = ({
       <Container>
         <Grid container marginTop="1rem " marginBottom="5rem">
           <Grid item xs={12} md={7.5}>
-            <ResumeGrid {...resumeList} title="CV đã tải lên" />
+            <ResumeGrid {...allResumes} title="CV đã tải lên" />
           </Grid>
           <Grid item xs={12} md={4.5}>
             <SuitableJob
@@ -236,7 +237,7 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       }
     }
   }
-  if (session?.user?.email === 'recruiter') {
+  if (session.user!.role === 'recruiter' || session.user!.role === 'admin') {
     return {
       redirect: {
         destination: '/ho-so-cv',
@@ -244,42 +245,38 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       }
     }
   }
-  const data1 = await resumiroApi
-    .getCandidateById(session!.user!.name!)
-    .then(res => res.data)
 
-  const convertData = data1.data.resumes.map((item: Resume) => {
-    return {
-      id: item.id,
-      resumeTitle: item.title,
-      data: item.data,
-      createAt: item.create_at
+  const data2 = await prisma.jobs
+    .findMany({
+      skip: 0,
+      take: 7,
+      include: {
+        company: true,
+        location: true
+      }
+    })
+    .then(res => JSON.parse(JSON.stringify(res)))
+  const suitableList = data2.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
+      return {
+        id: job.id,
+        logo: job.company.logo,
+        jobTitle: job.title,
+        companyName: job.company.name,
+        location: job.location,
+        salary: job.salary,
+        experience: job.experience,
+        createAt: job.create_at
+      }
     }
-  })
-
-  const data2 = await resumiroApi
-    .getJobs({ page: 1, limit: 7 })
-    .then(res => res.data)
-  const suitableList = data2.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
-    }
-  })
+  )
   return {
     props: {
-      resumeList: {
-        page: null,
-        totalPages: null,
-        perPage: null,
-        data: convertData
-      },
       suitableList: suitableList
     }
   }

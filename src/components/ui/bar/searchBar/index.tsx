@@ -2,16 +2,12 @@ import React from 'react'
 import Grid from '@mui/material/Grid'
 import SearchTextField from '@components/ui/textfield/searchTextField'
 import RoundButton from '@components/ui/button/roundButton'
-import { useRouter } from 'next/router'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { jobSelector } from '@redux/selectors'
-import { useSession } from 'next-auth/react'
 import RoundSelect from '@components/ui/select'
 
 interface SearchBarProps {
-  handleChangeLocation?: (value: string) => void
+  handleChangeLocation?: (_value: string) => void
   handleSearch: () => void
-  handleSearchTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleSearchTextChange: (_e: React.ChangeEvent<HTMLInputElement>) => void
   handleAddJob?: () => void
   handleAddCompany?: () => void
   hasAddJob?: boolean
@@ -44,8 +40,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   hasLocationSelect,
   hasAddCompany
 }) => {
-  const router = useRouter()
-  const { data: session } = useSession()
   return (
     <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
       <SearchTextField

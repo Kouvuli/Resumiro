@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,7 +12,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session) {
+    res.status(401).json({
+      message: 'Unauthorized',
+      status: 'error'
+    })
+    return
+  }
   const { candidateId } = req.query
   prisma.$connect()
   if (req.method === 'GET') {
@@ -23,6 +33,9 @@ export default async function handler(
           resumes: {
             orderBy: {
               create_at: 'desc'
+            },
+            include: {
+              owner: true
             }
           },
           users_skills: {
@@ -63,6 +76,13 @@ export default async function handler(
     return
   } else if (req.method === 'PATCH') {
     const { avatar, background, full_name, email, phone } = req.body
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const data = await prisma.users
       .update({
         where: {

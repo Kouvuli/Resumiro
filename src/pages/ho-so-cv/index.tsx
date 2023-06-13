@@ -1,13 +1,8 @@
 import Container from '@mui/material/Container'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
-import SuitableJob from '@components/lists/suitableJob'
 import ArticleLayout from '@components/layouts/article'
-import { ResumeCardProps } from '@components/cards/resumeCard'
-import { JobCardProps } from '@components/cards/jobCard'
-import resumiroApi from '@apis/resumiroApi'
-import { Job, Resume } from '@shared/interfaces'
 import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import SearchBar from '@components/ui/bar/searchBar'
@@ -15,96 +10,13 @@ import SearchResultBar from '@components/ui/bar/searchResultBar'
 import Image from 'next/image'
 import Filter from '@components/lists/filter'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import resumeSlice from '@redux/reducers/resumeSlice'
-import { jobSelector, resumeSelector } from '@redux/selectors'
-import { candidates } from '@prisma/client'
+import resumeSlice, { getResumes } from '@redux/reducers/resumeSlice'
+import { resumeSelector } from '@redux/selectors'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
-type ResumeListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: ResumeCardProps[]
-}
+import MySnackBar from '@components/ui/bar/snackbar'
 
-// const resumeList: ResumeListPerPage = {
-//   perPage: 7,
-//   page: 1,
-//   totalPage: 10,
-//   data: [
-//     {
-//       id: 1,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     },
-//     {
-//       id: 2,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     },
-//     {
-//       id: 3,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     },
-//     {
-//       id: 4,
-//       resumeTitle: 'Java Intern',
-//       data: '/images/Images_1.png',
-//       createAt: new Date('2023-03-16')
-//     }
-//   ]
-// }
-
-// const suitableList: JobCardProps[] = [
-//   {
-//     id: 1,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2023-03-16')
-//   },
-//   {
-//     id: 2,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2022-03-25')
-//   },
-//   {
-//     id: 3,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2023-03-16')
-//   },
-//   {
-//     id: 4,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     logo: '/images/Images_1.png',
-//     createAt: new Date('2023-03-16')
-//   }
-// ]
-
-interface ResumeRecruiterPageProps {
-  data: ResumeListPerPage
-}
+interface ResumeRecruiterPageProps {}
 
 const orderOptions = [
   {
@@ -121,17 +33,30 @@ const orderOptions = [
   }
 ]
 
-const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
+const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({}) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
+  const {
+    page,
+    limit,
+    skill,
+    q,
+    order_by,
+    showMessage,
+    message,
+    messageType,
+    allResumes
+  } = useAppSelector(resumeSelector)
 
-  const { page, limit, skill, q, order_by } = useAppSelector(resumeSelector)
+  useEffect(() => {
+    dispatch(getResumes(router.query))
+  }, [router.query])
   const searchHandler = () => {
     let query: any = {}
-    if (page !== '') {
+    if (!page) {
       query.page = 1
     }
-    if (limit !== '') {
+    if (!limit) {
       query.limit = limit
     }
     if (q !== '') {
@@ -159,8 +84,20 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
     dispatch(resumeSlice.actions.changeSearchText(e.target.value))
   }
 
+  const handleClose = (
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
+  ) => {
+    dispatch(resumeSlice.actions.toggleSnackBar({ showMessage: false }))
+  }
   return (
     <ArticleLayout title="Hồ sơ - CV">
+      <MySnackBar
+        handleClose={handleClose}
+        message={message}
+        messageType={messageType}
+        showMessage={showMessage}
+      />
       <Container>
         <Grid container marginTop="1rem " marginBottom="5rem" rowSpacing={2}>
           <SearchBar
@@ -168,18 +105,20 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({ data }) => {
             handleSearchTextChange={handleSearchTextChange}
           />
 
-          <SearchResultBar
-            options={orderOptions}
-            numberSearch={data.data.length}
-            handleChange={handleJobOrderChange}
-          />
+          {allResumes.data && (
+            <SearchResultBar
+              options={orderOptions}
+              numberSearch={allResumes.data.length}
+              handleChange={handleJobOrderChange}
+            />
+          )}
 
           <Grid item display={{ xs: 'none', md: 'unset' }} md={3}>
             <Filter type={2} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {!_.isEmpty(data.data) ? (
-              <ResumeGrid {...data} type={2} />
+            {!_.isEmpty(allResumes.data) ? (
+              <ResumeGrid {...allResumes} type={2} />
             ) : (
               <Image
                 style={{ display: 'flex', margin: 'auto' }}
@@ -210,7 +149,7 @@ export async function getServerSideProps(context: {
       }
     }
   }
-  if (session?.user?.email === 'candidate') {
+  if (session.user!.role === 'candidate') {
     return {
       redirect: {
         destination: '/ho-so-cv/ung-vien',
@@ -218,27 +157,10 @@ export async function getServerSideProps(context: {
       }
     }
   }
-  const resumes = await resumiroApi
-    .getResumes(context.query)
-    .then(res => res.data)
 
-  const convertData = resumes.data.map((item: Resume) => {
-    return {
-      id: item.id,
-      resumeTitle: item.title,
-      data: item.data,
-      createAt: item.create_at,
-      owner: item.owner
-    }
-  })
   return {
     props: {
-      data: {
-        perPage: resumes.pagination.limit,
-        page: resumes.pagination.page,
-        totalPage: resumes.pagination.total,
-        data: convertData
-      }
+      session
     }
   }
 }

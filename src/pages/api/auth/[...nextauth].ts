@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
 import { verifyPassword } from '@utils/authUtils'
-import { NextAuthOptions, RequestInternal } from 'next-auth'
+import { NextAuthOptions } from 'next-auth'
 import { ethers } from 'ethers'
 
 export const authOptions: NextAuthOptions = {
@@ -13,16 +13,38 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt'
   },
   secret: process.env.SECRET,
-
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+        token.walletAddress = user.walletAddress
+      }
+      return token
+    },
+    session({ session, token }) {
+      /* Step 2: update the session.user based on the token object */
+      if (token && session.user) {
+        session.user.id = token.id
+        session.user.role = token.role
+        session.user.walletAddress = token.walletAddress
+      }
+      return session
+    }
+  },
   providers: [
     CredentialsProvider({
-      async authorize(credentials: {
-        username: string
-        password: string
-        signedNonce?: string
-        address_wallet?: string
-      }) {
-        const prisma = new PrismaClient()
+      credentials: {
+        username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
+        password: { label: 'Password', type: 'password' },
+        signedNonce: { label: 'Signed Nonce', type: 'text' },
+        address_wallet: {
+          label: 'Address Wallet',
+          type: 'text',
+          placeholder: '0x...'
+        }
+      },
+      async authorize(credentials) {
         prisma.$connect()
         if (!credentials) return null
 
@@ -63,13 +85,15 @@ export const authOptions: NextAuthOptions = {
 
           if (!user) {
             prisma.$disconnect()
-            throw new Error('No user found')
+            return null
+            // throw new Error('No user found')
           }
 
           const isValid = await verifyPassword(password, user.password)
           if (!isValid) {
             prisma.$disconnect()
-            throw new Error('Could not log you in')
+            return null
+            // throw new Error('Could not log you in')
           }
         }
 
@@ -84,10 +108,12 @@ export const authOptions: NextAuthOptions = {
 
         prisma.$disconnect()
         return {
-          name: user.id,
+          id: user.id.toString(),
+          name: user.username,
           image: user.avatar,
-          email: user.role,
-          walletAddress: user.address_wallet
+          email: user.email,
+          walletAddress: user.address_wallet,
+          role: user.role
         }
       }
     })

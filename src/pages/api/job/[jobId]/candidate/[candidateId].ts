@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,7 +12,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session || session.user?.role !== 'candidate') {
+    res.status(401).json({
+      message: 'Unauthorized',
+      status: 'error'
+    })
+    return
+  }
+
   const { jobId, candidateId } = req.query
   prisma.$connect()
 
@@ -37,14 +48,14 @@ export default async function handler(
     if (!data) {
       res.status(200).json({
         message: 'Candidate not applied',
-        status: 'success'
+        status: 'ok'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
       message: 'Candidate already apply job',
-      status: 'success',
+      status: 'ok',
       data: data
     })
   } else if (req.method === 'DELETE') {
@@ -56,17 +67,27 @@ export default async function handler(
         }
       }
     })
+
+    if (Number(candidateId) !== Number(session.user.id)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      prisma.$disconnect()
+      return
+    }
+
     if (!data) {
       res.status(200).json({
         message: 'Cannot cancel applied job',
-        status: 'success'
+        status: 'ok'
       })
       prisma.$disconnect()
       return
     }
     res.status(200).json({
       message: 'Successfully cancel applied job',
-      status: 'success',
+      status: 'ok',
       data: data
     })
   }

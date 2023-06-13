@@ -2,7 +2,6 @@ import React from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import Image from 'next/image'
 import { styled } from '@mui/material/styles'
 import { IconButton } from '@mui/material'
 import { deleteCandidateSkill } from '@redux/reducers/profileSlice'
@@ -30,7 +29,7 @@ const SkillItem: React.FC<SkillItemProps> = ({ id, name, isModify }) => {
     await resumiro.disconnectCandidateSkill(wallet.address, [id])
     dispatch(
       deleteCandidateSkill({
-        id: session!.user!.name!,
+        id: session!.user!.id,
         data: { skill_id: id! }
       })
     )

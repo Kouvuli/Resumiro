@@ -2,11 +2,9 @@ import React from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import Image from 'next/image'
 import { styled } from '@mui/material/styles'
 import { Recruiter } from '@shared/interfaces'
 import { IconButton } from '@mui/material'
-import CreateIcon from '@mui/icons-material/Create'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { deleteCompanyFromRecruiter } from '@redux/reducers/profileSlice'
@@ -49,7 +47,7 @@ const OwnedRecruiterItem: React.FC<OwnedRecruiterItemProps> = ({
     <CustomOwnedRecruiterItem>
       <CardHeader
         avatar={
-          <Image
+          <img
             style={{ borderRadius: '5px' }}
             src={data.avatar || '/images/default-user.jpg'}
             width={80}
@@ -78,8 +76,8 @@ const OwnedRecruiterItem: React.FC<OwnedRecruiterItemProps> = ({
             <div style={{ flexGrow: 1 }} />
             {isModify && (
               <div>
-                <IconButton>
-                  <DeleteIcon onClick={deleteRecruiterHandler} />
+                <IconButton onClick={deleteRecruiterHandler}>
+                  <DeleteIcon />
                 </IconButton>
               </div>
             )}

@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 export type Data = {
   message: string
   status: string
@@ -11,7 +13,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session || session.user?.role !== 'admin') {
+    res.status(401).json({
+      message: 'Unauthorized',
+      status: 'error'
+    })
+    return
+  }
+
   prisma.$connect()
   if (req.method === 'GET') {
     const { q, page = 1, limit = 8 } = req.query
@@ -30,9 +41,7 @@ export default async function handler(
           {
             company_id: null
           },
-          {
-            is_admin: false
-          },
+
           {
             username: {
               search: q ? qList.join('|') : undefined
@@ -47,9 +56,6 @@ export default async function handler(
         AND: [
           {
             company_id: null
-          },
-          {
-            is_admin: false
           },
           {
             username: {

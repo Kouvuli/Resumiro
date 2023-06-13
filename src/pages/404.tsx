@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import Button from '@mui/material/Button'
 import ArticleLayout from '@components/layouts/article'
 const NotFoundPage = () => {
@@ -25,7 +24,9 @@ const NotFoundPage = () => {
         <Button
           color="primary"
           href="/"
-          variant="text"
+          variant="contained"
+          disableElevation
+          disableRipple
           sx={{ p: '8px 16px', width: 200 }}
         >
           Trở về trang chủ

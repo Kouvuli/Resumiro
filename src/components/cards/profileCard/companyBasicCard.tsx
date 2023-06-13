@@ -1,10 +1,8 @@
 import {
-  Avatar,
   Box,
   Card,
   CardContent,
   CardHeader,
-  CardMedia,
   Grid,
   IconButton,
   Modal,
@@ -12,18 +10,18 @@ import {
   Typography
 } from '@mui/material'
 import CreateIcon from '@mui/icons-material/Create'
+import AddIcon from '@mui/icons-material/Add'
 import React, { useState } from 'react'
-import { locations, companies } from '@prisma/client'
+import { locations, companies, roles } from '@prisma/client'
 import { styled } from '@mui/material/styles'
-import Link from 'next/link'
 import Image from 'next/image'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector, web3Selector } from '@redux/selectors'
 import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button'
 import profileSlice, {
+  applyCompany,
   updateCompany,
-  updateRecruiterCompany,
   uploadBackground,
   uploadLogo
 } from '@redux/reducers/profileSlice'
@@ -35,8 +33,9 @@ interface CompanyBasicCardProps {
   type?: number
   style?: React.CSSProperties
   company?: companies
-  isAdmin?: boolean
+  role?: roles
   allLocations?: locations[]
+  allCompanies?: companies[]
 }
 
 const CustomCard = styled(Card)(({}) => ({
@@ -48,12 +47,14 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
   type,
   style,
   company,
-  isAdmin,
-  allLocations
+  role,
+  allLocations,
+  allCompanies
 }) => {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
   const [open, setOpen] = useState(false)
+  const [openApplyCompany, setOpenApplyCompany] = useState(false)
   const {
     loading,
     uploadBackgroundLoading,
@@ -62,6 +63,28 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
     uploadedBackground
   } = useAppSelector(profileSelector)
   const { resumiro, wallet } = useAppSelector(web3Selector)
+  const handleOpenAddCompanyModal = () => {
+    setOpenApplyCompany(true)
+  }
+  const handleCloseAddCompanyModal = () => setOpenApplyCompany(false)
+
+  const handleAddCompanySubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const companyId = data.get('company')
+    if (!companyId) return
+    dispatch(
+      applyCompany({
+        owner_id: Number(session!.user!.id),
+        title: 'Thông báo',
+        content: 'yêu cầu gia nhập',
+        company_id: Number(companyId)
+      })
+    )
+    setOpenApplyCompany(false)
+  }
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -168,7 +191,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
                     src={
                       company.logo !== null
                         ? company.logo
-                        : '/images/Images_1.png'
+                        : '/images/default-company.png'
                     }
                   />
                 }
@@ -227,11 +250,18 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
           </Typography>
         }
         action={
-          isAdmin && (
-            <IconButton onClick={handleOpen}>
-              <CreateIcon />
-            </IconButton>
-          )
+          <>
+            {role === 'admin' && (
+              <IconButton onClick={handleOpen}>
+                <CreateIcon />
+              </IconButton>
+            )}
+            {role === 'recruiter' && !company && (
+              <IconButton onClick={handleOpenAddCompanyModal}>
+                <AddIcon />
+              </IconButton>
+            )}
+          </>
         }
       />
       {company && (
@@ -246,7 +276,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
                   src={
                     company.logo !== null
                       ? company.logo
-                      : '/images/Images_1.png'
+                      : '/images/default-company.png'
                   }
                 />
               }
@@ -504,6 +534,88 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
           </Modal>
         </CardContent>
       )}
+      <Modal open={openApplyCompany} onClose={handleCloseAddCompanyModal}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleAddCompanySubmit}
+          sx={{
+            borderRadius: '5px',
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4
+          }}
+        >
+          <Grid container alignItems="center">
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                select
+                name="company"
+                id="company"
+                label="Company"
+                defaultValue={1}
+                SelectProps={{
+                  native: true
+                }}
+              >
+                {!_.isEmpty(allCompanies) &&
+                  allCompanies!.map((company: companies, i) => (
+                    <option value={company.id} key={i}>
+                      {company.name}
+                    </option>
+                  ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'end',
+                  marginTop: '1rem'
+                }}
+              >
+                <Button
+                  variant="contained"
+                  disableElevation
+                  disableRipple
+                  color="primary"
+                  onClick={handleCloseAddCompanyModal}
+                  sx={{
+                    mr: 1,
+                    p: 1.5,
+                    textTransform: 'capitalize',
+                    fontSize: '1rem'
+                  }}
+                >
+                  Huỷ
+                </Button>
+                <Button
+                  type="submit"
+                  disableElevation
+                  disableRipple
+                  variant="contained"
+                  color="secondary"
+                  endIcon={loading && <CircularProgress size={18} />}
+                  sx={{
+                    p: 1.5,
+                    textTransform: 'capitalize',
+                    fontSize: '1rem'
+                  }}
+                >
+                  OK
+                </Button>
+              </div>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
     </Card>
   )
 }

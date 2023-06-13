@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,7 +12,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session) {
+    res.status(401).json({
+      message: 'Unauthorized',
+      status: 'error'
+    })
+    return
+  }
+
   const { userId } = req.query
   prisma.$connect()
   if (req.method === 'GET') {
@@ -35,9 +46,10 @@ export default async function handler(
         return
       })
     if (!user) {
-      res.status(404).json({
-        message: 'Cannot count user notification',
-        status: 'error'
+      res.status(200).json({
+        message: 'Successfully count user notification',
+        status: 'ok',
+        data: 0
       })
       prisma.$disconnect()
       return

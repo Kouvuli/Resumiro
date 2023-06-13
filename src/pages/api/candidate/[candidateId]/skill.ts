@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,11 +12,26 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session || session.user?.role !== 'candidate') {
+    res.status(401).json({
+      message: 'Unauthorized',
+      status: 'error'
+    })
+    return
+  }
   const { candidateId } = req.query
   prisma.$connect()
   if (req.method === 'POST') {
     const { skill_id } = req.body
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const existingSkill = await prisma.skills.findFirst({
       where: {
         id: Number(skill_id)
@@ -71,6 +88,13 @@ export default async function handler(
     return
   } else if (req.method === 'DELETE') {
     const { skill_id } = req.body
+    if (Number(session.user?.id) !== Number(candidateId)) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const existingSkill = await prisma.skills.findFirst({
       where: {
         id: Number(skill_id)

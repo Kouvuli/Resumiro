@@ -9,25 +9,33 @@ import styles from './styles.module.css'
 import { Button } from '@mui/material'
 import ShareIcon from '@mui/icons-material/Share'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
-import { candidates } from '@prisma/client'
+import { users } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { deleteResume } from '@redux/reducers/resumeSlice'
+import { useAppDispatch } from '@hooks/index'
+import {
+  checkIfAllowedToView,
+  deleteResume,
+  updateResumePrivacy
+} from '@redux/reducers/resumeSlice'
 import { useRouter } from 'next/router'
 import { web3Selector } from '@redux/selectors'
+import { decryptText } from '@utils/cryptoUtil'
+import { useSession } from 'next-auth/react'
+import candidateProfileSlice from '@redux/reducers/candidateProfileSlice'
 export interface ResumeCardProps {
   index?: number
   type?: number
   id: number
   resumeTitle: string
   data: string
-  owner: candidates
+  owner: users
   createAt: Date
+  resumeKey: string
+  isPublic: boolean
 }
 
 const CustomResumeCard = styled(Card)(({}) => ({
@@ -57,21 +65,54 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   id,
   owner,
   createAt,
-  type
+  type,
+  resumeKey,
+  isPublic
 }) => {
-  const [page, setPage] = useState(1)
+  const [page, _setPage] = useState(1)
   const canvasRef = useRef(null)
+  const { data: session } = useSession()
   const dispatch = useAppDispatch()
   const { resumiro, wallet } = useAppSelector(web3Selector)
   const router = useRouter()
-  const { pdfDocument, pdfPage } = usePdf({
-    file: data,
+  const { pdfDocument } = usePdf({
+    file: decryptText(data, resumeKey),
     canvasRef,
     page
-
-    // scale: 0.65
   })
+  const viewResumeHandler = () => {
+    dispatch(
+      checkIfAllowedToView({
+        resumeId: id,
+        userId: Number(session!.user!.id),
+        source: decryptText(data, resumeKey),
+        title: 'Yêu cầu xem CV',
+        recipient: owner.id,
+        content: 'yêu cầu xem ' + resumeTitle + ' của bạn',
+        isPublic: isPublic
+      })
+    )
+    if (router.pathname !== 'ca-nhan' && !isPublic) {
+      dispatch(
+        candidateProfileSlice.actions.changeSnackBarMessage({
+          message: 'Đã gửi yêu cầu thành công',
+          messageType: 'success'
+        })
+      )
+      dispatch(
+        candidateProfileSlice.actions.toggleSnackBar({ showMessage: true })
+      )
+    }
+  }
 
+  const updateResumePrivacyHandler = () => {
+    dispatch(
+      updateResumePrivacy({
+        resumeId: id.toString(),
+        isPublic: !isPublic
+      })
+    )
+  }
   const deleteHandler = async () => {
     await resumiro.deleteResume(id)
     dispatch(deleteResume(id))
@@ -101,8 +142,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                 color="secondary"
                 disableElevation
                 disableFocusRipple
-                target="_blank"
-                href={data}
+                onClick={viewResumeHandler}
                 sx={{
                   boxShadow: 'unset',
                   textTransform: 'capitalize'
@@ -121,17 +161,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                   mb: 1
                 }}
               >
-                <Link href={`/ca-nhan/${owner.id}`}>Cá nhân</Link>
-              </Button>
-              <Button
-                variant="text"
-                startIcon={<FavoriteBorderIcon />}
-                sx={{
-                  textTransform: 'none',
-                  mb: 1
-                }}
-              >
-                Chính
+                <Link href={`/ung-vien/${owner.id}`}>Cá nhân</Link>
               </Button>
             </div>
           </div>
@@ -144,17 +174,29 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
           }}
           className={styles['content']}
         >
-          <CardMedia
-            component="canvas"
-            ref={canvasRef}
-            sx={{
-              width: '100%!important',
-              height: '100%!important',
-              objectFit: 'cover'
-            }}
-            // src={data}
-            // alt="green iguana"
-          />
+          {!isPublic ? (
+            <CardMedia
+              component="img"
+              src="/images/encrypted-file.jpg"
+              sx={{
+                objectFit: 'contain'
+              }}
+              // src={data}
+              // alt="green iguana"
+            />
+          ) : (
+            <CardMedia
+              component="canvas"
+              ref={canvasRef}
+              sx={{
+                width: '100%!important',
+                height: '100%!important',
+                objectFit: 'cover'
+              }}
+              // src={data}
+              // alt="green iguana"
+            />
+          )}
           {!pdfDocument && (
             <CircularProgress sx={{ display: 'flex', margin: 'auto' }} />
           )}
@@ -197,7 +239,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             <Button
               variant="contained"
               size="large"
-              href={data}
+              href={decryptText(data, resumeKey)}
               color="secondary"
               target="_blank"
               disableElevation
@@ -211,37 +253,43 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             </Button>
           </div>
           <div className={styles['action']}>
-            <Button
-              variant="text"
-              size="small"
-              startIcon={<ShareIcon />}
-              sx={{
-                textTransform: 'none',
-                mr: 2,
-                mb: 1
-              }}
-            >
-              Chia sẻ
-            </Button>
-            <Button
-              variant="text"
-              size="small"
-              startIcon={<FavoriteBorderIcon />}
-              sx={{
-                textTransform: 'none',
-                mb: 1
-              }}
-            >
-              Chính
-            </Button>
-          </div>
-          <div className={styles['action']}>
+            {isPublic ? (
+              <Button
+                variant="contained"
+                size="small"
+                disableElevation
+                disableFocusRipple
+                startIcon={<ShareIcon />}
+                onClick={updateResumePrivacyHandler}
+                sx={{
+                  textTransform: 'none',
+                  mr: 2,
+                  mb: 1
+                }}
+              >
+                Công khai
+              </Button>
+            ) : (
+              <Button
+                variant="text"
+                size="small"
+                startIcon={<ShareIcon />}
+                onClick={updateResumePrivacyHandler}
+                sx={{
+                  textTransform: 'none',
+                  mr: 2,
+                  mb: 1
+                }}
+              >
+                Công khai
+              </Button>
+            )}
             <Button
               variant="text"
               size="small"
               onClick={deleteHandler}
               startIcon={<DeleteOutlineRoundedIcon />}
-              sx={{ textTransform: 'none', color: 'grey[200]' }}
+              sx={{ textTransform: 'none' }}
             >
               Xoá
             </Button>

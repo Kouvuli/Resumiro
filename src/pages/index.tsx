@@ -7,7 +7,6 @@ import CustomerSupportIcon from '@components/ui/icons/customerSupportIcon'
 import GuaranteeIcon from '@components/ui/icons/guaranteeIcon'
 import ShieldIcon from '@components/ui/icons/shieldIcon'
 import TrophyIcon from '@components/ui/icons/trophyIcon'
-import RoundSelect from '@components/ui/select'
 import Container from '@mui/material/Container'
 import MuiBox from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -22,14 +21,9 @@ import Achieve4Icon from '@components/ui/icons/achieve4Icon'
 import AboutUsCard from '@components/cards/aboutUsCard'
 import AdvertiseCard from '@components/cards/advertiseCard'
 import ArticleLayout from '@components/layouts/article'
-import { Achievement, Blog, FeatureType, Field, Job } from '@shared/interfaces'
-import resumiroApi from '@apis/resumiroApi'
-import { fields, jobs } from '@prisma/client'
-import { fetchUserById } from '@redux/reducers/headerSlice'
-import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
-import { headerSelector } from '@redux/selectors'
+import { Achievement, Blog, FeatureType, Field } from '@shared/interfaces'
+import { fields, jobs, locations, companies } from '@prisma/client'
+import prisma from '@libs/prisma'
 const titleVariants: Variants = {
   initial: {
     opacity: 0,
@@ -45,12 +39,11 @@ const titleVariants: Variants = {
 }
 const SectionBackgroundLight = styled(MuiBox)(({ theme }) => ({
   background: theme.palette.primary.light
-  // height: '90vh',
 }))
 
-const SectionBackgroundDark = styled(MuiBox)(({ theme }) => ({
-  background: theme.palette.primary.main
-  // height: '90vh',
+const SectionBackgroundDark = styled(MuiBox)(() => ({
+  background: "url('/images/banner.jpg') no-repeat ",
+  backgroundSize: 'cover'
 }))
 
 const featureLists: FeatureType[] = [
@@ -75,51 +68,6 @@ const featureLists: FeatureType[] = [
     icon: <CustomerSupportIcon />
   }
 ]
-
-// const latestJobLists: JobCardProps[] = [
-//   {
-//     id: 1,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     createAt: new Date('2023-03-16').getTime()
-//   },
-//   {
-//     id: 2,
-//     jobTitle: 'Nhân viên bảo trì thiết bị',
-//     companyName: 'Công ty TNHH MTV Công nghệ Công nghiệp Việt Nam',
-//     location: 'Hà Nội',
-//     salary: ' VND 2.5 - 3 triệu',
-//     experience: 'Từ 1 - 3 năm',
-//     createAt: new Date('2022-03-25').getTime()
-//   }
-// ]
-
-// const fieldLists: Field[] = [
-//   {
-//     id: 1,
-//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
-//     description:
-//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-//     vacantNumber: 1022
-//   },
-//   {
-//     id: 2,
-//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
-//     description:
-//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-//     vacantNumber: 1022
-//   },
-//   {
-//     id: 3,
-//     fieldTitle: 'Nhân sự/ Human Resource/ HR',
-//     description:
-//       'Making this the first true value generator on the Internet. It of over 200 Latin words, combined with a handful.',
-//     vacantNumber: 1022
-//   }
-// ]
 
 const achievementLists: Achievement[] = [
   {
@@ -174,13 +122,22 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
   return (
     <>
       <section>
-        <SectionBackgroundDark>
-          <ArticleLayout>
-            <Container sx={{ padding: '4% 0 4%' }}>
-              <AdvertiseCard />
-            </Container>
-          </ArticleLayout>
-        </SectionBackgroundDark>
+        <ArticleLayout title="Trang chủ">
+          <SectionBackgroundDark>
+            <div
+              style={{
+                height: '100vh',
+                background: 'rgb(27,55,100,0.7)',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <Container>
+                <AdvertiseCard />
+              </Container>
+            </div>
+          </SectionBackgroundDark>
+        </ArticleLayout>
         {/* <Carousel /> */}
       </section>
       <ArticleLayout>
@@ -188,13 +145,14 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
           <section style={{ margin: '3rem 0' }}>
             <Grid
               container
-              justifyContent="center"
+              justifyContent="space-evenly"
+              alignItems="center"
               // alignItems="center"
               columnSpacing={4}
               rowSpacing={5}
             >
               {featureLists.map((feature, index) => (
-                <Grid item xs={12} md={3} key={index}>
+                <Grid item xs={12} sm={6} md={3} key={index}>
                   <FeatureCard
                     icon={feature.icon}
                     title={feature.title}
@@ -288,14 +246,13 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
                 justifyContent="space-evenly"
                 alignItems="center"
                 columnSpacing={4}
-                rowSpacing={2}
+                rowSpacing={6}
               >
                 <Grid item xs={12}>
                   <motion.div
                     style={{
                       display: 'flex',
-                      justifyContent: 'center',
-                      padding: '0 0 8%'
+                      justifyContent: 'center'
                     }}
                     variants={titleVariants}
                     initial="initial"
@@ -306,7 +263,7 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
                   </motion.div>
                 </Grid>
                 {achievementLists.map((achievement, index) => (
-                  <Grid item xs={12} md={3} key={index}>
+                  <Grid item xs={12} sm={6} md={3} key={index}>
                     <AchievementCard {...achievement} />
                   </Grid>
                 ))}
@@ -341,7 +298,7 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              <Typography variant="h4">Những bài blog về nhóm</Typography>
+              <Typography variant="h4">Những bài blog về Resumiro</Typography>
             </motion.div>
             <Slider items={blogList} />
           </section>
@@ -352,33 +309,49 @@ const Home: React.FC<HomePageProps> = ({ latestJobLists, jobTypeList }) => {
 }
 
 export async function getServerSideProps() {
-  const jobs = await resumiroApi
-    .getJobs({ page: 1, limit: 7 })
-    .then(res => res.data)
-
-  const latestJobLists = jobs.data.map((job: Job) => {
-    return {
-      id: job.id,
-      logo: job.company.logo,
-      jobTitle: job.title,
-      companyName: job.company.name,
-      location: job.location,
-      salary: job.salary,
-      experience: job.experience,
-      createAt: job.create_at
-    }
-  })
-  const jobFields = await resumiroApi.getFields().then(res => res.data)
-  const jobFieldsList = jobFields.data.map(
-    (item: fields & { jobs: jobs[] }) => {
+  const jobs = await prisma.jobs
+    .findMany({
+      skip: 0,
+      take: 7,
+      include: {
+        company: true,
+        location: true
+      }
+    })
+    .then(res => JSON.parse(JSON.stringify(res)))
+  const latestJobLists = jobs.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
       return {
-        id: item.id,
-        fieldTitle: item.name,
-        description: item.description,
-        vacantNumber: item.jobs.length
+        id: job.id,
+        logo: job.company.logo,
+        jobTitle: job.title,
+        companyName: job.company.name,
+        location: job.location,
+        salary: job.salary,
+        experience: job.experience,
+        createAt: job.create_at
       }
     }
   )
+
+  const fields = await prisma.fields.findMany({
+    include: {
+      jobs: true
+    }
+  })
+  const jobFieldsList = fields.map((item: fields & { jobs: jobs[] }) => {
+    return {
+      id: item.id,
+      fieldTitle: item.name,
+      description: item.description,
+      vacantNumber: item.jobs.length
+    }
+  })
 
   return {
     props: {

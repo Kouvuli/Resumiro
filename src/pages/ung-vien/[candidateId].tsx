@@ -8,43 +8,65 @@ import BasicInfoCard from '@components/cards/profileCard/basicInfoCard'
 import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import ImagesCard from '@components/cards/profileCard/imagesCard'
 import ArticleLayout from '@components/layouts/article'
-import { useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]'
-import {
-  fetchAllCompanies,
-  fetchAllSkills,
-  fetchCandidateById,
-  fetchRecruiterById
-} from '@redux/reducers/profileSlice'
+import { Company, Skill } from '@shared/interfaces'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
+import { useSession } from 'next-auth/react'
+import candidateProfileSlice, {
+  fetchCandidateById
+} from '@redux/reducers/candidateProfileSlice'
+import { candidateProfileSelector } from '@redux/selectors'
+import { useRouter } from 'next/router'
 import MySnackBar from '@components/ui/bar/snackbar'
-import CompanyCard from '@components/cards/companyCard'
-import CompanyBasicCard from '@components/cards/profileCard/companyBasicCard'
-import resumiroApi from '@apis/resumiroApi'
-import { candidates, companies, skills } from '@prisma/client'
-import { Candidate, Company, Skill } from '@shared/interfaces'
+import prisma from '@libs/prisma'
 interface CandidateProfilePageProps {
-  user: Candidate
   allCompanies: Company[]
   allSkills: Skill[]
 }
 
 const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
-  user,
   allCompanies,
   allSkills
 }) => {
+  const { data: session } = useSession()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { user, message, messageType, showMessage } = useAppSelector(
+    candidateProfileSelector
+  )
+  useEffect(() => {
+    if (session) {
+      const candidateId = Array.isArray(router.query!.candidateId!)
+        ? router.query!.candidateId![0]
+        : router.query!.candidateId!
+      dispatch(fetchCandidateById(candidateId))
+    }
+  }, [])
+  const handleClose = (
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
+  ) => {
+    dispatch(
+      candidateProfileSlice.actions.toggleSnackBar({ showMessage: false })
+    )
+  }
+
   return (
     <div style={{ backgroundColor: '#F6F6F6' }}>
-      <ArticleLayout title="Cá nhân">
+      <ArticleLayout title={`Trang cá nhân của ${user.username}`}>
         <Container
           sx={{
             paddingTop: '2rem ',
             paddingBottom: '5rem'
           }}
         >
+          <MySnackBar
+            handleClose={handleClose}
+            message={message}
+            messageType={messageType}
+            showMessage={showMessage}
+          />
           <Grid container columnSpacing={{ md: 2, xs: 0 }}>
             <Grid item xs={12}>
               <BackgroundCard src={user.background} alt={user.full_name} />
@@ -52,6 +74,7 @@ const CandidateProfilePage: React.FC<CandidateProfilePageProps> = ({
             <Grid item xs={12} md={8}>
               <BasicInfoCard
                 type={2}
+                id={user.id}
                 avatar={user.avatar}
                 fullName={user.full_name}
                 username={user.username}
@@ -102,7 +125,6 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const { candidateId } = context.query
   const session = await getServerSession(context.req, context.res, authOptions)
 
   if (!session) {
@@ -114,30 +136,20 @@ export async function getServerSideProps(context: {
     }
   }
 
-  if (session?.user?.email === 'candidate') {
+  if (session.user!.role === 'candidate') {
     return {
-      redirect: {
-        destination: '/ca-nhan',
-        permanent: false
-      }
+      notFound: true
     }
   }
-  const candidateDetail = await resumiroApi
-    .getCandidateById(candidateId)
-    .then(res => res.data)
 
-  const allCompanies = await resumiroApi.getAllCompanies().then(res => res.data)
-  const allSkills = await resumiroApi.getAllSkills().then(res => res.data)
+  const allCompanies = await prisma.companies.findMany()
+  const allSkills = await prisma.skills.findMany()
 
-  // const candidate = await resumiroApi
-  //   .getCandidateById(session!.user!.name!)
-  //   .then(res => res.data)
   return {
     props: {
       session: session,
-      user: candidateDetail.data,
-      allCompanies: allCompanies.data,
-      allSkills: allSkills.data
+      allCompanies: allCompanies,
+      allSkills: allSkills
     }
   }
 }

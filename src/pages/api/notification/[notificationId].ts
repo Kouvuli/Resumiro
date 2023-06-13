@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,12 +12,26 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session) {
+    res.status(401).json({
+      message: 'Unauthorized',
+      status: 'error'
+    })
+    return
+  }
+
   const { notificationId } = req.query
   prisma.$connect()
   let id = Number(notificationId)
 
   if (req.method === 'DELETE') {
+    await prisma.notifications_users.deleteMany({
+      where: {
+        notification_id: id
+      }
+    })
     const data = await prisma.notifications
       .delete({
         where: {

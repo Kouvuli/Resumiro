@@ -15,7 +15,6 @@ import profileSlice, {
   fetchAllCompanies,
   fetchAllFields,
   fetchAllLocations,
-  fetchAllRecruiterSameCompany,
   fetchAllSkills,
   fetchCandidateById,
   fetchRecruiterById
@@ -48,19 +47,16 @@ const ProfilePage = () => {
     dispatch(fetchAllFields())
   }, [])
   useEffect(() => {
-    if (session?.user?.email === 'candidate') {
-      dispatch(fetchCandidateById(session!.user!.name!))
+    if (session!.user!.role === 'candidate') {
+      dispatch(fetchCandidateById(session!.user!.id))
     } else {
-      dispatch(fetchRecruiterById(session!.user!.name!))
-      if (user.is_admin) {
-        dispatch(fetchAllRecruiterSameCompany(user.company_id))
-      }
+      dispatch(fetchRecruiterById(session!.user!.id))
     }
   }, [showMessage])
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(profileSlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -90,21 +86,21 @@ const ProfilePage = () => {
                 fullN ame={user.full_name}
                 username={user.username}
                 role={user.role}
-                is_admin={user.is_admin}
                 phone={user.phone}
                 background={user.background}
                 email={user.email}
               />
 
-              {user.role === 'recruiter' && (
+              {user.role !== 'candidate' && (
                 <CompanyBasicCard
                   style={{ marginTop: '16px' }}
                   company={user.company}
-                  isAdmin={user.is_admin}
+                  role={user.role}
                   allLocations={allLocations}
+                  allCompanies={allCompanies}
                 />
               )}
-              {user.role === 'recruiter' && (
+              {user.role !== 'candidate' && (
                 <OwnedJobCard
                   style={{ marginTop: '16px' }}
                   jobs={user.jobs}
@@ -113,7 +109,7 @@ const ProfilePage = () => {
                   allLocations={allLocations}
                 />
               )}
-              {user.role === 'recruiter' && user.is_admin && (
+              {user.role === 'admin' && (
                 <OwnedRecruiterCard
                   style={{ marginTop: '16px' }}
                   recruiters={recruitersSameCompany}
@@ -134,6 +130,7 @@ const ProfilePage = () => {
                 <EducationCard
                   style={{ marginTop: '16px' }}
                   educations={user.certificates}
+                  allCompanies={allCompanies}
                 />
               )}
               {user.role === 'candidate' && (
@@ -165,9 +162,7 @@ export async function getServerSideProps(context: { req: any; res: any }) {
       }
     }
   }
-  // const candidate = await resumiroApi
-  //   .getCandidateById(session!.user!.name!)
-  //   .then(res => res.data)
+
   return {
     props: {
       session: session

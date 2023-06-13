@@ -6,10 +6,11 @@ import SearchBar from '@components/ui/bar/searchBar'
 import CompanyCard, { CompanyCardProps } from '@components/cards/companyCard'
 import RoundPagination from '@components/ui/pagination/roundPagination'
 import ArticleLayout from '@components/layouts/article'
-import resumiroApi from '@apis/resumiroApi'
-import { Company, Recruiter } from '@shared/interfaces'
+
 import companySlice, {
   createCompany,
+  fetchUserById,
+  getCompanies,
   updateRecruiterCompany,
   uploadBackground,
   uploadLogo
@@ -20,22 +21,14 @@ import { companySelector, web3Selector } from '@redux/selectors'
 import Image from 'next/image'
 import _ from 'lodash'
 import { Box, Button, CircularProgress, Modal, TextField } from '@mui/material'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@pages/api/auth/[...nextauth]'
 import { Input } from 'antd'
 import { locations } from '@prisma/client'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
+import prisma from '@libs/prisma'
 const { TextArea } = Input
-type CompanyListPerPage = {
-  perPage: number
-  page: number
-  totalPage: number
-  data: CompanyCardProps[]
-}
+
 interface CompanyPageProps {
-  data: CompanyListPerPage
-  recruiter?: Recruiter
   allLocations: locations[]
 }
 
@@ -46,15 +39,10 @@ const orderOptions = [
   }
 ]
 
-const CompanyPage: React.FC<CompanyPageProps> = ({
-  data,
-  recruiter,
-  allLocations
-}) => {
+const CompanyPage: React.FC<CompanyPageProps> = ({ allLocations }) => {
   const dispatch = useAppDispatch()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [open, setOpen] = useState(false)
-  const [hasAddCompany, setHasAddCompany] = useState(false)
   const router = useRouter()
   const {
     showMessage,
@@ -67,28 +55,35 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
     loading,
     page,
     limit,
-    total,
     createdCompany,
     q,
+    total,
     location,
-    order_by
+    order_by,
+    hasAddCompany,
+    data
   } = useAppSelector(companySelector)
   const { resumiro, wallet } = useAppSelector(web3Selector)
   useEffect(() => {
-    if (!_.isEmpty(recruiter) && recruiter.is_admin) {
-      if (recruiter.company_id == null) {
-        setHasAddCompany(true)
-        if (createdCompany) {
-          dispatch(
-            updateRecruiterCompany({
-              id: Number(session!.user!.name),
-              data: {
-                company_id: Number(createdCompany.id)
-              }
-            })
-          )
-        }
-      }
+    if (status === 'authenticated') {
+      dispatch(fetchUserById(session!.user!.id))
+    }
+  }, [])
+
+  useEffect(() => {
+    dispatch(getCompanies(router.query))
+  }, [router.query])
+
+  useEffect(() => {
+    if (createdCompany) {
+      dispatch(
+        updateRecruiterCompany({
+          id: Number(session!.user!.id),
+          data: {
+            company_id: Number(createdCompany.id)
+          }
+        })
+      )
     }
   }, [createdCompany])
   const handleOpenAddCompanyModal = () => {
@@ -215,8 +210,8 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
   }
 
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(companySlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -409,17 +404,24 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
             handleAddCompany={handleOpenAddCompanyModal}
             hasAddCompany={hasAddCompany}
           />
-          <SearchResultBar
-            numberSearch={data.data.length}
-            handleChange={handleCompanyOrderChange}
-            options={orderOptions}
-          />
-          {!_.isEmpty(data.data) ? (
-            data.data.map((company, index) => (
-              <Grid item xs={12} md={6} lg={4} key={index}>
-                <CompanyCard {...company} />
-              </Grid>
-            ))
+          {data && (
+            <SearchResultBar
+              numberSearch={data.length}
+              handleChange={handleCompanyOrderChange}
+              options={orderOptions}
+            />
+          )}
+          {!_.isEmpty(data) ? (
+            data.map(
+              (
+                company: JSX.IntrinsicAttributes & CompanyCardProps,
+                index: React.Key | null | undefined
+              ) => (
+                <Grid item xs={12} md={6} lg={4} key={index}>
+                  <CompanyCard {...company} />
+                </Grid>
+              )
+            )
           ) : (
             <Image
               style={{ display: 'flex', margin: 'auto' }}
@@ -430,62 +432,29 @@ const CompanyPage: React.FC<CompanyPageProps> = ({
             />
           )}
 
-          {data.totalPage > 0 && (
-            <Grid
-              item
-              xs={12}
-              sx={{
-                justifyContent: 'center',
-                display: 'flex',
-                mt: 4
-              }}
-            >
-              <RoundPagination page={data.page} totalPage={data.totalPage} />
-            </Grid>
-          )}
+          <Grid
+            item
+            xs={12}
+            sx={{
+              justifyContent: 'center',
+              display: 'flex',
+              mt: 4
+            }}
+          >
+            <RoundPagination page={Number(page)} totalPage={Number(total)} />
+          </Grid>
         </Grid>
       </Container>
     </ArticleLayout>
   )
 }
 
-export async function getServerSideProps(context: {
-  req: any
-  res: any
-  query: any
-}) {
-  const session = await getServerSession(context.req, context.res, authOptions)
+export async function getServerSideProps() {
+  const allLocations = await prisma.locations.findMany()
 
-  let recruiter: any = { data: {} }
-  if (session && session!.user!.email === 'recruiter') {
-    recruiter = await resumiroApi
-      .getRecruiterById(session!.user!.name!)
-      .then(res => res.data)
-  }
-  const allLocations = await resumiroApi.getLocations().then(res => res.data)
-  const companies = await resumiroApi
-    .getCompanies(context.query)
-    .then(res => res.data)
-  const companyList = companies.data.map((company: Company) => {
-    return {
-      id: company.id,
-      logo: company.logo,
-      companyName: company.name,
-      location: company.location,
-      scale: company.scale,
-      hiringNumber: company.jobs.length
-    }
-  })
   return {
     props: {
-      data: {
-        perPage: companies.pagination.limit,
-        page: companies.pagination.page,
-        totalPage: companies.pagination.total,
-        data: companyList
-      },
-      recruiter: recruiter.data,
-      allLocations: allLocations.data
+      allLocations: allLocations
     }
   }
 }

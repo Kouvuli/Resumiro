@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -11,7 +13,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
   prisma.$connect()
   if (req.method === 'GET') {
     const {
@@ -95,7 +98,27 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'POST') {
+    if (!session || session.user?.role !== 'admin') {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const { name, logo, background, about, location_id, scale } = req.body
+
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      }
+    })
+    if (user?.company_id !== null) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
 
     let data = await prisma.companies.create({
       data: {

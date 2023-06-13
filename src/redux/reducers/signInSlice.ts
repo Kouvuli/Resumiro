@@ -1,17 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { ethers } from 'ethers'
 import resumiroApi from '@apis/resumiroApi'
-import { useRouter } from 'next/router'
 import { signIn } from 'next-auth/react'
-import { networks } from '@shared/networks'
-import { floatButtonPrefixCls } from 'antd/es/float-button/FloatButton'
-
 const initialState = {
   showMessage: false,
   message: '',
   messageType: 'success',
-  loading: false,
-  success: false
+  loading: false
 }
 
 export const signInNormal = createAsyncThunk(
@@ -19,11 +14,13 @@ export const signInNormal = createAsyncThunk(
   async (input: any) => {
     const { username, password } = input
 
-    await signIn('credentials', {
+    const data = await signIn('credentials', {
       redirect: false,
       username: username,
       password: password
     })
+
+    return data
   }
 )
 
@@ -59,15 +56,14 @@ export const signInWallet = createAsyncThunk(
       })
       .then(res => res.data)
 
-    const signedNonce = await signer.signMessage(response.nonce)
-    await signIn('credentials', {
-      redirect: false,
-      address_wallet: walletAddress,
-      signedNonce
-    })
-    // return result;
-  }
-)
+  const signedNonce = await signer.signMessage(response.nonce)
+  const result = await signIn('credentials', {
+    redirect: false,
+    address_wallet: walletAddress,
+    signedNonce
+  }) 
+  return result
+})
 
 const signInSlice = createSlice({
   name: 'signIn',
@@ -84,36 +80,40 @@ const signInSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(signInWallet.pending, (state, action) => {
+      .addCase(signInWallet.pending, (state, _action) => {
         state.loading = true
       })
-      .addCase(signInWallet.fulfilled, (state, action) => {
+      .addCase(signInWallet.fulfilled, (state, _action) => {
         state.showMessage = true
         state.message = 'Đăng nhập ví thành công'
         state.messageType = 'success'
-        state.success = true
         state.loading = false
 
         // state.provider = provider
       })
-      .addCase(signInWallet.rejected, (state, action) => {
+      .addCase(signInWallet.rejected, (state, _action) => {
         state.showMessage = true
         state.message = 'Đăng nhập ví thất bại'
         state.messageType = 'error'
         state.loading = false
       })
 
-      .addCase(signInNormal.pending, (state, action) => {
+      .addCase(signInNormal.pending, (state, _action) => {
         state.loading = true
       })
       .addCase(signInNormal.fulfilled, (state, action) => {
         state.showMessage = true
-        state.message = 'Đăng nhập thành công'
-        state.messageType = 'success'
-        state.success = true
+        if (!action.payload?.error) {
+          state.message = 'Đăng nhập thành công'
+          state.messageType = 'success'
+        } else {
+          state.message = 'Đăng nhập thất bại'
+          state.messageType = 'error'
+        }
+
         state.loading = false
       })
-      .addCase(signInNormal.rejected, (state, action) => {
+      .addCase(signInNormal.rejected, (state, _action) => {
         state.showMessage = true
         state.message = 'Đăng nhập thất bại'
         state.messageType = 'error'

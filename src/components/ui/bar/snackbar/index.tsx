@@ -5,7 +5,7 @@ interface MySnackBarProps {
   showMessage: boolean
   message: string
   messageType: 'success' | 'error' | 'info' | 'warning'
-  handleClose: (event?: React.SyntheticEvent | Event, reason?: string) => void
+  handleClose: (_event?: React.SyntheticEvent | Event, _reason?: string) => void
 }
 
 const MySnackBar: React.FC<MySnackBarProps> = ({

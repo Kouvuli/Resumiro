@@ -24,8 +24,8 @@ const qualityVariants: Variants = {
 }
 
 const CustomFeatureCard = styled(Box)(({}) => ({
-  width: '100%',
-  height: '20px',
+  // width: '100%',
+  // height: '20px',
 
   display: 'flex',
   justifyContent: 'center',

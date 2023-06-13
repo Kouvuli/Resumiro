@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@libs/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@pages/api/auth/[...nextauth]'
 type Data = {
   message: string
   status: string
@@ -10,7 +12,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const prisma = new PrismaClient()
+  const session = await getServerSession(req, res, authOptions)
+
   const { jobId } = req.query
   prisma.$connect()
   let id = Number(jobId)
@@ -87,6 +90,16 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'PATCH') {
+    if (
+      !session ||
+      (session.user?.role !== 'recruiter' && session.user?.role !== 'admin')
+    ) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
     const {
       title,
       location_id,
@@ -96,6 +109,30 @@ export default async function handler(
       job_type,
       skill
     } = req.body
+
+    const userCompany = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      },
+      include: {
+        jobs: true
+      }
+    })
+    let isOwned = false
+
+    userCompany?.jobs.forEach((item: any) => {
+      if (item.id === id) {
+        isOwned = true
+      }
+    })
+
+    if (!isOwned) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
 
     let data = await prisma.jobs.update({
       where: {
@@ -147,6 +184,41 @@ export default async function handler(
     prisma.$disconnect()
     return
   } else if (req.method === 'DELETE') {
+    if (
+      !session ||
+      (session.user?.role !== 'recruiter' && session.user?.role !== 'admin')
+    ) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(session.user?.id)
+      },
+      include: {
+        jobs: true
+      }
+    })
+    let isOwned = false
+
+    user?.jobs.forEach((item: any) => {
+      if (item.id === id) {
+        isOwned = true
+      }
+    })
+
+    if (!isOwned) {
+      res.status(401).json({
+        message: 'Unauthorized',
+        status: 'error'
+      })
+      return
+    }
+
     await prisma.jobs_skills.deleteMany({
       where: {
         job_id: id

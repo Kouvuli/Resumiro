@@ -8,7 +8,6 @@
         "varsIgnorePattern": "^_",
         "argsIgnorePattern": "^_"
       }
-    ],
-    "semicolon": false
+    ]
   }
 }

@@ -10,7 +10,7 @@ import React from 'react'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import SkillItem from './skillsItem'
-import { Button, CardActions, Divider } from '@mui/material'
+import { Button, Divider } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { motion, Variants } from 'framer-motion'
 import { skills } from '@prisma/client'
@@ -70,7 +70,7 @@ const SkillCard: React.FC<SkillCardProps> = ({
     await resumiro.connectCandidateSkill(wallet.address, [Number(skill)])
     dispatch(
       createCandidateSkill({
-        id: session!.user!.name!,
+        id: session!.user!.id,
         skill_id: Number(skill)
       })
     )
@@ -103,22 +103,23 @@ const SkillCard: React.FC<SkillCardProps> = ({
           />
           <CardContent sx={{ paddingTop: 'unset', paddingBottom: 'unset' }}>
             <List disablePadding>
-              {skills.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <CustomListItem>
-                      <SkillItem
-                        id={item.skill.id}
-                        name={item.skill.name}
-                        isModify={isModify}
-                      />
-                    </CustomListItem>
-                    {index !== skills.length - 1 && (
-                      <Divider sx={{ borderWidth: '0.5px' }} />
-                    )}
-                  </div>
-                )
-              })}
+              {skills &&
+                skills.map((item, index) => {
+                  return (
+                    <div key={index}>
+                      <CustomListItem>
+                        <SkillItem
+                          id={item.skill.id}
+                          name={item.skill.name}
+                          isModify={isModify}
+                        />
+                      </CustomListItem>
+                      {index !== skills.length - 1 && (
+                        <Divider sx={{ borderWidth: '0.5px' }} />
+                      )}
+                    </div>
+                  )
+                })}
             </List>
           </CardContent>
         </Card>
@@ -158,22 +159,23 @@ const SkillCard: React.FC<SkillCardProps> = ({
         />
         <CardContent sx={{ paddingTop: 'unset', paddingBottom: 'unset' }}>
           <List disablePadding>
-            {skills.map((item, index) => {
-              return (
-                <div key={index}>
-                  <CustomListItem>
-                    <SkillItem
-                      id={item.skill.id}
-                      name={item.skill.name}
-                      isModify={isModify}
-                    />
-                  </CustomListItem>
-                  {index !== skills.length - 1 && (
-                    <Divider sx={{ borderWidth: '0.5px' }} />
-                  )}
-                </div>
-              )
-            })}
+            {skills &&
+              skills.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <CustomListItem>
+                      <SkillItem
+                        id={item.skill.id}
+                        name={item.skill.name}
+                        isModify={isModify}
+                      />
+                    </CustomListItem>
+                    {index !== skills.length - 1 && (
+                      <Divider sx={{ borderWidth: '0.5px' }} />
+                    )}
+                  </div>
+                )
+              })}
           </List>
         </CardContent>
       </Card>

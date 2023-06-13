@@ -3,6 +3,12 @@ import React from 'react'
 import Grid from '@mui/material/Grid'
 import Container from '@mui/material/Container'
 import { styled } from '@mui/material/styles'
+import { Typography } from '@mui/material'
+import FacebookIcon from '@mui/icons-material/Facebook'
+import YouTubeIcon from '@mui/icons-material/YouTube'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import InstagramIcon from '@mui/icons-material/Instagram'
+import Link from 'next/link'
 
 const CustomFooterBackground = styled('footer')(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -34,7 +40,7 @@ const FooterTitle = styled('h4')(({ theme }) => ({
 const CustomList = styled('ul')(({}) => ({
   listStyle: 'none',
   '& li:not(:last-child)': {
-    marginBottom: '10px'
+    marginBottom: '15px'
   },
   '& li a': {
     fontSize: '16px',
@@ -62,7 +68,8 @@ const SocialLink = styled('div')(({}) => ({
     lineHeight: '40px',
     borderRadius: '50%',
     color: '#ffffff',
-    transition: 'all 0.5s ease'
+    transition: 'all 0.5s ease',
+    paddingTop: '6px'
   },
   '& a:hover': {
     color: '#24262b',
@@ -79,75 +86,70 @@ const Footer: React.FC = () => {
           justifyContent="center"
           alignItems="start"
           alignContent="content"
+          columnSpacing={5}
         >
+          <Grid item xs={12} sm={6} md={4}>
+            <Typography
+              variant="h5"
+              sx={{ color: 'primary.contrastText', mb: 2 }}
+            >
+              Resumiro.
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontSize: '1rem',
+                lineHeight: '1.3rem',
+                color: 'primary.contrastText'
+              }}
+            >
+              Cơ hội tham gia vào những công ty, doanh nghiệp hàng đầu Việt Nam.
+            </Typography>
+          </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <FooterTitle>company</FooterTitle>
+            <FooterTitle>Trợ giúp</FooterTitle>
             <CustomList>
               <li>
-                <a href="#">about us</a>
+                <Link href="/chinh-sach-va-dieu-khoan">
+                  Chính sách và điều khoản
+                </Link>
               </li>
               <li>
-                <a href="#">our services</a>
+                <Link href="/ve-chung-toi">Về chúng tôi</Link>
               </li>
               <li>
-                <a href="#">privacy policy</a>
-              </li>
-              <li>
-                <a href="#">affiliate program</a>
+                <Link href="#">Blog</Link>
               </li>
             </CustomList>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <FooterTitle>get help</FooterTitle>
+            <FooterTitle>Dịch vụ</FooterTitle>
             <CustomList>
               <li>
-                <a href="#">FAQ</a>
+                <Link href="/viec-lam">Việc làm</Link>
               </li>
               <li>
-                <a href="#">shipping</a>
+                <Link href="/cong-ty">Công ty</Link>
               </li>
               <li>
-                <a href="#">returns</a>
-              </li>
-              <li>
-                <a href="#">order status</a>
-              </li>
-              <li>
-                <a href="#">payment options</a>
+                <Link href="/dang-ky">Đăng ký</Link>
               </li>
             </CustomList>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <FooterTitle>online shop</FooterTitle>
-            <CustomList>
-              <li>
-                <a href="#">watch</a>
-              </li>
-              <li>
-                <a href="#">bag</a>
-              </li>
-              <li>
-                <a href="#">shoes</a>
-              </li>
-              <li>
-                <a href="#">dress</a>
-              </li>
-            </CustomList>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <FooterTitle>follow us</FooterTitle>
+          <Grid item xs={12} sm={6} md={2}>
+            <FooterTitle>Theo dõi</FooterTitle>
             <SocialLink>
               <a href="#">
-                <i className="fab fa-facebook-f"></i>
+                <FacebookIcon />
               </a>
               <a href="#">
-                <i className="fab fa-twitter"></i>
+                <YouTubeIcon />
               </a>
               <a href="#">
-                <i className="fab fa-instagram"></i>
+                <InstagramIcon />
               </a>
               <a href="#">
-                <i className="fab fa-linkedin-in"></i>
+                <LinkedInIcon />
               </a>
             </SocialLink>
           </Grid>

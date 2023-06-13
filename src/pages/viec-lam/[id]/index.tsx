@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 import Container from '@mui/material/Container'
 import ArticleLayout from '@components/layouts/article'
@@ -10,9 +10,8 @@ import DenseChip from '@components/ui/chip/DenseChip'
 import { styled } from '@mui/material/styles'
 import CompanyBriefCard from '@components/cards/detailCard/jobDetail/companyBriefCard'
 import SuitableJob from '@components/lists/suitableJob'
-import { Company, Job, Skill } from '@shared/interfaces'
+import { Job } from '@shared/interfaces'
 import { JobCardProps } from '@components/cards/jobCard'
-import parse from 'html-react-parser'
 import resumiroApi from '@apis/resumiroApi'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { jobDetailSelector, web3Selector } from '@redux/selectors'
@@ -26,7 +25,8 @@ import jobDetailSlice, {
 import MySnackBar from '@components/ui/bar/snackbar'
 import Resumiro from '../../../interfaces/Resumiro'
 import { Wallet } from 'ethers'
-
+import prisma from '@libs/prisma'
+import { locations, companies, jobs } from '@prisma/client'
 const DetailJobList = styled(`ul`)(({ theme }) => ({
   listStyle: 'none',
   '& li p': {
@@ -127,7 +127,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
   } = data
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
-  const { isApplied, showMessage, message, messageType, loading } =
+  const { isApplied, showMessage, message, messageType } =
     useAppSelector(jobDetailSelector)
   const { resumiro, wallet } = useAppSelector(web3Selector) as {
     resumiro: Resumiro
@@ -141,7 +141,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     if (session) {
       dispatch(
         checkIsApplied({
-          candidateId: session!.user!.name!,
+          candidateId: session!.user!.id,
           jobId: id
         })
       )
@@ -154,13 +154,13 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
         applyJob({
           id: id,
           data: {
-            candidate_id: session!.user!.name!
+            candidate_id: session!.user!.id
           }
         })
       )
       dispatch(
         createNotification({
-          author_id: Number(session!.user!.name!),
+          author_id: Number(session!.user!.id),
           title: 'Thông báo',
           content: 'mới ứng tuyển vào công việc của bạn',
           object_url: id.toString(),
@@ -173,7 +173,7 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
       await resumiro.disconnectJobCandidate(wallet.address, id)
       dispatch(
         cancelJob({
-          candidateId: session!.user!.name!,
+          candidateId: session!.user!.id,
           jobId: id
         })
       )
@@ -181,8 +181,8 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
     }
   }
   const handleSnackBarClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
+    _event?: React.SyntheticEvent | Event,
+    _reason?: string
   ) => {
     dispatch(jobDetailSlice.actions.toggleSnackBar({ showMessage: false }))
   }
@@ -303,8 +303,45 @@ export async function getServerSideProps(context: { query: { id: string } }) {
   const { id } = context.query
 
   const jobDetail = await resumiroApi.getJobById(id).then(res => res.data)
-  const sameCompanyJob: JobCardProps[] = jobDetail.data.company.jobs.map(
-    (job: Job) => {
+
+  const jobs = await prisma.jobs.findFirst({
+    where: { id: Number(id) },
+    include: {
+      owner: {
+        include: {
+          room: true
+        }
+      },
+      company: {
+        include: {
+          jobs: {
+            where: {
+              id: {
+                not: Number(id)
+              }
+            },
+            include: {
+              location: true,
+              company: true
+            }
+          }
+        }
+      },
+      location: true,
+      jobs_skills: {
+        select: {
+          skill: true
+        }
+      }
+    }
+  })
+  const sameCompanyJob: JobCardProps[] = jobs!.company.jobs.map(
+    (
+      job: jobs & {
+        location: locations
+        company: companies
+      }
+    ) => {
       return {
         id: job.id,
         jobTitle: job.title,
