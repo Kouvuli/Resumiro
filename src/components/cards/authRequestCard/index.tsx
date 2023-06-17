@@ -157,7 +157,9 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
                   textTransform: 'capitalize'
                 }}
               >
-                {request.owner.username}
+                {request.owner.full_name && request.owner.full_name.trim() != ''
+                  ? request.owner.full_name
+                  : request.owner.username}
               </Typography>
             </Link>
           }
