@@ -23,6 +23,8 @@ import { CircularProgress } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { profileSelector, web3Selector } from '@redux/selectors'
 import { createCandidateSkill } from '@redux/reducers/profileSlice'
+import Resumiro from '../../../../interfaces/Resumiro'
+import { Wallet } from '@redux/reducers/web3Slice'
 interface SkillCardProps {
   type?: number
   style?: React.CSSProperties
@@ -56,7 +58,8 @@ const SkillCard: React.FC<SkillCardProps> = ({
   const { data: session } = useSession()
   const [isModify, setIsModify] = useState(false)
   const { loading } = useAppSelector(profileSelector)
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro, wallet }: { resumiro: Resumiro; wallet: Wallet } =
+    useAppSelector(web3Selector)
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)

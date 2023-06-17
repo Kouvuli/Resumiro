@@ -56,7 +56,7 @@ const EducationItem: React.FC<EducationItemProps> = ({
     await resumiro.updateCertificate({
       id: data.id,
       name,
-      verifiedAt: Math.floor(new Date(verified_at).getTime() / 1000)
+      expiredAt: Math.floor(new Date(verified_at).getTime() / 1000)
     })
     dispatch(
       updateCertificate({

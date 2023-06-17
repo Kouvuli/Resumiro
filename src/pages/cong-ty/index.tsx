@@ -169,7 +169,6 @@ const CompanyPage: React.FC<CompanyPageProps> = ({ allLocations }) => {
     await resumiro.addCompany({
       name,
       location: allLocations[Number(locationId) - 1].name,
-      adminAddress: wallet.address
     })
 
     dispatch(

@@ -18,7 +18,7 @@ export const signUp = createAsyncThunk('sign-up', async (input: any) => {
       address_wallet: walletAddress,
       role: role.toString()
     })
-    .then(res => res.data)
+    .then((res: { data: any }) => res.data)
 
   return result
 })

@@ -88,8 +88,10 @@ const EducationCard: React.FC<EducationCardProps> = ({
 
     await resumiro.addCertificate({
       name,
-      verifiedAt: Math.floor(new Date(verified_at).getTime() / 1000),
-      candidateAddress: wallet.address
+      expiredAt: Math.floor(new Date(verified_at).getTime() / 1000),
+      source: uploadedCertificate,
+      candidateAddress: wallet.address,
+      companyId: Number(company)
     })
     dispatch(
       createCertificate({

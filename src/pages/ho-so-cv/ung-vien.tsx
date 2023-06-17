@@ -67,8 +67,8 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
     }
     const key = randomToken()
     await resumiro.addResume({
-      title,
       data: encryptText(uploadedResume, key),
+      title,
       candidateAddress: wallet.address
     })
     dispatch(

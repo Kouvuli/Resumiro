@@ -97,7 +97,7 @@ export default function SignUpPage() {
         case 'recruiter':
           type = 1
           break
-        case 'admin_recruiter':
+        case 'admin':
           type = 2
           break
       }

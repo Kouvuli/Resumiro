@@ -4,13 +4,16 @@ import { styled } from '@mui/material/styles'
 import { getCurrentTimeDiff } from '@utils/timeUtil'
 import CardContent from '@mui/material/CardContent'
 import { users } from '@prisma/client'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import {
   updateRecruiterCompany,
   allowRecruiterToView,
   deleteNotificationById
 } from '@redux/reducers/headerSlice'
 import { useSession } from 'next-auth/react'
+import Resumiro from '../../../interfaces/Resumiro'
+import { Wallet } from '@redux/reducers/web3Slice'
+import { web3Selector } from '@redux/selectors'
 interface NotificationCardProps {
   id: number
   type: number
@@ -39,8 +42,14 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   isRead
 }) => {
   const dispatch = useAppDispatch()
+  const { resumiro, wallet }: { resumiro: Resumiro; wallet: Wallet } =
+    useAppSelector(web3Selector)
   const { data: session } = useSession()
-  const acceptRecruiterToCompanyHandler = () => {
+  const acceptRecruiterToCompanyHandler = async () => {
+    await resumiro.connectCompanyRecruiter({
+      recruiterAddress: author.address_wallet,
+      companyId: Number(object_id)
+    })
     dispatch(
       updateRecruiterCompany({
         data: {
@@ -61,7 +70,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     // dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
   }
 
-  const acceptRecruiterToViewResumeHandler = () => {
+  const acceptRecruiterToViewResumeHandler = async () => {
+    await resumiro.connectResumeRecruiter(
+      author.address_wallet,
+      Number(object_id)
+    )
     dispatch(
       allowRecruiterToView({
         resumeId: Number(object_id),

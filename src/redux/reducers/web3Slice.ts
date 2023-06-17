@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { ethers } from 'ethers'
 import Resumiro from '../../interfaces/Resumiro'
 
-type Wallet = {
+export type Wallet = {
   address: string
   amount: number
 }
@@ -56,7 +56,7 @@ const web3Slice = createSlice({
         state.provider = action.payload.provider
         state.wallet = action.payload.wallet
         state.resumiro = action.payload.resumiro
-        console.log("Web3 connected!")
+        console.log('Web3 connected!')
       })
       .addCase(reconnectWeb3.rejected, (state, action) => {
         console.log('Connection crashed!')

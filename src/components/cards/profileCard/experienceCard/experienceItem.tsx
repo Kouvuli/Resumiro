@@ -60,7 +60,6 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
       start,
       finish,
       companyId: Number(company),
-      userAddress: wallet.address
     })
 
     dispatch(

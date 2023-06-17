@@ -147,6 +147,22 @@ const authRequestSlice = createSlice({
         state.messageType = 'error'
         state.loading = false
       })
+
+      .addCase(getAuthRequests.pending, (state, _action) => {
+        state.loading = true
+      })
+      .addCase(getAuthRequests.fulfilled, (state, action) => {
+        state.data.data=action.payload.data
+        state.data.perPage=action.payload.pagination.limit
+        state.data.page=action.payload.pagination.page
+        state.data.totalPage=action.payload.pagination.total
+
+        state.loading = false
+      })
+      .addCase(getAuthRequests.rejected, (state, _action) => {
+        
+        state.loading = false
+      })
   }
 })
 

@@ -105,7 +105,9 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
     }
   }
 
-  const updateResumePrivacyHandler = () => {
+  const updateResumePrivacyHandler = async () => {
+    let ipfs_string: string = !isPublic ? decryptText(data, resumeKey) : 'no-change'
+    await resumiro.togglePublic(id, ipfs_string)
     dispatch(
       updateResumePrivacy({
         resumeId: id.toString(),

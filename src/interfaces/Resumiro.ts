@@ -19,8 +19,10 @@ export type CompanyProps = {
 export type CertProps = {
   id: number
   name?: string
-  verifiedAt?: number
+  expiredAt?: number
+  source?: string
   candidateAddress?: string
+  companyId?: number
 }
 
 export type ExperienceProps = {
@@ -28,7 +30,9 @@ export type ExperienceProps = {
   position?: string
   start?: string
   finish?: string
+  source?: string
   companyId?: number
+  verifiedAt?: number
   userAddress?: string
 }
 
@@ -57,6 +61,7 @@ export type SkillProps = {
 export type ResumeProps = {
   id: number
   data?: string
+  isPublic?: boolean
   title?: string
   createAt?: number
   // updateAt?: number
@@ -113,7 +118,8 @@ export default class Resumiro extends BaseInterface {
       name: company.name,
       website: company.website,
       location: company.location,
-      address: company.address
+      address: company.addr,
+      creator: company.creator
     }
   }
 
@@ -121,15 +127,13 @@ export default class Resumiro extends BaseInterface {
     name,
     website = '',
     location,
-    address = '',
-    adminAddress
+    address = ''
   }: CompanyProps) {
     const addTx = await this._contract.addCompany(
       name,
       website,
       location,
       address,
-      adminAddress,
       this._option
     )
     const result = await this._handleTransactionRespone(addTx)
@@ -167,7 +171,7 @@ export default class Resumiro extends BaseInterface {
     recruiterAddress: string
     companyId: number
   }) {
-    const connectTx = await this._contract.connectCompanyRecruiter(
+    const connectTx = await this._contract.connectCompanyUser(
       recruiterAddress,
       companyId,
       this._option
@@ -184,7 +188,7 @@ export default class Resumiro extends BaseInterface {
     recruiterAddress: string
     companyId: number
   }) {
-    const disconnectTx = await this._contract.disconnectCompanyRecruiter(
+    const disconnectTx = await this._contract.disconnectCompanyUser(
       recruiterAddress,
       companyId,
       this._option
@@ -203,20 +207,27 @@ export default class Resumiro extends BaseInterface {
 
     return {
       name: cert.name,
-      verified_at: Number(cert.verifiedAt),
-      candidate_address: cert.owner
+      expired_at: Number(cert.expiredAt),
+      certificate_address: cert.certificateAddress,
+      candidate_address: cert.candidate,
+      company_id: cert.companyId
     }
   }
 
   async addCertificate({
     name,
-    verifiedAt = Math.floor(new Date().getTime() / 1000),
-    candidateAddress
+    // verifiedAt = Math.floor(new Date().getTime() / 1000),
+    expiredAt,
+    source,
+    candidateAddress,
+    companyId
   }: CertProps) {
     const addTx = await this._contract.addCertificate(
       name,
-      verifiedAt,
+      expiredAt,
+      source,
       candidateAddress,
+      companyId,
       this._option
     )
     const result = await this._handleTransactionRespone(addTx)
@@ -224,12 +235,12 @@ export default class Resumiro extends BaseInterface {
     return result
   }
 
-  async updateCertificate({ id, name, verifiedAt }: CertProps) {
+  async updateCertificate({ id, name, expiredAt }: CertProps) {
     const cert = await this.getCertificate(id)
     const updateTx = await this._contract.updateCertificate(
       id,
       name ?? cert.name,
-      verifiedAt ?? cert.verified_at,
+      expiredAt ?? cert.expired_at,
       this._option
     )
     const result = await this._handleTransactionRespone(updateTx)
@@ -244,6 +255,16 @@ export default class Resumiro extends BaseInterface {
     return result
   }
 
+  async changeCertificateStatus(id: number, status: number) {
+    const tx = await this._contract.changeCertificateStatus(
+      id,
+      status,
+      this._option
+    )
+    const result = await this._handleTransactionRespone(tx)
+    return result
+  }
+
   /* ========================= EXPERIENCE ========================= */
 
   async getExperience(id: number) {
@@ -252,21 +273,31 @@ export default class Resumiro extends BaseInterface {
       console.log(exp)
 
       return {
-        position: exp.postion,
+        position: exp.position,
         start: exp.start,
         finish: exp.finish,
-        company_id: exp.companyId
+        source: exp.source,
+        company_id: exp.companyId,
+        verifiedAt: exp.verifiedAt,
+        owner: exp.owner
       }
     } catch (error) {
       return undefined
     }
   }
 
-  async addExperience({ position, start, finish, companyId }: ExperienceProps) {
+  async addExperience({
+    position,
+    start,
+    finish,
+    source,
+    companyId
+  }: ExperienceProps) {
     const addTx = await this._contract.addExperience(
       position,
       start,
       finish,
+      source,
       companyId,
       this._option
     )
@@ -310,6 +341,18 @@ export default class Resumiro extends BaseInterface {
     return result
   }
 
+  async changeExpStatus(id: number, status: number) {
+    let verifiedAt = Math.floor(new Date().getTime() / 1000)
+    const tx = await this._contract.changeExpStatus(
+      id,
+      status,
+      verifiedAt,
+      this._option
+    )
+    const result = await this._handleTransactionRespone(tx)
+    return result
+  }
+
   /* ========================= JOB ========================= */
 
   async getJob(id: number) {
@@ -328,7 +371,8 @@ export default class Resumiro extends BaseInterface {
         update_at: job.updateAt,
         company_id: job.companyId,
         salary: job.salary,
-        field: job.field
+        field: job.field,
+        owner: job.owner
       }
     } catch (error) {
       return undefined
@@ -352,7 +396,6 @@ export default class Resumiro extends BaseInterface {
     const addTx = await this._contract.addJob(
       [
         0,
-        0,
         title,
         location,
         jobType,
@@ -364,7 +407,6 @@ export default class Resumiro extends BaseInterface {
         companyId,
         salary,
         field,
-        true,
         recruiterAddress
       ],
       skillIds,
@@ -388,8 +430,8 @@ export default class Resumiro extends BaseInterface {
     companyId,
     salary,
     field,
-    skillIds,
-    recruiterAddress = ''
+    recruiterAddress = '',
+    skillIds
   }: JobProps) {
     const job = await this.getJob(id)
 
@@ -402,7 +444,6 @@ export default class Resumiro extends BaseInterface {
 
     const updateTx = await this._contract.updateJob(
       [
-        0,
         id,
         title ?? job.title,
         location ?? job.location,
@@ -415,7 +456,6 @@ export default class Resumiro extends BaseInterface {
         companyId ?? job.company_id,
         salary ?? job.salary,
         field ?? job.field,
-        true,
         recruiterAddress
       ],
       skillIds,
@@ -462,8 +502,9 @@ export default class Resumiro extends BaseInterface {
 
       return {
         data: resume.data,
-        create_at: resume.createAt,
-        update_at: resume.updateAt
+        owner: resume.owner,
+        title: resume.title,
+        create_at: resume.createAt
       }
     } catch (error) {
       return undefined
@@ -511,6 +552,13 @@ export default class Resumiro extends BaseInterface {
   async deleteResume(id: number) {
     const deleteTx = await this._contract.deleteResume(id, this._option)
     const result = await this._handleTransactionRespone(deleteTx)
+
+    return result
+  }
+
+  async togglePublic(id: number, data: string) {
+    const tx = await this._contract.togglePublic(id, data, this._option)
+    const result = await this._handleTransactionRespone(tx)
 
     return result
   }

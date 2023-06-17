@@ -93,10 +93,10 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
       return
     }
     await resumiro.addExperience({
-      id: null,
       position,
       start,
       finish,
+      source: uploadedExperience,
       companyId: Number(company),
       userAddress: wallet.address
     })
