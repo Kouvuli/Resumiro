@@ -17,7 +17,7 @@ import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Grid from '@mui/material/Grid'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import profileSlice, {
   createCertificate,
@@ -60,6 +60,7 @@ const EducationCard: React.FC<EducationCardProps> = ({
   const [open, setOpen] = useState(false)
   const { loading, uploadedCertificate, uploadCertificateLoading } =
     useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -85,6 +86,13 @@ const EducationCard: React.FC<EducationCardProps> = ({
       return
     }
 
+    await resumiro.addCertificate({
+      name,
+      expiredAt: Math.floor(new Date(verified_at).getTime() / 1000),
+      source: uploadedCertificate,
+      candidateAddress: wallet.address,
+      companyId: Number(company)
+    })
     dispatch(
       createCertificate({
         certificate: {

@@ -14,7 +14,7 @@ import resumeSlice, {
   uploadResume
 } from '@redux/reducers/resumeSlice'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { resumeSelector } from '@redux/selectors'
+import { resumeSelector, web3Selector } from '@redux/selectors'
 import MySnackBar from '@components/ui/bar/snackbar'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
@@ -39,6 +39,7 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
     uploadedResume,
     allResumes
   } = useAppSelector(resumeSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const [openModal, setOpenModal] = useState(false)
   const handleOpenModal = () => {
     dispatch(resumeSlice.actions.resetForm())
@@ -65,6 +66,11 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
       return
     }
     const key = randomToken()
+    await resumiro.addResume({
+      data: encryptText(uploadedResume, key),
+      title,
+      candidateAddress: wallet.address
+    })
     dispatch(
       createResume({
         title,

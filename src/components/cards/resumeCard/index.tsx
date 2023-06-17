@@ -15,13 +15,14 @@ import { users } from '@prisma/client'
 import { usePdf } from '@mikecousins/react-pdf'
 import Link from 'next/link'
 import CircularProgress from '@mui/material/CircularProgress/'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import {
   checkIfAllowedToView,
   deleteResume,
   updateResumePrivacy
 } from '@redux/reducers/resumeSlice'
 import { useRouter } from 'next/router'
+import { web3Selector } from '@redux/selectors'
 import { decryptText } from '@utils/cryptoUtil'
 import { useSession } from 'next-auth/react'
 import candidateProfileSlice from '@redux/reducers/candidateProfileSlice'
@@ -72,6 +73,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   const canvasRef = useRef(null)
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const router = useRouter()
   const { pdfDocument } = usePdf({
     file: decryptText(data, resumeKey),
@@ -103,7 +105,9 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
     }
   }
 
-  const updateResumePrivacyHandler = () => {
+  const updateResumePrivacyHandler = async () => {
+    let ipfs_string: string = !isPublic ? decryptText(data, resumeKey) : 'no-change'
+    await resumiro.togglePublic(id, ipfs_string)
     dispatch(
       updateResumePrivacy({
         resumeId: id.toString(),
@@ -111,7 +115,8 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
       })
     )
   }
-  const deleteHandler = () => {
+  const deleteHandler = async () => {
+    await resumiro.deleteResume(id)
     dispatch(deleteResume(id))
     router.push({
       pathname: router.pathname

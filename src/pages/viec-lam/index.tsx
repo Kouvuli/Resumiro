@@ -10,7 +10,7 @@ import { Skill } from '@shared/interfaces'
 import Image from 'next/image'
 import _ from 'lodash'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { jobSelector } from '@redux/selectors'
+import { jobSelector, web3Selector } from '@redux/selectors'
 import jobSlice, {
   createJob,
   fetchRecruiterById,
@@ -102,6 +102,7 @@ const JobPage: React.FC<JobPageProps> = ({
     hasAddJob,
     data
   } = useAppSelector(jobSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
 
   useEffect(() => {
     if (session && session.user!.role !== 'candidate') {
@@ -207,6 +208,17 @@ const JobPage: React.FC<JobPageProps> = ({
       return
     }
 
+    await resumiro.addJob({
+      title,
+      location: allLocations[Number(locationId) - 1].name,
+      jobType,
+      experience: Number(experience),
+      companyId: recruiter!.company_id,
+      salary: Number(salary),
+      field: allFields[Number(field) - 1].name,
+      recruiterAddress: wallet.address,
+      skillIds: skill.map(item => Number(item))
+    })
     dispatch(
       createJob({
         title,

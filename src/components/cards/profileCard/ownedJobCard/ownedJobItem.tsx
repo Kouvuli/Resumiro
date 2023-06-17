@@ -18,7 +18,7 @@ import { Box } from '@mui/material'
 import { Grid } from '@mui/material'
 import { TextField } from '@mui/material'
 import { useState } from 'react'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import { CircularProgress } from '@mui/material'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
@@ -76,6 +76,7 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
     data.jobs_skills.map(item => item.skill_id.toString())
   )
   const { loading } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpenUpdateModal = () => setUpdateModalOpen(true)
   const handleCloseUpdateModal = () => setUpdateModalOpen(false)
   const handleOpenApplicantModel = () => setApplicantModalOpen(true)
@@ -118,6 +119,17 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
       dispatch(profileSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+    await resumiro.updateJob({
+      id: data.id,
+      title,
+      location: allLocations[Number(locationId) - 1].name,
+      jobType,
+      experience: Number(experience),
+      salary: Number(salary),
+      field: allFields[Number(field) - 1].name,
+      recruiterAddress: wallet.address,
+      skillIds: skill.map(item => Number(item))
+    })
     dispatch(
       updateJob({
         id: data.id,
@@ -135,7 +147,8 @@ const OwnedJobItem: React.FC<OwnedJobItemProps> = ({
 
     setUpdateModalOpen(false)
   }
-  const deleteJobHandler = () => {
+  const deleteJobHandler = async () => {
+    await resumiro.deleteJob(data.id)
     dispatch(deleteJob(data.id))
   }
   return (

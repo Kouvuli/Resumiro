@@ -45,5 +45,16 @@ export const networks = {
     },
     rpcUrls: ['https://matic-mumbai.chainstacklabs.com'],
     blockExplorerUrls: ['https://mumbai.polygonscan.com']
+  },
+  localhost: {
+    chainId: `0x${Number(31337).toString(16)}`,
+    chainName: 'Hardhat Localhost',
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ['http://127.0.0.1:8545/'],
+    blockExplorerUrls: []
   }
 }

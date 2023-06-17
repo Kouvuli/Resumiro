@@ -14,7 +14,7 @@ import { Job } from '@shared/interfaces'
 import { JobCardProps } from '@components/cards/jobCard'
 import resumiroApi from '@apis/resumiroApi'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { jobDetailSelector } from '@redux/selectors'
+import { jobDetailSelector, web3Selector } from '@redux/selectors'
 import { useSession } from 'next-auth/react'
 import jobDetailSlice, {
   applyJob,
@@ -23,6 +23,8 @@ import jobDetailSlice, {
   createNotification
 } from '@redux/reducers/jobDetailSlice'
 import MySnackBar from '@components/ui/bar/snackbar'
+import Resumiro from '../../../interfaces/Resumiro'
+import { Wallet } from 'ethers'
 import prisma from '@libs/prisma'
 import { locations, companies, jobs } from '@prisma/client'
 const DetailJobList = styled(`ul`)(({ theme }) => ({
@@ -127,6 +129,10 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
   const { data: session } = useSession()
   const { isApplied, showMessage, message, messageType } =
     useAppSelector(jobDetailSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector) as {
+    resumiro: Resumiro
+    wallet: Wallet
+  }
 
   useEffect(() => {
     dispatch(jobDetailSlice.actions.changeRoom({ room: owner.room.token }))
@@ -141,8 +147,9 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
       )
     }
   }, [session])
-  const applyHandler = () => {
+  const applyHandler = async () => {
     if (!isApplied) {
+      await resumiro.connectJobCandidate(wallet.address, id)
       dispatch(
         applyJob({
           id: id,
@@ -161,9 +168,9 @@ const JobDetailPage: React.FC<JobDetailProps> = ({ data, sameCompanyJob }) => {
           notification_type_id: 3
         })
       )
-
       dispatch(jobDetailSlice.actions.changeApplyStatus({ isApplied: true }))
     } else {
+      await resumiro.disconnectJobCandidate(wallet.address, id)
       dispatch(
         cancelJob({
           candidateId: session!.user!.id,

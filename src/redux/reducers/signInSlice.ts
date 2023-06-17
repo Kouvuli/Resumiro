@@ -24,37 +24,44 @@ export const signInNormal = createAsyncThunk(
   }
 )
 
-export const signInWallet = createAsyncThunk('sign-in-wallet', async () => {
-  if (!window.ethereum) {
-    window.alert('Please install MetaMask first.')
-    return
-  }
+export const signInWallet = createAsyncThunk(
+  'sign-in-wallet',
+  async (input: any) => {
+    const { provider } = input
 
-  // await window.ethereum.request({
-  //   method: 'wallet_addEthereumChain',
-  //   params: [
-  //     {
-  //       ...networks['mumbai']
-  //     }
-  //   ]
-  // })
-  // Get the wallet provider, the signer and address
-  //  see: https://docs.ethers.org/v6/getting-started/#starting-signing
-  const provider = new ethers.BrowserProvider(window.ethereum)
-  const signer = await provider.getSigner()
-  const walletAddress = await signer.getAddress()
-  const response = await resumiroApi
-    .generateNonce({
-      address_wallet: walletAddress
-    })
-    .then(res => res.data)
+    if (!window.ethereum) {
+      window.alert('Please install MetaMask first.')
+      return
+    }
+
+    // await window.ethereum.request({
+    //   method: 'wallet_addEthereumChain',
+    //   params: [
+    //     {
+    //       ...networks['mumbai']
+    //     }
+    //   ]
+    // })
+    // Get the wallet provider, the signer and address
+    //  see: https://docs.ethers.org/v6/getting-started/#starting-signing
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // await provider.send('eth_requestAccounts', [])
+
+    const signer = provider.getSigner()
+    const walletAddress = await signer.getAddress()
+
+    const response = await resumiroApi
+      .generateNonce({
+        address_wallet: walletAddress
+      })
+      .then(res => res.data)
 
   const signedNonce = await signer.signMessage(response.nonce)
   const result = await signIn('credentials', {
     redirect: false,
     address_wallet: walletAddress,
     signedNonce
-  })
+  }) 
   return result
 })
 
@@ -81,6 +88,8 @@ const signInSlice = createSlice({
         state.message = 'Đăng nhập ví thành công'
         state.messageType = 'success'
         state.loading = false
+
+        // state.provider = provider
       })
       .addCase(signInWallet.rejected, (state, _action) => {
         state.showMessage = true

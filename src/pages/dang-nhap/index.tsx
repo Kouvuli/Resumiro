@@ -20,6 +20,9 @@ import signInSlice, {
 import MySnackBar from '@components/ui/bar/snackbar'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { useSession } from 'next-auth/react'
+import { ethers } from 'ethers'
+import web3Slice from '@redux/reducers/web3Slice'
+import Resumiro from '../../interfaces/Resumiro'
 
 export default function SignInPage() {
   const { message, messageType, showMessage } = useAppSelector(signInSelector)
@@ -53,7 +56,30 @@ export default function SignInPage() {
   }
 
   const handleSignInWallet = async () => {
-    dispatch(signInWallet())
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum,
+      undefined
+    )
+    // await provider.send('eth_requestAccounts', [])
+    await provider.send('wallet_requestPermissions', [
+      {
+        eth_accounts: {}
+      }
+    ])
+
+    const signer = provider.getSigner()
+    const address = await signer.getAddress()
+    const amount = Number(
+      ethers.utils.formatEther(
+        await provider.getBalance(await signer.getAddress())
+      )
+    )
+    const wallet: { address: any; amount: any } = { address, amount }
+
+    const resumiro = new Resumiro(provider)
+    
+    dispatch(web3Slice.actions.setWeb3({ provider, wallet, resumiro }))
+    dispatch(signInWallet({ provider }))
   }
 
   const handleClose = (

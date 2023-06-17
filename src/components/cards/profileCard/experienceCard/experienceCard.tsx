@@ -21,7 +21,7 @@ import { companies } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { CircularProgress } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import profileSlice, {
   createExperience,
   uploadExperience
@@ -62,6 +62,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   const [open, setOpen] = useState(false)
   const { loading, uploadExperienceLoading, uploadedExperience } =
     useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
@@ -91,6 +92,15 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
       dispatch(profileSlice.actions.toggleSnackBar({ showMessage: true }))
       return
     }
+    await resumiro.addExperience({
+      position,
+      start,
+      finish,
+      source: uploadedExperience,
+      companyId: Number(company),
+      userAddress: wallet.address
+    })
+
     dispatch(
       createExperience({
         experience: {

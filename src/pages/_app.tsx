@@ -9,6 +9,7 @@ import { AnimatePresence } from 'framer-motion'
 import { SessionProvider } from 'next-auth/react'
 import store from '@redux/store'
 const inter = Inter({ subsets: ['latin'] })
+import { Web3Provider } from '@context/Web3Context'
 
 export default function App({
   Component,
@@ -18,20 +19,22 @@ export default function App({
   return (
     <ThemeProvider theme={lightTheme}>
       <Provider store={store}>
-        <SessionProvider session={session}>
-          <Layout className={inter.className}>
-            <AnimatePresence
-              mode="wait"
-              onExitComplete={() => {
-                if (typeof window !== 'undefined') {
-                  window.scrollTo({ top: 0 })
-                }
-              }}
-            >
-              <Component {...pageProps} key={router.route} />
-            </AnimatePresence>
-          </Layout>
-        </SessionProvider>
+        <Web3Provider>
+          <SessionProvider session={session}>
+            <Layout className={inter.className}>
+              <AnimatePresence
+                mode="wait"
+                onExitComplete={() => {
+                  if (typeof window !== 'undefined') {
+                    window.scrollTo({ top: 0 })
+                  }
+                }}
+              >
+                <Component {...pageProps} key={router.route} />
+              </AnimatePresence>
+            </Layout>
+          </SessionProvider>
+        </Web3Provider>
       </Provider>
     </ThemeProvider>
   )

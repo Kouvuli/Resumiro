@@ -9,12 +9,15 @@ import { Button, CardHeader } from '@mui/material'
 import Link from 'next/link'
 import { Request } from '@shared/interfaces'
 import { useRouter } from 'next/router'
-import { useAppDispatch } from '@hooks/index'
+import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { certificates, experiences } from '@prisma/client'
 import {
   updateCertifcateStatus,
   updateExperienceStatus
 } from '@redux/reducers/authRequestSlice'
+import Resumiro from '../../../interfaces/Resumiro'
+import { Wallet } from '@redux/reducers/web3Slice'
+import { web3Selector } from '@redux/selectors'
 
 export interface AuthRequestCardProps {
   request: Request
@@ -43,10 +46,13 @@ const authRequestCardVariants: Variants = {
 const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const handleAcceptCertificate = (
+  const { resumiro, wallet }: { resumiro: Resumiro; wallet: Wallet } =
+    useAppSelector(web3Selector)
+  const handleAcceptCertificate = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     data: certificates | null
   ) => {
+    await resumiro.changeCertificateStatus(data!.id, 1)
     dispatch(
       updateCertifcateStatus({
         id: data!.id,
@@ -61,10 +67,11 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     })
   }
 
-  const handleAcceptExperience = (
+  const handleAcceptExperience = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     data: experiences | null
   ) => {
+    await resumiro.changeExpStatus(data!.id, 1)
     dispatch(
       updateExperienceStatus({
         id: data!.id,
@@ -79,10 +86,11 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     })
   }
 
-  const handleRejectExperience = (
+  const handleRejectExperience = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     data: experiences | null
   ) => {
+    await resumiro.changeExpStatus(data!.id, 2)
     dispatch(
       updateExperienceStatus({
         id: data!.id,
@@ -97,10 +105,11 @@ const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
     })
   }
 
-  const handleRejectCertificate = (
+  const handleRejectCertificate = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     data: null | certificates
   ) => {
+    await resumiro.changeCertificateStatus(data!.id, 2)
     dispatch(
       updateCertifcateStatus({
         id: data!.id,

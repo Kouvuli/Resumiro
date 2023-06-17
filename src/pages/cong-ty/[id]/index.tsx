@@ -5,6 +5,7 @@ import BackgroundCard from '@components/cards/profileCard/backgroundCard'
 import CompanyDetailCard from '@components/cards/detailCard/companyDetail/companyDetailCard'
 import CompanyDescriptionCard from '@components/cards/detailCard/companyDetail/companyDescriptionCard'
 import { Company } from '@shared/interfaces'
+import resumiroApi from '@apis/resumiroApi'
 import prisma from '@libs/prisma'
 
 const CompanyDetailPage: React.FC<Company> = ({

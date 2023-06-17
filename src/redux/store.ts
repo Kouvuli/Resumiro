@@ -10,6 +10,7 @@ import recruiterProfileSlice from './reducers/recruiterProfileSlice'
 import resumeSlice from './reducers/resumeSlice'
 import signInSlice from './reducers/signInSlice'
 import signUpSlice from './reducers/signUpSlice'
+import web3Slice from './reducers/web3Slice'
 
 const store = configureStore({
   reducer: {
@@ -23,8 +24,13 @@ const store = configureStore({
     header: headerSlice.reducer,
     authRequest: authRequestSlice.reducer,
     candidateProfile: candidateProfileSlice.reducer,
-    recruiterProfile: recruiterProfileSlice.reducer
-  }
+    recruiterProfile: recruiterProfileSlice.reducer,
+    web3: web3Slice.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 })
 
 export type AppDispatch = typeof store.dispatch

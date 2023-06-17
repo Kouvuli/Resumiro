@@ -14,6 +14,8 @@ export const resumeSelector = (state: { resume: any }) => state.resume
 
 export const jobDetailSelector = (state: { jobDetail: any }) => state.jobDetail
 
+export const web3Selector = (state: { web3: any }) => state.web3
+
 export const authRequestSelector = (state: { authRequest: any }) =>
   state.authRequest
 export const candidateProfileSelector = (state: { candidateProfile: any }) =>

@@ -34,6 +34,7 @@ import resumeSlice from '@redux/reducers/resumeSlice'
 import jobSlice from '@redux/reducers/jobSlice'
 import companySlice from '@redux/reducers/companySlice'
 import authRequestSlice from '@redux/reducers/authRequestSlice'
+import web3Slice, { reconnectWeb3 } from '@redux/reducers/web3Slice'
 // import '../../styles/header/header.css'
 
 const BackgroundHeader = styled('header')(({}) => ({
@@ -276,6 +277,12 @@ const Header = () => {
   }, [refreshNotification, session])
 
   useEffect(() => {
+    if (status === 'authenticated') {
+      dispatch(reconnectWeb3())
+    }
+  }, [status])
+
+  useEffect(() => {
     socket.on('receive_message', _data => {
       dispatch(headerSlice.actions.refreshNotification(!refreshNotification))
     })
@@ -329,6 +336,7 @@ const Header = () => {
     dispatch(headerSlice.actions.reset())
     dispatch(signInSlice.actions.reset())
     dispatch(resumeSlice.actions.reset())
+    dispatch(web3Slice.actions.reset())
     const result = await signOut({ redirect: false })
     if (result) {
       router.replace('/dang-nhap')

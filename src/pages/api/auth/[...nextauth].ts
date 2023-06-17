@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
             prisma.$disconnect()
             throw new Error('No user found')
           }
-          const signerAddress = ethers.verifyMessage(
+          const signerAddress = ethers.utils.verifyMessage(
             user.nonce?.nonce!,
             signedNonce
           )

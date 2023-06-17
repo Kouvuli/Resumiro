@@ -9,7 +9,7 @@ import CreateIcon from '@mui/icons-material/Create'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { useState } from 'react'
-import { profileSelector } from '@redux/selectors'
+import { profileSelector, web3Selector } from '@redux/selectors'
 import { Modal } from '@mui/material'
 import { Box } from '@mui/material'
 import { TextField } from '@mui/material'
@@ -43,6 +43,7 @@ const EducationItem: React.FC<EducationItemProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
+  const { resumiro, wallet } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const dispatch = useAppDispatch()
@@ -52,6 +53,11 @@ const EducationItem: React.FC<EducationItemProps> = ({
     const name = formData.get('name')!.toString()
     const verified_at = formData.get('verified_at')!.toString()
 
+    await resumiro.updateCertificate({
+      id: data.id,
+      name,
+      expiredAt: Math.floor(new Date(verified_at).getTime() / 1000)
+    })
     dispatch(
       updateCertificate({
         id: data.id,
@@ -64,7 +70,8 @@ const EducationItem: React.FC<EducationItemProps> = ({
 
     setOpen(false)
   }
-  const deleteHandler = () => {
+  const deleteHandler = async () => {
+    await resumiro.deleteCertificate(data.id)
     dispatch(deleteCertificate(data.id))
   }
   return (
