@@ -83,7 +83,7 @@ const ProfilePage = () => {
             <Grid item xs={12} md={8}>
               <BasicInfoCard
                 avatar={user.avatar}
-                fullN ame={user.full_name}
+                fullName={user.full_name}
                 username={user.username}
                 role={user.role}
                 phone={user.phone}
