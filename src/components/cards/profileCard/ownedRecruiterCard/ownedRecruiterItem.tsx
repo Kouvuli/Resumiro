@@ -26,7 +26,7 @@ const OwnedRecruiterItem: React.FC<OwnedRecruiterItemProps> = ({
   isModify
 }) => {
   const dispatch = useAppDispatch()
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro } = useAppSelector(web3Selector)
 
   const deleteRecruiterHandler = async () => {
     await resumiro.disconnectCompanyRecruiter({

@@ -62,7 +62,7 @@ const CompanyBasicCard: React.FC<CompanyBasicCardProps> = ({
     uploadedLogo,
     uploadedBackground
   } = useAppSelector(profileSelector)
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro } = useAppSelector(web3Selector)
   const handleOpenAddCompanyModal = () => {
     setOpenApplyCompany(true)
   }

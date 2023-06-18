@@ -49,7 +49,7 @@ const web3Slice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(reconnectWeb3.pending, (state, action) => {
+      .addCase(reconnectWeb3.pending, (_state, _action) => {
         console.log('Connecting wallet...')
       })
       .addCase(reconnectWeb3.fulfilled, (state, action) => {
@@ -58,7 +58,7 @@ const web3Slice = createSlice({
         state.resumiro = action.payload.resumiro
         console.log('Web3 connected!')
       })
-      .addCase(reconnectWeb3.rejected, (state, action) => {
+      .addCase(reconnectWeb3.rejected, (_state, _action) => {
         console.log('Connection crashed!')
       })
   }

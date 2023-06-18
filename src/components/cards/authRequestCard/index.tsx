@@ -46,7 +46,7 @@ const authRequestCardVariants: Variants = {
 const AuthRequestCard: React.FC<AuthRequestCardProps> = ({ request }) => {
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const { resumiro, wallet }: { resumiro: Resumiro; wallet: Wallet } =
+  const { resumiro }: { resumiro: Resumiro; wallet: Wallet } =
     useAppSelector(web3Selector)
   const handleAcceptCertificate = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,

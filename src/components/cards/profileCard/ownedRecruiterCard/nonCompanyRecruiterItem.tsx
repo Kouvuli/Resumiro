@@ -29,7 +29,7 @@ const NonCompanyRecruiterItem: React.FC<NonCompanyItemProps> = ({
   companyId
 }) => {
   const dispatch = useAppDispatch()
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro } = useAppSelector(web3Selector)
 
   const addRecruiterToCompanyHandler = async () => {
     await resumiro.connectCompanyRecruiter({

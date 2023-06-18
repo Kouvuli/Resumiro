@@ -63,7 +63,7 @@ const CompanyPage: React.FC<CompanyPageProps> = ({ allLocations }) => {
     hasAddCompany,
     data
   } = useAppSelector(companySelector)
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro } = useAppSelector(web3Selector)
   useEffect(() => {
     if (status === 'authenticated') {
       dispatch(fetchUserById(session!.user!.id))
@@ -168,7 +168,7 @@ const CompanyPage: React.FC<CompanyPageProps> = ({ allLocations }) => {
 
     await resumiro.addCompany({
       name,
-      location: allLocations[Number(locationId) - 1].name,
+      location: allLocations[Number(locationId) - 1].name
     })
 
     dispatch(

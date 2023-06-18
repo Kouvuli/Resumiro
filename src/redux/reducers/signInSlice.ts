@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { ethers } from 'ethers'
 import resumiroApi from '@apis/resumiroApi'
 import { signIn } from 'next-auth/react'
 const initialState = {
@@ -56,14 +55,15 @@ export const signInWallet = createAsyncThunk(
       })
       .then(res => res.data)
 
-  const signedNonce = await signer.signMessage(response.nonce)
-  const result = await signIn('credentials', {
-    redirect: false,
-    address_wallet: walletAddress,
-    signedNonce
-  }) 
-  return result
-})
+    const signedNonce = await signer.signMessage(response.nonce)
+    const result = await signIn('credentials', {
+      redirect: false,
+      address_wallet: walletAddress,
+      signedNonce
+    })
+    return result
+  }
+)
 
 const signInSlice = createSlice({
   name: 'signIn',

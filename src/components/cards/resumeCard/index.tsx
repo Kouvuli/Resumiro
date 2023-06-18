@@ -73,7 +73,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   const canvasRef = useRef(null)
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro } = useAppSelector(web3Selector)
   const router = useRouter()
   const { pdfDocument } = usePdf({
     file: decryptText(data, resumeKey),
@@ -106,7 +106,9 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
   }
 
   const updateResumePrivacyHandler = async () => {
-    let ipfs_string: string = !isPublic ? decryptText(data, resumeKey) : 'no-change'
+    let ipfs_string: string = !isPublic
+      ? decryptText(data, resumeKey)
+      : 'no-change'
     await resumiro.togglePublic(id, ipfs_string)
     dispatch(
       updateResumePrivacy({

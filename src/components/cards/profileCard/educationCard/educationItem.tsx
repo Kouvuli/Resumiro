@@ -43,7 +43,7 @@ const EducationItem: React.FC<EducationItemProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const { loading } = useAppSelector(profileSelector)
-  const { resumiro, wallet } = useAppSelector(web3Selector)
+  const { resumiro } = useAppSelector(web3Selector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const dispatch = useAppDispatch()
