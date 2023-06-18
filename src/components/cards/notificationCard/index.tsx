@@ -42,7 +42,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   isRead
 }) => {
   const dispatch = useAppDispatch()
-  const { resumiro, wallet }: { resumiro: Resumiro; wallet: Wallet } =
+  const { resumiro }: { resumiro: Resumiro; wallet: Wallet } =
     useAppSelector(web3Selector)
   const { data: session } = useSession()
   const acceptRecruiterToCompanyHandler = async () => {

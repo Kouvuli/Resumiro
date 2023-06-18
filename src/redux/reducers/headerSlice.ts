@@ -108,6 +108,17 @@ export const deleteNotificationById = createAsyncThunk(
   }
 )
 
+export const readAllNotifications = createAsyncThunk(
+  'read-all-notifications',
+  async (id: number, { dispatch }) => {
+    const data = await resumiroApi
+      .readAllNotifications(id)
+      .then(res => res.data)
+    dispatch(headerSlice.actions.refreshNotification(null))
+    return data
+  }
+)
+
 const headerSlice = createSlice({
   name: 'header',
   initialState,
@@ -202,6 +213,16 @@ const headerSlice = createSlice({
         state.showMessage = true
         state.message = action.error.message!
         state.messageType = 'error'
+        state.loading = false
+      })
+
+      .addCase(readAllNotifications.pending, (state, _action) => {
+        state.loading = true
+      })
+      .addCase(readAllNotifications.fulfilled, (state, _action) => {
+        state.loading = false
+      })
+      .addCase(readAllNotifications.rejected, (state, _action) => {
         state.loading = false
       })
   }

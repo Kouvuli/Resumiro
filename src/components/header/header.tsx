@@ -20,7 +20,8 @@ import profileSlice from '@redux/reducers/profileSlice'
 import socket from '@libs/socket'
 import headerSlice, {
   fetchUserById,
-  fetchUserNotification
+  fetchUserNotification,
+  readAllNotifications
 } from '@redux/reducers/headerSlice'
 import _ from 'lodash'
 import Badge from '@mui/material/Badge'
@@ -301,11 +302,7 @@ const Header = () => {
   const NavBar = (
     <ul>
       <li>
-        <Link href="/viec-lam">
-          {/* <a href="#" className="active"> */}
-          Việc làm
-          {/* </a> */}
-        </Link>
+        <Link href="/viec-lam">Việc làm</Link>
       </li>
       {session && (
         <li>
@@ -343,6 +340,10 @@ const Header = () => {
     }
   }
 
+  const readAllNotifiations = () => {
+    dispatch(readAllNotifications(Number(session?.user?.id)))
+  }
+
   const convertNotificationList = (notificationList: Notification[]) => {
     if (notificationList.length === 0)
       return (
@@ -358,6 +359,19 @@ const Header = () => {
           maxHeight: 300
         }}
       >
+        <ListItem>
+          <Typography variant="h5">Thông báo</Typography>
+          <div style={{ flexGrow: 1 }} />
+          <Button
+            disableElevation
+            disableFocusRipple
+            variant="text"
+            onClick={readAllNotifiations}
+            sx={{ textTransform: 'none' }}
+          >
+            Xem hết
+          </Button>
+        </ListItem>
         {notificationList.map(item => (
           <ListItem disablePadding key={item.notification.id}>
             <NotificationCard
