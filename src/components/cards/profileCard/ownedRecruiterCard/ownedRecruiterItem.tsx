@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useAppDispatch, useAppSelector } from '@hooks/index'
 import { deleteCompanyFromRecruiter } from '@redux/reducers/profileSlice'
 import { web3Selector } from '@redux/selectors'
+import Image from 'next/image'
 
 const CustomOwnedRecruiterItem = styled(Card)(({}) => ({
   boxShadow: 'unset',
@@ -47,7 +48,7 @@ const OwnedRecruiterItem: React.FC<OwnedRecruiterItemProps> = ({
     <CustomOwnedRecruiterItem>
       <CardHeader
         avatar={
-          <img
+          <Image
             style={{ borderRadius: '5px' }}
             src={data.avatar || '/images/default-user.jpg'}
             width={80}

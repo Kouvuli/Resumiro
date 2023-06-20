@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
 import { Recruiter } from '@shared/interfaces'
 import { IconButton } from '@mui/material'
-
+import Image from 'next/image'
 import AddIcon from '@mui/icons-material/Add'
 
 import { useAppDispatch, useAppSelector } from '@hooks/index'
@@ -51,7 +51,7 @@ const NonCompanyRecruiterItem: React.FC<NonCompanyItemProps> = ({
     <CustomNonCompanyItem>
       <CardHeader
         avatar={
-          <img
+          <Image
             style={{ borderRadius: '5px' }}
             src={data.avatar || '/images/default-user.jpg'}
             width={80}
