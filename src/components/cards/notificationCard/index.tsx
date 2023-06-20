@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react'
 import Resumiro from '../../../interfaces/Resumiro'
 import { Wallet } from '@redux/reducers/web3Slice'
 import { web3Selector } from '@redux/selectors'
+import Image from 'next/image'
 interface NotificationCardProps {
   id: number
   type: number
@@ -101,7 +102,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             alignItems: 'start'
           }}
           avatar={
-            <img
+            <Image
               style={{ borderRadius: '5px' }}
               src={author.avatar ? author.avatar : '/images/default-user.jpg'}
               width={40}
@@ -152,7 +153,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             alignItems: 'start'
           }}
           avatar={
-            <img
+            <Image
               style={{ borderRadius: '5px' }}
               src={author.avatar ? author.avatar : '/images/default-user.jpg'}
               width={40}
@@ -204,7 +205,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             alignItems: 'start'
           }}
           avatar={
-            <img
+            <Image
               style={{ borderRadius: '5px' }}
               src={author.avatar ? author.avatar : '/images/default-user.jpg'}
               width={60}
@@ -280,7 +281,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             alignItems: 'start'
           }}
           avatar={
-            <img
+            <Image
               style={{ borderRadius: '5px' }}
               src={author.avatar ? author.avatar : '/images/default-user.jpg'}
               width={60}
@@ -349,7 +350,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             alignItems: 'start'
           }}
           avatar={
-            <img
+            <Image
               style={{ borderRadius: '5px' }}
               src={author.avatar ? author.avatar : '/images/default-user.jpg'}
               width={40}
@@ -392,7 +393,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           alignItems: 'start'
         }}
         avatar={
-          <img
+          <Image
             style={{ borderRadius: '5px' }}
             src={author.avatar ? author.avatar : '/images/default-user.jpg'}
             width={60}

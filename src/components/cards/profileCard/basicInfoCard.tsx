@@ -17,7 +17,8 @@ import { useState, useEffect } from 'react'
 import {
   fetchAllUserResumes,
   updateCandidateBasicInfo,
-  updateRecruiterBasicInfo
+  updateRecruiterBasicInfo,
+  uploadAvatar
 } from '@redux/reducers/profileSlice'
 import { Modal } from '@mui/material'
 import { Box } from '@mui/material'
@@ -59,13 +60,13 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
   fullName,
   role,
   phone,
-  background,
   email
 }) => {
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
 
-  const { loading, allUserResumes } = useAppSelector(profileSelector)
+  const { loading, allUserResumes, uploadAvatarLoading } =
+    useAppSelector(profileSelector)
   const controls = useAnimationControls()
   useEffect(() => {
     controls.stop()
@@ -93,8 +94,6 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
         updateCandidateBasicInfo({
           id: session!.user!.id,
           data: {
-            background: data.get('background')!.toString(),
-            avatar: data.get('avatar')!.toString(),
             full_name: data.get('full_name')!.toString(),
             phone: data.get('phone')!.toString(),
             email: data.get('email')!.toString()
@@ -106,8 +105,6 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
         updateRecruiterBasicInfo({
           id: session!.user!.id,
           data: {
-            background: data.get('background')!.toString(),
-            avatar: data.get('avatar')!.toString(),
             full_name: data.get('full_name')!.toString(),
             phone: data.get('phone')!.toString(),
             email: data.get('email')!.toString()
@@ -117,6 +114,17 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
     }
 
     setIsOpenEditInfo(false)
+  }
+
+  const avatarHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const data = e.target.files![0]
+
+    if (data) {
+      const body = new FormData()
+
+      body.append('file', data)
+      dispatch(uploadAvatar({ userId: Number(session!.user!.id), body }))
+    }
   }
 
   if (type === 2) {
@@ -262,17 +270,43 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
         <CardHeader
           avatar={
             <div style={{ position: 'relative', width: '170px' }}>
-              <Avatar
-                sx={{
+              <label
+                style={{
+                  display: 'inline-block',
                   position: 'absolute',
                   bottom: 0,
                   left: 0,
-                  height: '170px',
-                  width: '170px'
+                  cursor: 'pointer'
                 }}
-                alt={fullName!}
-                src={avatar || '/images/default-user.jpg'}
-              />
+              >
+                {uploadAvatarLoading && (
+                  <CircularProgress
+                    sx={{
+                      position: 'absolute',
+                      bottom: 65,
+                      left: 65,
+                      zIndex: 99
+                    }}
+                    size={40}
+                  />
+                )}
+
+                <input
+                  style={{ display: 'none' }}
+                  type="file"
+                  accept="image/*"
+                  title=""
+                  onChange={avatarHandler}
+                />
+                <Avatar
+                  sx={{
+                    height: '170px',
+                    width: '170px'
+                  }}
+                  alt={fullName!}
+                  src={avatar || '/images/default-user.jpg'}
+                />
+              </label>
             </div>
           }
           title={
@@ -344,36 +378,6 @@ const BasicInfoCard: React.FC<BasicInfoCardProps> = ({
             }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  name="avatar"
-                  required
-                  fullWidth
-                  id="avatar"
-                  defaultValue={avatar}
-                  label="Avatar"
-                  autoFocus
-                  color="primary"
-                  sx={{
-                    borderRadius: '5px'
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  name="background"
-                  required
-                  fullWidth
-                  id="background"
-                  defaultValue={background}
-                  label="Background"
-                  autoFocus
-                  color="primary"
-                  sx={{
-                    borderRadius: '5px'
-                  }}
-                />
-              </Grid>
               <Grid item xs={6}>
                 <TextField
                   name="full_name"

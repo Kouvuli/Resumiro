@@ -23,7 +23,7 @@ const CompanyDetailPage: React.FC<Company> = ({
       <Container>
         <Grid container marginTop="1rem " marginBottom="5rem">
           <Grid item xs={12}>
-            <BackgroundCard src={background} alt={name} />
+            <BackgroundCard type={2} src={background} alt={name} />
           </Grid>
           <Grid item xs={12} sx={{ mb: 2 }}>
             <CompanyDetailCard

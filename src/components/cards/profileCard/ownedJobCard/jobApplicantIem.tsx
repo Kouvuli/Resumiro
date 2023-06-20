@@ -3,6 +3,7 @@ import { Card, CardHeader, Typography } from '@mui/material'
 import { users } from '@prisma/client'
 import { styled } from '@mui/material/styles'
 import Link from 'next/link'
+import Image from 'next/image'
 interface JobApplicantItemProps {
   data: users
 }
@@ -15,7 +16,7 @@ const JobApplicantItem: React.FC<JobApplicantItemProps> = ({ data }) => {
     <CustomJobApplicantItem sx={{ width: '100%' }}>
       <CardHeader
         avatar={
-          <img
+          <Image
             style={{ borderRadius: '5px' }}
             src={data.avatar ? data.avatar : '/images/default-user.jpg'}
             width={80}

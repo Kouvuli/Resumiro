@@ -13,6 +13,7 @@ const initialState = {
   uploadExperienceLoading: false,
   uploadedExperience: '',
   uploadCertificateLoading: false,
+  uploadAvatarLoading: false,
   uploadedCertificate: '',
   message: '',
   messageType: 'success',
@@ -36,6 +37,44 @@ export const uploadCertificate = createAsyncThunk(
   'upload-certificate',
   async (body: any) => {
     const data = await resumiroApi.uploadFile(body).then(res => res.data)
+    return data
+  }
+)
+
+export const uploadAvatar = createAsyncThunk(
+  'upload-avatar',
+  async (input: { userId: number; body: any }, { dispatch }) => {
+    const { data } = await resumiroApi
+      .uploadFile(input.body)
+      .then(res => res.data)
+    dispatch(
+      updateCandidateBasicInfo({
+        id: input.userId,
+        data: {
+          avatar: data
+        }
+      })
+    )
+
+    return data
+  }
+)
+
+export const uploadUserBackground = createAsyncThunk(
+  'upload-user-background',
+  async (input: { userId: number; body: any }, { dispatch }) => {
+    const { data } = await resumiroApi
+      .uploadFile(input.body)
+      .then(res => res.data)
+    dispatch(
+      updateCandidateBasicInfo({
+        id: input.userId,
+        data: {
+          background: data
+        }
+      })
+    )
+
     return data
   }
 )
@@ -440,6 +479,34 @@ const profileSlice = createSlice({
         state.message = action.error.message!
         state.messageType = 'error'
         state.uploadCertificateLoading = false
+      })
+
+      .addCase(uploadAvatar.pending, (state, _action) => {
+        state.uploadAvatarLoading = true
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+        state.uploadAvatarLoading = false
+      })
+      .addCase(uploadAvatar.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
+        state.uploadAvatarLoading = false
+      })
+
+      .addCase(uploadUserBackground.pending, (_state, _action) => {})
+      .addCase(uploadUserBackground.fulfilled, (state, action) => {
+        state.showMessage = true
+        state.message = action.payload.message
+        state.messageType = 'success'
+      })
+      .addCase(uploadUserBackground.rejected, (state, action) => {
+        state.showMessage = true
+        state.message = action.error.message!
+        state.messageType = 'error'
       })
 
       .addCase(fetchCandidateById.pending, (state, _action) => {

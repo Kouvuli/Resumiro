@@ -76,24 +76,29 @@ export default async function handler(
     return
   } else if (req.method === 'PATCH') {
     const { avatar, background, full_name, email, phone } = req.body
-    if (Number(session.user?.id) !== Number(candidateId)) {
-      res.status(401).json({
-        message: 'Unauthorized',
-        status: 'error'
-      })
-      return
-    }
+    // if (Number(session.user?.id) !== Number(candidateId)) {
+    //   res.status(401).json({
+    //     message: 'Unauthorized',
+    //     status: 'error'
+    //   })
+    //   return
+    // }
+
+    const oldData = await prisma.users.findFirst({
+      where: { id: Number(candidateId) }
+    })
+
     const data = await prisma.users
       .update({
         where: {
           id: Number(candidateId)
         },
         data: {
-          avatar: avatar,
-          background: background,
-          full_name: full_name,
-          phone: phone,
-          email: email
+          avatar: avatar?.length > 0 ? avatar : oldData?.avatar,
+          background: background?.length > 0 ? background : oldData?.background,
+          full_name: full_name?.length > 0 ? full_name : oldData?.full_name,
+          phone: phone?.length > 0 ? phone : oldData?.phone,
+          email: email?.length > 0 ? email : oldData?.email
         }
       })
       .catch(() => {
