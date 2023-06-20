@@ -101,11 +101,10 @@ export default function SignUpPage() {
           type = 2
           break
       }
-      let result: any = await resumiro.addUser({
+      await resumiro.addUser({
         userAddress: walletAddress,
         type
       })
-      console.log(result)
     } catch (error: any) {
       console.log(error)
       throw new Error(error)

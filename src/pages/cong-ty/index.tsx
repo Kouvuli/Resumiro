@@ -131,12 +131,7 @@ const CompanyPage: React.FC<CompanyPageProps> = ({ allLocations }) => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault()
-    // await resumiro.addCompany({
-    //   name: 'google',
-    //   location: 'TP.Hồ Chí Minh',
-    //   adminAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'
-    // })
-    // return
+
 
     const data = new FormData(event.currentTarget)
     const name = data.get('name')!.toString()
