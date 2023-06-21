@@ -120,7 +120,7 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '25%',
+            width: 'auto',
             bgcolor: 'background.paper',
             boxShadow: 24,
             p: 4
@@ -213,7 +213,7 @@ const ResumePage: React.FC<ResumePageProps> = ({ suitableList }) => {
           <Grid item xs={12} md={7.5}>
             <ResumeGrid {...allResumes} title="CV đã tải lên" />
           </Grid>
-          <Grid item xs={12} md={4.5}>
+          <Grid item xs={12} md={4.5} marginTop={{ xs: '16px', md: '0px' }}>
             <SuitableJob
               openHandler={handleOpenModal}
               isResumePage

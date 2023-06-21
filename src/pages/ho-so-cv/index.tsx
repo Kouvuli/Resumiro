@@ -1,5 +1,5 @@
 import Container from '@mui/material/Container'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import ResumeGrid from '@components/grid/resumeGrid'
 import ArticleLayout from '@components/layouts/article'
@@ -15,6 +15,7 @@ import { resumeSelector } from '@redux/selectors'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
 import MySnackBar from '@components/ui/bar/snackbar'
+import { Button, Drawer } from '@mui/material'
 
 interface ResumeRecruiterPageProps {}
 
@@ -47,6 +48,7 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({}) => {
     messageType,
     allResumes
   } = useAppSelector(resumeSelector)
+  const [openDrawer, setOpenDrawer] = useState(false)
 
   useEffect(() => {
     dispatch(getResumes(router.query))
@@ -112,7 +114,24 @@ const ResumeRecruiterPage: React.FC<ResumeRecruiterPageProps> = ({}) => {
               handleChange={handleJobOrderChange}
             />
           )}
-
+          <Grid item display={{ xs: 'unset', md: 'none' }} md={3}>
+            <Button
+              disableElevation
+              variant="contained"
+              onClick={() => setOpenDrawer(true)}
+            >
+              Lọc
+            </Button>
+            <Drawer
+              anchor={'left'}
+              open={openDrawer}
+              onClose={() => setOpenDrawer(false)}
+            >
+              <div style={{ width: '250px', padding: '12px 0 12px 24px' }}>
+                <Filter type={2} />
+              </div>
+            </Drawer>
+          </Grid>
           <Grid item display={{ xs: 'none', md: 'unset' }} md={3}>
             <Filter type={2} />
           </Grid>

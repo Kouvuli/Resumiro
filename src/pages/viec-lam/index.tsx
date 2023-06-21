@@ -25,6 +25,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import { fields, locations, skills } from '@prisma/client'
 import {
+  Drawer,
   FormControl,
   InputLabel,
   MenuItem,
@@ -103,7 +104,7 @@ const JobPage: React.FC<JobPageProps> = ({
     data
   } = useAppSelector(jobSelector)
   const { resumiro, wallet } = useAppSelector(web3Selector)
-
+  const [openDrawer, setOpenDrawer] = useState(false)
   useEffect(() => {
     if (session && session.user!.role !== 'candidate') {
       dispatch(fetchRecruiterById(session.user!.id))
@@ -460,6 +461,24 @@ const JobPage: React.FC<JobPageProps> = ({
             />
           )}
 
+          <Grid item display={{ xs: 'unset', md: 'none' }} md={3}>
+            <Button
+              disableElevation
+              variant="contained"
+              onClick={() => setOpenDrawer(true)}
+            >
+              Lọc
+            </Button>
+            <Drawer
+              anchor={'left'}
+              open={openDrawer}
+              onClose={() => setOpenDrawer(false)}
+            >
+              <div style={{ padding: '12px 0 12px 12px' }}>
+                <Filter />
+              </div>
+            </Drawer>
+          </Grid>
           <Grid item display={{ xs: 'none', md: 'unset' }} md={3}>
             <Filter />
           </Grid>
