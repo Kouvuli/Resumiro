@@ -44,22 +44,24 @@ export async function getServerSideProps(context: {
   res: any
   query: any
 }) {
-  const { page, limit, id } = context.query
+  const { page = 1, limit = 6, id } = context.query
   let p = Number(page)
   let l = Number(limit)
 
-  const jobs = await prisma.jobs.findMany({
-    skip: (p - 1) * l,
-    take: l,
-    where: {
-      company_id: Number(id)
-    },
+  const jobs = await prisma.jobs
+    .findMany({
+      skip: (p - 1) * l,
+      take: l,
+      where: {
+        company_id: Number(id)
+      },
 
-    include: {
-      company: true,
-      location: true
-    }
-  })
+      include: {
+        company: true,
+        location: true
+      }
+    })
+    .then(res => JSON.parse(JSON.stringify(res)))
   const jobList = jobs.map(
     (
       job: jobs & {

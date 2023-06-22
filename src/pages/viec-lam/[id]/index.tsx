@@ -304,37 +304,39 @@ export async function getServerSideProps(context: { query: { id: string } }) {
 
   const jobDetail = await resumiroApi.getJobById(id).then(res => res.data)
 
-  const jobs = await prisma.jobs.findFirst({
-    where: { id: Number(id) },
-    include: {
-      owner: {
-        include: {
-          room: true
-        }
-      },
-      company: {
-        include: {
-          jobs: {
-            where: {
-              id: {
-                not: Number(id)
+  const jobs = await prisma.jobs
+    .findFirst({
+      where: { id: Number(id) },
+      include: {
+        owner: {
+          include: {
+            room: true
+          }
+        },
+        company: {
+          include: {
+            jobs: {
+              where: {
+                id: {
+                  not: Number(id)
+                }
+              },
+              include: {
+                location: true,
+                company: true
               }
-            },
-            include: {
-              location: true,
-              company: true
             }
           }
-        }
-      },
-      location: true,
-      jobs_skills: {
-        select: {
-          skill: true
+        },
+        location: true,
+        jobs_skills: {
+          select: {
+            skill: true
+          }
         }
       }
-    }
-  })
+    })
+    .then(res => JSON.parse(JSON.stringify(res)))
   const sameCompanyJob: JobCardProps[] = jobs!.company.jobs.map(
     (
       job: jobs & {
