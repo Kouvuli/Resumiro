@@ -14,6 +14,7 @@ const MainLayout: React.FC<MainProps> = ({ children }) => {
   return (
     <Box>
       <Head>
+        <link rel="icon" href="/logo.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Home page</title>
       </Head>
